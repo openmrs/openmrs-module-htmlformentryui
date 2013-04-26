@@ -19,13 +19,21 @@
 	<!-- Required Modules -->
 	<require_modules>
 																											
-		<require_module version="2.0.8">
+		<require_module version="${htmlformentryModuleVersion}">
 			org.openmrs.module.htmlformentry
 		</require_module>
 																											
-		<require_module version="2.5.1">
+		<require_module version="${uiframeworkModuleVersion}">
 			org.openmrs.module.uiframework
 		</require_module>
+
+        <require_module version="${emrapiModuleVersion}">
+            org.openmrs.module.emrapi
+        </require_module>
+
+        <require_module version="${emrModuleVersion}">
+            org.openmrs.module.emr
+        </require_module>
 			
 	</require_modules>
 	<!-- / Required Modules -->

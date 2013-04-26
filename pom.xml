@@ -33,52 +33,51 @@
 	</modules>
 	
 	<properties>
-		<openMRSVersion>1.9.0</openMRSVersion>
+		<openMRSVersion>1.9.4-SNAPSHOT</openMRSVersion>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-	</properties>
+        <htmlformentryModuleVersion>2.0.8</htmlformentryModuleVersion>
+        <uiframeworkModuleVersion>2.5.1</uiframeworkModuleVersion>
+        <emrModuleVersion>2.0-SNAPSHOT</emrModuleVersion>
+        <emrapiModuleVersion>1.0-SNAPSHOT</emrapiModuleVersion>
+    </properties>
 
-	<dependencyManagement>
 		<dependencies>
-		
-			<!--
-			Libraries to add as dependencies with compile or runtime scope:
-			Find matching dependencies in the maven central repository.
-			<dependency>
-				<groupId>org.other.library</groupId>
-				<artifactId>library-name</artifactId>
-				<version>library.version</version>
-				<scope>compile</scope>
-			</dependency>
-			-->
-			
-						
+
 			<!-- Begin OpenMRS modules -->
-			
-						
 			<dependency>
-			
 				<groupId>org.openmrs.module</groupId>
-												
 				<artifactId>htmlformentry-api</artifactId>
-																								
-				<version>2.0.8</version>
-												
+				<version>${htmlformentryModuleVersion}</version>
 				<scope>provided</scope>
-				
 			</dependency>
 						
 			<dependency>
-			
 				<groupId>org.openmrs.module</groupId>
-												
 				<artifactId>uiframework-api</artifactId>
-																								
-				<version>2.5.1</version>
-												
+				<version>${uiframeworkModuleVersion}</version>
 				<scope>provided</scope>
-				
 			</dependency>
-						
+
+            <dependency>
+                <groupId>org.openmrs.module</groupId>
+                <artifactId>emrapi-api</artifactId>
+                <version>${emrapiModuleVersion}</version>
+                <scope>provided</scope>
+            </dependency>
+
+            <dependency>
+                <groupId>org.openmrs.module</groupId>
+                <artifactId>emr-api</artifactId>
+                <version>${emrModuleVersion}</version>
+                <scope>provided</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.openmrs.module</groupId>
+                <artifactId>emr-api</artifactId>
+                <version>${emrModuleVersion}</version>
+                <type>test-jar</type>
+                <scope>test</scope>
+            </dependency>
 			<!-- End OpenMRS modules -->
 			
 
@@ -93,29 +92,13 @@
 			</dependency>
 
 			<dependency>
-				<groupId>org.openmrs.web</groupId>
-				<artifactId>openmrs-web</artifactId>
-				<version>${openMRSVersion}</version>
-				<type>jar</type>
-				<scope>provided</scope>
-			</dependency>
-						
-			<dependency>
 				<groupId>org.openmrs.api</groupId>
 				<artifactId>openmrs-api</artifactId>
 				<version>${openMRSVersion}</version>
 				<type>test-jar</type>
 				<scope>test</scope>
 			</dependency>
-			
-			<dependency>
-				<groupId>org.openmrs.web</groupId>
-				<artifactId>openmrs-web</artifactId>
-				<version>${openMRSVersion}</version>
-				<type>test-jar</type>
-				<scope>test</scope>
-			</dependency>
-			
+
 			<dependency>
 				<groupId>org.openmrs.test</groupId>
 				<artifactId>openmrs-test</artifactId>
@@ -127,7 +110,6 @@
 			<!-- End OpenMRS core -->
 
 		</dependencies>
-	</dependencyManagement>
 
 	<build>
 		<pluginManagement>
