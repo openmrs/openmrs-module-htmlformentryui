@@ -22,9 +22,9 @@
 	</organization>
 
 	<scm>
-		<connection>scm:svn:https://svn.openmrs.org/openmrs-modules/htmlformentryui/trunk/</connection>
-		<developerConnection>scm:svn:https://svn.openmrs.org/openmrs-modules/htmlformentryui/trunk/</developerConnection>
-		<url>https://svn.openmrs.org/openmrs-modules/htmlformentryui/trunk/</url>
+        <connection>scm:git:git@github.com:openmrs/htmlformentryui.git</connection>
+        <developerConnection>scm:git:git@github.com:openmrs/htmlformentryui.git</developerConnection>
+        <url>scm:git:git@github.com:openmrs/htmlformentryui.git</url>
 	</scm>
 
 	<modules>
@@ -189,5 +189,18 @@
 			</snapshots>
 		</pluginRepository>
 	</pluginRepositories>
+
+    <distributionManagement>
+        <repository>
+            <id>openmrs-repo-modules</id>
+            <name>OpenMRS Modules</name>
+            <url>http://mavenrepo.openmrs.org/nexus/content/repositories/modules</url>
+        </repository>
+        <snapshotRepository>
+            <id>openmrs-repo-snapshots</id>
+            <name>OpenMRS Snapshots</name>
+            <url>http://mavenrepo.openmrs.org/nexus/content/repositories/snapshots</url>
+        </snapshotRepository>
+    </distributionManagement>
 
 </project>
