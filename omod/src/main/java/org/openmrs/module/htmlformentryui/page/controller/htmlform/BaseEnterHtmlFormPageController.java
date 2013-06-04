@@ -22,10 +22,12 @@ import org.openmrs.api.FormService;
 import org.openmrs.module.appui.UiSessionContext;
 import org.openmrs.module.htmlformentry.HtmlForm;
 import org.openmrs.module.htmlformentry.HtmlFormEntryService;
+import org.openmrs.module.htmlformentryui.HtmlFormUtil;
 import org.openmrs.ui.framework.SimpleObject;
 import org.openmrs.ui.framework.UiUtils;
 import org.openmrs.ui.framework.annotation.SpringBean;
 import org.openmrs.ui.framework.page.PageModel;
+import org.openmrs.ui.framework.resource.ResourceFactory;
 import org.springframework.web.bind.annotation.RequestParam;
 
 /**
@@ -37,17 +39,22 @@ public abstract class BaseEnterHtmlFormPageController {
                     @RequestParam("patientId") Patient currentPatient,
                     @RequestParam(value = "formUuid", required = false) String formUuid,
                     @RequestParam(value = "htmlFormId", required = false) HtmlForm htmlForm,
+                    @RequestParam(value = "definitionUiResource", required = false) String definitionUiResource,
                     @RequestParam(value = "visitId", required = false) Visit visit,
                     @RequestParam(value = "createVisit", required = false) Boolean createVisit,
                     @RequestParam(value = "returnUrl", required = false) String returnUrl,
                     @RequestParam(value = "breadcrumbOverride", required = false) String breadcrumbOverride,
                     @SpringBean("htmlFormEntryService") HtmlFormEntryService htmlFormEntryService,
                     @SpringBean("formService") FormService formService,
+                    @SpringBean("coreResourceFactory") ResourceFactory resourceFactory,
                     UiUtils ui,
-                    PageModel model) {
+                    PageModel model) throws Exception {
 
         sessionContext.requireAuthentication();
 
+        if (htmlForm == null && StringUtils.isNotEmpty(definitionUiResource)) {
+            htmlForm = HtmlFormUtil.getHtmlFormFromUiResource(resourceFactory, formService, htmlFormEntryService, definitionUiResource);
+        }
         if (htmlForm == null && formUuid != null) {
             Form form = formService.getFormByUuid(formUuid);
             if (form != null) {
