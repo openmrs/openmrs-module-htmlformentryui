@@ -14,57 +14,11 @@
 package org.openmrs.module.htmlformentryui;
 
 
-import org.apache.commons.logging.Log; 
-import org.apache.commons.logging.LogFactory;
-import org.openmrs.module.ModuleActivator;
+import org.openmrs.module.BaseModuleActivator;
 
 /**
  * This class contains the logic that is run every time this module is either started or stopped.
  */
-public class HTMLFormEntryUIFrameworkIntegrationActivator implements ModuleActivator {
-	
-	protected Log log = LogFactory.getLog(getClass());
-		
-	/**
-	 * @see ModuleActivator#willRefreshContext()
-	 */
-	public void willRefreshContext() {
-		log.info("Refreshing HTML Form Entry UI Framework Integration Module");
-	}
-	
-	/**
-	 * @see ModuleActivator#contextRefreshed()
-	 */
-	public void contextRefreshed() {
-		log.info("HTML Form Entry UI Framework Integration Module refreshed");
-	}
-	
-	/**
-	 * @see ModuleActivator#willStart()
-	 */
-	public void willStart() {
-		log.info("Starting HTML Form Entry UI Framework Integration Module");
-	}
-	
-	/**
-	 * @see ModuleActivator#started()
-	 */
-	public void started() {
-		log.info("HTML Form Entry UI Framework Integration Module started");
-	}
-	
-	/**
-	 * @see ModuleActivator#willStop()
-	 */
-	public void willStop() {
-		log.info("Stopping HTML Form Entry UI Framework Integration Module");
-	}
-	
-	/**
-	 * @see ModuleActivator#stopped()
-	 */
-	public void stopped() {
-		log.info("HTML Form Entry UI Framework Integration Module stopped");
-	}
-		
+public class HTMLFormEntryUIFrameworkIntegrationActivator extends BaseModuleActivator {
+
 }

@@ -19,8 +19,7 @@ import org.openmrs.Form;
 import org.openmrs.Patient;
 import org.openmrs.Visit;
 import org.openmrs.api.FormService;
-import org.openmrs.module.emr.EmrContext;
-import org.openmrs.module.emr.htmlform.EntryTiming;
+import org.openmrs.module.appui.UiSessionContext;
 import org.openmrs.module.htmlformentry.HtmlForm;
 import org.openmrs.module.htmlformentry.HtmlFormEntryService;
 import org.openmrs.ui.framework.SimpleObject;
@@ -34,8 +33,8 @@ import org.springframework.web.bind.annotation.RequestParam;
  */
 public abstract class BaseEnterHtmlFormPageController {
 
-    public void get(EmrContext emrContext,
-                    @RequestParam("timing") EntryTiming timing,
+    public void get(UiSessionContext sessionContext,
+                    @RequestParam("patientId") Patient currentPatient,
                     @RequestParam(value = "formUuid", required = false) String formUuid,
                     @RequestParam(value = "htmlFormId", required = false) HtmlForm htmlForm,
                     @RequestParam(value = "visitId", required = false) Visit visit,
@@ -47,7 +46,7 @@ public abstract class BaseEnterHtmlFormPageController {
                     UiUtils ui,
                     PageModel model) {
 
-        emrContext.requireAuthentication();
+        sessionContext.requireAuthentication();
 
         if (htmlForm == null && formUuid != null) {
             Form form = formService.getFormByUuid(formUuid);
@@ -60,27 +59,11 @@ public abstract class BaseEnterHtmlFormPageController {
             throw new IllegalArgumentException("Couldn't find a form");
         }
 
-        if (timing == EntryTiming.REAL_TIME) {
-            if((createVisit==null) || (createVisit!=null && !createVisit)){
-                if (emrContext.getActiveVisit() == null) {
-                    throw new IllegalStateException("No active visit");
-                }
-            }
-            if (visit != null && !visit.equals(emrContext.getActiveVisit().getVisit())) {
-                throw new IllegalStateException("Can't enter a real-time HTML Form for a different visit than the active one");
-            }
-            if (visit == null && emrContext.getActiveVisit()!=null) {
-                visit = emrContext.getActiveVisit().getVisit();
-            }
-        }
-
-        Patient currentPatient = emrContext.getCurrentPatient();
-
         if (StringUtils.isEmpty(returnUrl)) {
             if (currentPatient != null) {
-                returnUrl = ui.pageLink("emr", "patient", SimpleObject.create("patientId", currentPatient.getId()));
+                returnUrl = ui.pageLink("coreapps", "patientDashboard", SimpleObject.create("patientId", currentPatient.getId()));
             } else {
-                returnUrl = ui.pageLink("emr", "home");
+                returnUrl = "/" + ui.contextPath() + "index.html";
             }
         }
 

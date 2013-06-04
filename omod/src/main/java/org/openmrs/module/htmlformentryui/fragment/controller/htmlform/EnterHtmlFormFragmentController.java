@@ -22,9 +22,7 @@ import org.openmrs.api.EncounterService;
 import org.openmrs.api.FormService;
 import org.openmrs.api.context.Context;
 import org.openmrs.api.context.ContextAuthenticationException;
-import org.openmrs.module.emr.EmrConstants;
-import org.openmrs.module.emr.EmrContext;
-import org.openmrs.module.emr.htmlform.HtmlFormUtil;
+import org.openmrs.module.appui.UiSessionContext;
 import org.openmrs.module.emrapi.adt.AdtService;
 import org.openmrs.module.htmlformentry.FormEntryContext;
 import org.openmrs.module.htmlformentry.FormEntrySession;
@@ -32,6 +30,8 @@ import org.openmrs.module.htmlformentry.FormSubmissionError;
 import org.openmrs.module.htmlformentry.HtmlForm;
 import org.openmrs.module.htmlformentry.HtmlFormEntryService;
 import org.openmrs.module.htmlformentry.HtmlFormEntryUtil;
+import org.openmrs.module.htmlformentryui.HtmlFormUtil;
+import org.openmrs.module.uicommons.UiCommonsConstants;
 import org.openmrs.ui.framework.SimpleObject;
 import org.openmrs.ui.framework.UiUtils;
 import org.openmrs.ui.framework.annotation.FragmentParam;
@@ -55,7 +55,7 @@ public class EnterHtmlFormFragmentController {
 
     /**
      * @param config
-     * @param emrContext
+     * @param sessionContext
      * @param htmlFormEntryService
      * @param formService
      * @param resourceFactory
@@ -73,7 +73,7 @@ public class EnterHtmlFormFragmentController {
      * @throws Exception
      */
     public void controller(FragmentConfiguration config,
-                           EmrContext emrContext,
+                           UiSessionContext sessionContext,
                            @SpringBean("htmlFormEntryService") HtmlFormEntryService htmlFormEntryService,
                            @SpringBean("formService") FormService formService,
                            @SpringBean("coreResourceFactory") ResourceFactory resourceFactory,
@@ -120,10 +120,10 @@ public class EnterHtmlFormFragmentController {
         // the code below doesn't handle the HFFS case where you might want to _add_ data to an existing encounter
         FormEntrySession fes;
         if (encounter != null) {
-            fes = new FormEntrySession(patient, encounter, FormEntryContext.Mode.EDIT, hf, emrContext.getSessionLocation(), httpSession, automaticValidation, !automaticValidation);
+            fes = new FormEntrySession(patient, encounter, FormEntryContext.Mode.EDIT, hf, sessionContext.getSessionLocation(), httpSession, automaticValidation, !automaticValidation);
         }
         else {
-            fes = new FormEntrySession(patient, hf, FormEntryContext.Mode.ENTER, emrContext.getSessionLocation(), httpSession, automaticValidation, !automaticValidation);
+            fes = new FormEntrySession(patient, hf, FormEntryContext.Mode.ENTER, sessionContext.getSessionLocation(), httpSession, automaticValidation, !automaticValidation);
         }
 
         if (returnUrl != null) {
@@ -169,8 +169,7 @@ public class EnterHtmlFormFragmentController {
      * @return
      * @throws Exception
      */
-    public SimpleObject submit(
-                          EmrContext emrContext,
+    public SimpleObject submit(UiSessionContext sessionContext,
                          @RequestParam("personId") Patient patient,
                          @RequestParam("htmlFormId") HtmlForm hf,
                          @RequestParam(value = "encounterId", required = false) Encounter encounter,
@@ -227,7 +226,7 @@ public class EnterHtmlFormFragmentController {
                 return returnHelper(validationErrors, fes.getContext());
             }
         }else if(createVisit!=null && (createVisit)){
-            visit= adtService.ensureActiveVisit(patient, emrContext.getSessionLocation());
+            visit= adtService.ensureActiveVisit(patient, sessionContext.getSessionLocation());
             visit.setStartDatetime(formEncounterDateTime);
         }
 
@@ -241,9 +240,9 @@ public class EnterHtmlFormFragmentController {
             encounterService.saveEncounter(encounter);
         }
 
-        request.getSession().setAttribute(EmrConstants.SESSION_ATTRIBUTE_INFO_MESSAGE,
+        request.getSession().setAttribute(UiCommonsConstants.SESSION_ATTRIBUTE_INFO_MESSAGE,
                 ui.message("emr.task.enterHtmlForm.successMessage", ui.format(hf.getForm()), ui.format(patient)));
-        request.getSession().setAttribute(EmrConstants.SESSION_ATTRIBUTE_TOAST_MESSAGE, "true");
+        request.getSession().setAttribute(UiCommonsConstants.SESSION_ATTRIBUTE_TOAST_MESSAGE, "true");
 
         return returnHelper(null, null);
     }

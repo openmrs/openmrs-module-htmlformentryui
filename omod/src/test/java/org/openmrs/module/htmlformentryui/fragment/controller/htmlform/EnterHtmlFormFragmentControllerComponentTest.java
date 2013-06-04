@@ -27,8 +27,8 @@ import org.openmrs.api.FormService;
 import org.openmrs.api.PatientService;
 import org.openmrs.api.PersonService;
 import org.openmrs.api.ProviderService;
-import org.openmrs.module.emr.EmrContext;
-import org.openmrs.module.emr.TestUiUtils;
+import org.openmrs.module.appui.TestUiUtils;
+import org.openmrs.module.appui.UiSessionContext;
 import org.openmrs.module.emrapi.adt.AdtService;
 import org.openmrs.module.htmlformentry.FormEntrySession;
 import org.openmrs.module.htmlformentry.HtmlForm;
@@ -87,7 +87,7 @@ public class EnterHtmlFormFragmentControllerComponentTest extends BaseModuleWebC
 
     UiUtils ui;
 
-    EmrContext emrContext;
+    UiSessionContext sessionContext;
 
     public static final String FORM_DEFINITION = "<htmlform formUuid=\"form-uuid\" formName=\"Form Name\" formVersion=\"1.0\">Weight:<obs id=\"weight\" conceptId=\"5089\"/> <encounterDate/> <encounterLocation/> <encounterProvider/></htmlform>";
     private EnterHtmlFormFragmentController controller;
@@ -98,7 +98,7 @@ public class EnterHtmlFormFragmentControllerComponentTest extends BaseModuleWebC
         resourceFactory = mock(ResourceFactory.class);
         when(resourceFactory.getResourceAsString("emr", "htmlforms/vitals.xml")).thenReturn(FORM_DEFINITION);
 
-        emrContext = mock(EmrContext.class);
+        sessionContext = mock(UiSessionContext.class);
 
         ui = new TestUiUtils();
 
@@ -115,7 +115,7 @@ public class EnterHtmlFormFragmentControllerComponentTest extends BaseModuleWebC
         config.put("patient", patient);
         config.put("definitionResource", resourcePath);
 
-        controller.controller(config, emrContext, htmlFormEntryService, formService, resourceFactory, patient, null, null, null, null, resourcePath, null, null, null, null, true, model, null);
+        controller.controller(config, sessionContext, htmlFormEntryService, formService, resourceFactory, patient, null, null, null, null, resourcePath, null, null, null, null, true, model, null);
 
         FormEntrySession command = (FormEntrySession) model.getAttribute("command");
         String html = command.getHtmlToDisplay();
@@ -146,7 +146,7 @@ public class EnterHtmlFormFragmentControllerComponentTest extends BaseModuleWebC
         request.addParameter("w5", "2"); // location = Xanadu
         request.addParameter("w7", "502"); // provider = Hippocrates
 
-        SimpleObject result = controller.submit(emrContext, patient, hf, null, null, null, null, encounterService, adtService, resourceFactory, ui, request);
+        SimpleObject result = controller.submit(sessionContext, patient, hf, null, null, null, null, encounterService, adtService, resourceFactory, ui, request);
         assertThat((Boolean) result.get("success"), Matchers.is(Boolean.TRUE));
         assertThat(encounterService.getEncountersByPatient(patient).size(), Matchers.is(1));
         Encounter created = encounterService.getEncountersByPatient(patient).get(0);

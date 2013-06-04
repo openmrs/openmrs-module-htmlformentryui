@@ -20,13 +20,18 @@
 			<artifactId>${project.parent.artifactId}-api</artifactId>
 			<version>${project.parent.version}</version>
 		</dependency>
+        <dependency>
+            <groupId>${project.parent.groupId}</groupId>
+            <artifactId>${project.parent.artifactId}-api</artifactId>
+            <version>${project.parent.version}</version>
+            <type>test-jar</type>
+            <scope>test</scope>
+        </dependency>
 
         <dependency>
             <groupId>org.openmrs.module</groupId>
-            <artifactId>emr-omod</artifactId>
-            <version>${emrModuleVersion}</version>
-            <type>test-jar</type>
-            <scope>test</scope>
+            <artifactId>appui-omod</artifactId>
+            <version>${appuiModuleVersion}</version>
         </dependency>
 
         <dependency>

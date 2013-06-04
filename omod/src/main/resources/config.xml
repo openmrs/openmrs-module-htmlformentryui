@@ -31,10 +31,14 @@
             org.openmrs.module.emrapi
         </require_module>
 
-        <require_module version="${emrModuleVersion}">
-            org.openmrs.module.emr
+        <require_module version="${appuiModuleVersion}">
+            org.openmrs.module.appui
         </require_module>
-			
+
+        <require_module version="${uicommonsModuleVersion}">
+            org.openmrs.module.uicommons
+        </require_module>
+
 	</require_modules>
 	<!-- / Required Modules -->
 	
@@ -44,7 +48,6 @@
 	
 	<!-- Maps hibernate file's, if present -->
 	<mappingFiles>
-				
 	</mappingFiles>
 
 	<!-- Internationalization -->
@@ -52,14 +55,6 @@
 	<messages>
 		<lang>en</lang>
 		<file>messages.properties</file>
-	</messages>
-	<messages>
-		<lang>fr</lang>
-		<file>messages_fr.properties</file>
-	</messages>
-	<messages>
-		<lang>es</lang>
-		<file>messages_es.properties</file>
 	</messages>
 	<!-- /Internationalization -->
 
