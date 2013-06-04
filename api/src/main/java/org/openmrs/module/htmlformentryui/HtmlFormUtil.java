@@ -99,7 +99,7 @@ public class HtmlFormUtil {
                 htmlForm.setForm(form);
                 needToSaveHtmlForm = true;
             }
-            if (!OpenmrsUtil.nullSafeEquals(htmlForm.getXmlData(), xml)) {
+            if (!OpenmrsUtil.nullSafeEquals(trim(htmlForm.getXmlData()), trim(xml))) { // trim because if the file ends with a newline the db will have trimmed it
                 htmlForm.setXmlData(xml);
                 needToSaveHtmlForm = true;
             }
@@ -111,6 +111,10 @@ public class HtmlFormUtil {
         } catch (Exception e) {
             throw new IllegalArgumentException("Failed to parse XML and build Form and HtmlForm", e);
         }
+    }
+
+    private static String trim(String s) {
+        return s == null ? null : s.trim();
     }
 
     private static String getAttributeValue(Node htmlForm, String attributeName) {
