@@ -68,7 +68,7 @@ public abstract class BaseEnterHtmlFormPageController {
 
         if (StringUtils.isEmpty(returnUrl)) {
             if (currentPatient != null) {
-                returnUrl = ui.pageLink("coreapps", "patientDashboard", SimpleObject.create("patientId", currentPatient.getId()));
+                returnUrl = ui.pageLink("coreapps", "patientdashboard/patientDashboard", SimpleObject.create("patientId", currentPatient.getId()));
             } else {
                 returnUrl = "/" + ui.contextPath() + "index.html";
             }
