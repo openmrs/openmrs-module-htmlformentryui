@@ -15,7 +15,7 @@
 
 ${ ui.includeFragment("uicommons", "validationMessages")}
 
-${ ui.includeFragment("coreapps", "patientdashboard/patientHeader", [ patient: patient ]) }
+${ ui.includeFragment("coreapps", "patientHeader", [ patient: patient ]) }
 
 <script type="text/javascript">
     var breadcrumbs = _.flatten([

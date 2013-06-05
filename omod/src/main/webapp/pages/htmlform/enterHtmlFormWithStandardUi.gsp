@@ -14,7 +14,7 @@
     ]);
 </script>
 
-${ ui.includeFragment("coreapps", "patientdashboard/patientHeader", [ patient: patient ]) }
+${ ui.includeFragment("coreapps", "patientHeader", [ patient: patient ]) }
 
 ${ ui.includeFragment("htmlformentryui", "htmlform/enterHtmlForm", [
         patient: patient,
