@@ -39,6 +39,7 @@ import org.openmrs.ui.framework.annotation.SpringBean;
 import org.openmrs.ui.framework.fragment.FragmentConfiguration;
 import org.openmrs.ui.framework.fragment.FragmentModel;
 import org.openmrs.ui.framework.resource.ResourceFactory;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import javax.servlet.http.HttpServletRequest;
@@ -126,13 +127,17 @@ public class EnterHtmlFormFragmentController {
             fes = new FormEntrySession(patient, hf, FormEntryContext.Mode.ENTER, sessionContext.getSessionLocation(), httpSession, automaticValidation, !automaticValidation);
         }
 
-        if (returnUrl != null) {
+        if (StringUtils.hasText(returnUrl)) {
             fes.setReturnUrl(returnUrl);
         }
 
         model.addAttribute("command", fes);
         model.addAttribute("visit", visit);
-        model.addAttribute("createVisit", createVisit);
+        if (createVisit!=null) {
+            model.addAttribute("createVisit", createVisit.toString());
+        } else {
+            model.addAttribute("createVisit", "false");
+        }
     }
 
     /**
@@ -185,6 +190,8 @@ public class EnterHtmlFormFragmentController {
         // TODO formModifiedTimestamp and encounterModifiedTimestamp
         // TODO support for real-time mode (i.e. automatically set encounterDatetime=now, and put in the current visit)
 
+        boolean editMode = encounter != null;
+
         FormEntrySession fes;
         if (encounter != null) {
             fes = new FormEntrySession(patient, encounter, FormEntryContext.Mode.EDIT, hf, request.getSession());
@@ -225,8 +232,8 @@ public class EnterHtmlFormFragmentController {
             if (validationErrors.size() > 0) {
                 return returnHelper(validationErrors, fes.getContext());
             }
-        }else if(createVisit!=null && (createVisit)){
-            visit= adtService.ensureActiveVisit(patient, sessionContext.getSessionLocation());
+        } else if (createVisit != null && (createVisit)) {
+            visit = adtService.ensureActiveVisit(patient, sessionContext.getSessionLocation());
             visit.setStartDatetime(formEncounterDateTime);
         }
 
@@ -241,7 +248,7 @@ public class EnterHtmlFormFragmentController {
         }
 
         request.getSession().setAttribute(UiCommonsConstants.SESSION_ATTRIBUTE_INFO_MESSAGE,
-                ui.message("emr.task.enterHtmlForm.successMessage", ui.format(hf.getForm()), ui.format(patient)));
+                ui.message(editMode ? "emr.editHtmlForm.successMessage" : "emr.task.enterHtmlForm.successMessage", ui.format(hf.getForm()), ui.format(patient)));
         request.getSession().setAttribute(UiCommonsConstants.SESSION_ATTRIBUTE_TOAST_MESSAGE, "true");
 
         return returnHelper(null, null);
