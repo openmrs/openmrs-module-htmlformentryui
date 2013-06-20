@@ -46,7 +46,7 @@
         if (!tryingToSubmit) {
             tryingToSubmit = true;
             //ui.disableConfirmBeforeNavigating();
-            jq.getJSON(emr.fragmentActionLink('emr', 'htmlform/enterHtmlForm', 'checkIfLoggedIn'), function(result) {
+            jq.getJSON(emr.fragmentActionLink('htmlformentryui', 'htmlform/enterHtmlForm', 'checkIfLoggedIn'), function(result) {
                 checkIfLoggedInAndErrorsCallback(result.isLoggedIn);
             });
         }
@@ -122,7 +122,7 @@
         var password = jq('#passwordPopupPassword').val();
         jq('#passwordPopupUsername').val('');
         jq('#passwordPopupPassword').val('');
-        jq.getJSON(emr.fragmentActionLink('emr', 'htmlform/enterHtmlForm', 'checkIfLoggedIn', { user: username, pass: password }), submitHtmlForm);
+        jq.getJSON(emr.fragmentActionLink('htmlformentryui', 'htmlform/enterHtmlForm', 'checkIfLoggedIn', { user: username, pass: password }), submitHtmlForm);
     }
 
     function doSubmitHtmlForm() {
@@ -188,7 +188,7 @@
 
     <span class="error" style="display: none" id="general-form-error"></span>
 
-    <form id="htmlform" method="post" action="${ ui.actionLink("emr", "htmlform/enterHtmlForm", "submit") }" onSubmit="submitHtmlForm(); return false;">
+    <form id="htmlform" method="post" action="${ ui.actionLink("htmlformentryui", "htmlform/enterHtmlForm", "submit") }" onSubmit="submitHtmlForm(); return false;">
         <input type="hidden" name="personId" value="${ command.patient.personId }"/>
         <input type="hidden" name="htmlFormId" value="${ command.htmlFormId }"/>
         <input type="hidden" name="createVisit" value="${ createVisit }"/>
