@@ -1,0 +1,19 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<dataset>
+
+    <location_tag location_tag_id="1" name="Visit Location"
+                  description="Visits are only allowed to happen at locations tagged with this location tag or at locations that descend from a location tagged with this tag."
+                  creator="1" date_created="2012-10-23 16:13:45 " retired="0"
+                  uuid="0967d73d-f3c9-492b-abed-356478610a94"/>
+
+
+    <!-- tag Xanadu as a visit location -->
+    <location_tag_map location_id="2" location_tag_id="1"/>
+
+    <global_property property="emr.atFacilityVisitType" property_value="f01c54cb-2225-471a-9cd5-d348552c337c"
+                     uuid="a0ee79e5-1d6c-46bf-903f-55437441329f"/>
+    <visit_type visit_type_id="1" name="Clinic or Hospital Visit" creator="1" date_created="2012-10-23 18:04:14"
+                changed_by="1" date_changed="2012-10-23 18:04:14"
+                retired="0" uuid="f01c54cb-2225-471a-9cd5-d348552c337c"/>
+
+</dataset>

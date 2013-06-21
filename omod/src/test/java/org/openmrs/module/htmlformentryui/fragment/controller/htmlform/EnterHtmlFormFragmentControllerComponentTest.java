@@ -16,6 +16,7 @@ package org.openmrs.module.htmlformentryui.fragment.controller.htmlform;
 
 import org.hamcrest.Matchers;
 import org.hamcrest.core.IsCollectionContaining;
+import org.joda.time.DateTime;
 import org.junit.Before;
 import org.junit.Test;
 import org.openmrs.Encounter;
@@ -24,6 +25,7 @@ import org.openmrs.Patient;
 import org.openmrs.Provider;
 import org.openmrs.api.EncounterService;
 import org.openmrs.api.FormService;
+import org.openmrs.api.LocationService;
 import org.openmrs.api.PatientService;
 import org.openmrs.api.PersonService;
 import org.openmrs.api.ProviderService;
@@ -46,6 +48,9 @@ import org.springframework.mock.web.MockHttpServletRequest;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import static org.hamcrest.Matchers.is;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -62,6 +67,10 @@ public class EnterHtmlFormFragmentControllerComponentTest extends BaseModuleWebC
     @Qualifier("patientService")
     @Autowired
     PatientService patientService;
+
+    @Qualifier("locationService")
+    @Autowired
+    LocationService locationService;
 
     @Qualifier("providerService")
     @Autowired
@@ -95,10 +104,15 @@ public class EnterHtmlFormFragmentControllerComponentTest extends BaseModuleWebC
 
     @Before
     public void before() throws Exception {
+
+        executeDataSet("enterHtmlFormFragmentControllerTestDataset.xml");
+
         resourceFactory = mock(ResourceFactory.class);
         when(resourceFactory.getResourceAsString("emr", "htmlforms/vitals.xml")).thenReturn(FORM_DEFINITION);
 
         sessionContext = mock(UiSessionContext.class);
+        when(sessionContext.getSessionLocation()).thenReturn(locationService.getLocation(2));
+
 
         ui = new TestUiUtils();
 
@@ -157,5 +171,75 @@ public class EnterHtmlFormFragmentControllerComponentTest extends BaseModuleWebC
         Obs weightObs = created.getAllObs().iterator().next();
         assertThat(weightObs.getConcept().getId(), Matchers.is(5089));
         assertThat(weightObs.getValueNumeric(), Matchers.is(Double.valueOf(70d)));
+    }
+
+
+    @Test
+    public void testSubmittingHtmlFormDefinedInUiResourceShouldCreateCompletedVisit() throws Exception {
+        // first, ensure the form is created and persisted, by calling the controller display method
+        testDefiningAnHtmlFormInUiResource();
+        HtmlForm hf = htmlFormEntryService.getHtmlFormByForm(formService.getFormByUuid("form-uuid"));
+
+        // make "Hippocrates" a provider
+        Provider provider = new Provider();
+        provider.setPerson(personService.getPerson(502));
+        providerService.saveProvider(provider);
+
+        Patient patient = patientService.getPatient(8);
+        assertThat(encounterService.getEncountersByPatient(patient).size(), is(0));
+
+        String dateString = "2012-12-17";
+        Date date = new SimpleDateFormat("yyyy-MM-dd").parse(dateString);
+
+        MockHttpServletRequest request = new MockHttpServletRequest();
+        request.addParameter("w2", "70"); // weight in kg
+        request.addParameter("w3", dateString); // date
+        request.addParameter("w5", "2"); // location = Xanadu
+        request.addParameter("w7", "502"); // provider = Hippocrates
+
+        SimpleObject result = controller.submit(sessionContext, patient, hf, null, null, true, null, encounterService, adtService, resourceFactory, ui, request);
+        assertThat((Boolean) result.get("success"), is(Boolean.TRUE));
+        assertThat(encounterService.getEncountersByPatient(patient).size(), is(1));
+        Encounter created = encounterService.getEncountersByPatient(patient).get(0);
+
+        Date expectedEndDate = new DateTime(2012, 12, 17, 23, 59, 59, 999).toDate();
+
+        assertNotNull(created.getVisit());
+        assertThat(created.getVisit().getStartDatetime(), is(date));
+        assertThat(created.getVisit().getStopDatetime(), is(expectedEndDate));
+    }
+
+    @Test
+    public void testSubmittingHtmlFormDefinedInUiResourceShouldCreateOpenVisit() throws Exception {
+        // first, ensure the form is created and persisted, by calling the controller display method
+        testDefiningAnHtmlFormInUiResource();
+        HtmlForm hf = htmlFormEntryService.getHtmlFormByForm(formService.getFormByUuid("form-uuid"));
+
+        // make "Hippocrates" a provider
+        Provider provider = new Provider();
+        provider.setPerson(personService.getPerson(502));
+        providerService.saveProvider(provider);
+
+        Patient patient = patientService.getPatient(8);
+        assertThat(encounterService.getEncountersByPatient(patient).size(), is(0));
+
+        // date is today, so it should create an open visit
+        Date date = new DateTime(new Date()).withHourOfDay(0).withMinuteOfHour(0).withSecondOfMinute(0).withMillisOfSecond(0).toDate();
+        String dateString = new SimpleDateFormat("yyyy-MM-dd").format(date);
+
+        MockHttpServletRequest request = new MockHttpServletRequest();
+        request.addParameter("w2", "70"); // weight in kg
+        request.addParameter("w3", dateString); // date
+        request.addParameter("w5", "2"); // location = Xanadu
+        request.addParameter("w7", "502"); // provider = Hippocrates
+
+        SimpleObject result = controller.submit(sessionContext, patient, hf, null, null, true, null, encounterService, adtService, resourceFactory, ui, request);
+        assertThat((Boolean) result.get("success"), is(Boolean.TRUE));
+        assertThat(encounterService.getEncountersByPatient(patient).size(), is(1));
+        Encounter created = encounterService.getEncountersByPatient(patient).get(0);
+
+        assertNotNull(created.getVisit());
+        assertThat(created.getVisit().getStartDatetime(), is(date));
+        assertNull(created.getVisit().getStopDatetime());
     }
 }

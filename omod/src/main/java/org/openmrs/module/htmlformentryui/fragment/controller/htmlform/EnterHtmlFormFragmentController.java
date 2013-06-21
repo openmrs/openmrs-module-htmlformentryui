@@ -14,6 +14,7 @@
 
 package org.openmrs.module.htmlformentryui.fragment.controller.htmlform;
 
+import org.joda.time.DateTime;
 import org.openmrs.Encounter;
 import org.openmrs.Form;
 import org.openmrs.Patient;
@@ -232,10 +233,18 @@ public class EnterHtmlFormFragmentController {
             if (validationErrors.size() > 0) {
                 return returnHelper(validationErrors, fes.getContext());
             }
-        } else if (createVisit != null && (createVisit)) {
+        }  // create a visit if necessary
+        else if (createVisit != null && (createVisit)){
             visit = adtService.ensureActiveVisit(patient, sessionContext.getSessionLocation());
             visit.setStartDatetime(formEncounterDateTime);
+
+            // if this is retrospective (ie, not today), then set the visit end date to the last minute of the day represented by the start date
+            if (formEncounterDateTime.before(new DateTime(new Date()).withHourOfDay(0).withMinuteOfHour(0).withSecondOfMinute(0).withMillisOfSecond(0).toDate())) {
+                visit.setStopDatetime(new DateTime(formEncounterDateTime).withHourOfDay(23).withMinuteOfHour(59).withSecondOfMinute(59).withMillisOfSecond(999).toDate());
+            }
+
         }
+
 
         // Do actual encounter creation/updating
         fes.applyActions();
