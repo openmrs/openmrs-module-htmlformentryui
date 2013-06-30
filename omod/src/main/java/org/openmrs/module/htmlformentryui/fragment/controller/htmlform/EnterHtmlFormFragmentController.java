@@ -44,6 +44,7 @@ import org.openmrs.ui.framework.annotation.SpringBean;
 import org.openmrs.ui.framework.fragment.FragmentConfiguration;
 import org.openmrs.ui.framework.fragment.FragmentModel;
 import org.openmrs.ui.framework.resource.ResourceFactory;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.RequestParam;
 
@@ -179,6 +180,7 @@ public class EnterHtmlFormFragmentController {
      * @return
      * @throws Exception
      */
+    @Transactional
     public SimpleObject submit(UiSessionContext sessionContext,
                          @RequestParam("personId") Patient patient,
                          @RequestParam("htmlFormId") HtmlForm hf,
