@@ -14,7 +14,7 @@
 
 package org.openmrs.module.htmlformentryui.fragment.controller.htmlform;
 
-import org.joda.time.DateTime;
+import org.joda.time.DateMidnight;
 import org.openmrs.Encounter;
 import org.openmrs.Form;
 import org.openmrs.Patient;
@@ -25,6 +25,10 @@ import org.openmrs.api.context.Context;
 import org.openmrs.api.context.ContextAuthenticationException;
 import org.openmrs.module.appui.UiSessionContext;
 import org.openmrs.module.emrapi.adt.AdtService;
+import org.openmrs.module.emrapi.adt.exception.EncounterDateAfterVisitStopDateException;
+import org.openmrs.module.emrapi.adt.exception.EncounterDateBeforeVisitStartDateException;
+import org.openmrs.module.emrapi.encounter.EncounterDomainWrapper;
+import org.openmrs.module.emrapi.visit.VisitDomainWrapper;
 import org.openmrs.module.htmlformentry.FormEntryContext;
 import org.openmrs.module.htmlformentry.FormEntrySession;
 import org.openmrs.module.htmlformentry.FormSubmissionError;
@@ -86,7 +90,7 @@ public class EnterHtmlFormFragmentController {
                            @FragmentParam(value = "formUuid", required = false) String formUuid,
                            @FragmentParam(value = "definitionUiResource", required = false) String definitionUiResource,
                            @FragmentParam(value = "encounter", required = false) Encounter encounter,
-                           @FragmentParam(value = "visit", required = false) Visit visit,
+                           @FragmentParam(value = "visit", required = false) VisitDomainWrapper visit,
                            @FragmentParam(value = "createVisit", required = false) Boolean createVisit,
                            @FragmentParam(value = "returnUrl", required = false) String returnUrl,
                            @FragmentParam(value = "automaticValidation", defaultValue = "true") boolean automaticValidation,
@@ -189,7 +193,6 @@ public class EnterHtmlFormFragmentController {
                          HttpServletRequest request) throws Exception {
 
         // TODO formModifiedTimestamp and encounterModifiedTimestamp
-        // TODO support for real-time mode (i.e. automatically set encounterDatetime=now, and put in the current visit)
 
         boolean editMode = encounter != null;
 
@@ -219,42 +222,39 @@ public class EnterHtmlFormFragmentController {
             throw new IllegalArgumentException("This form is not going to create an encounter");
         }
 
-        // If encounter is for a specific visit then check encounter date is valid for that visit
         Encounter formEncounter = fes.getContext().getMode() == FormEntryContext.Mode.ENTER ? fes.getSubmissionActions().getEncountersToCreate().get(0) : encounter;
-        Date formEncounterDateTime = formEncounter.getEncounterDatetime();
+
+        // we don't want to lose any time information just because we edited it with a form that only collects date
+        if (fes.getContext().getMode() == FormEntryContext.Mode.EDIT && hasNoTimeComponent(formEncounter.getEncounterDatetime())) {
+            keepTimeComponentOfEncounterIfDateComponentHasNotChanged(fes.getContext().getPreviousEncounterDate(), formEncounter);
+        }
+
+        // create a visit if necessary
+        // (note that this currently only works in real-time mode)
+        if (createVisit != null && (createVisit) && visit == null) {
+            visit = adtService.ensureActiveVisit(patient, sessionContext.getSessionLocation());
+            visit.setStartDatetime(formEncounter.getEncounterDatetime());
+        }
+
+        // attach to the visit if it exists
         if (visit != null) {
-            if (formEncounterDateTime.before(visit.getStartDatetime())) {
+            try {
+                new EncounterDomainWrapper(formEncounter).attachToVisit(visit);
+            }
+            catch (EncounterDateBeforeVisitStartDateException e) {
                 validationErrors.add(new FormSubmissionError("general-form-error", "Encounter datetime should be after the visit start date"));
             }
-            if (visit.getStopDatetime() != null && formEncounterDateTime.after(visit.getStopDatetime())) {
+            catch (EncounterDateAfterVisitStopDateException e) {
                 validationErrors.add(new FormSubmissionError("general-form-error", "Encounter datetime should be before the visit stop date"));
             }
 
             if (validationErrors.size() > 0) {
                 return returnHelper(validationErrors, fes.getContext());
             }
-        }  // create a visit if necessary
-        else if (createVisit != null && (createVisit)){
-            visit = adtService.ensureActiveVisit(patient, sessionContext.getSessionLocation());
-            visit.setStartDatetime(formEncounterDateTime);
-
-            // if this is retrospective (ie, not today), then set the visit end date to the last minute of the day represented by the start date
-            if (formEncounterDateTime.before(new DateTime(new Date()).withHourOfDay(0).withMinuteOfHour(0).withSecondOfMinute(0).withMillisOfSecond(0).toDate())) {
-                visit.setStopDatetime(new DateTime(formEncounterDateTime).withHourOfDay(23).withMinuteOfHour(59).withSecondOfMinute(59).withMillisOfSecond(999).toDate());
-            }
-
         }
-
 
         // Do actual encounter creation/updating
         fes.applyActions();
-
-        // Add created encounter to the specified visit
-        if (encounter == null && visit != null) {
-            encounter = fes.getEncounter();
-            encounter.setVisit(visit);
-            encounterService.saveEncounter(encounter);
-        }
 
         request.getSession().setAttribute(UiCommonsConstants.SESSION_ATTRIBUTE_INFO_MESSAGE,
                 ui.message(editMode ? "emr.editHtmlForm.successMessage" : "emr.task.enterHtmlForm.successMessage", ui.format(hf.getForm()), ui.format(patient)));
@@ -276,6 +276,19 @@ public class EnterHtmlFormFragmentController {
             }
             return SimpleObject.create("success", false, "errors", errors);
         }
+    }
+
+    private boolean hasNoTimeComponent(Date date) {
+        return new DateMidnight(date).toDate().equals(date);
+    }
+
+    private void keepTimeComponentOfEncounterIfDateComponentHasNotChanged(Date previousEncounterDate, Encounter formEncounter) {
+
+        if (previousEncounterDate != null
+                && new DateMidnight(previousEncounterDate).equals(new DateMidnight(formEncounter.getEncounterDatetime()))) {
+            formEncounter.setEncounterDatetime(previousEncounterDate);
+        }
+
     }
 
 }

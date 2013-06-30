@@ -54,6 +54,11 @@ public class EditHtmlFormWithStandardUiPageController {
             throw new IllegalArgumentException("encounter.form is not an HTML Form: " + encounter.getForm());
         }
 
+        // if there is a visit for this encounter, add it to the model
+        if (encounter.getVisit() != null) {
+            pageModel.addAttribute("visit", encounter.getVisit());
+        }
+
         pageModel.addAttribute("encounter", encounter);
         pageModel.addAttribute("patient", patient);
         pageModel.addAttribute("htmlForm", htmlForm);

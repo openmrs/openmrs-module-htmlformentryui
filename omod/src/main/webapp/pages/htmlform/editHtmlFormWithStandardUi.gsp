@@ -17,6 +17,7 @@
 ${ ui.includeFragment("coreapps", "patientHeader", [ patient: patient ]) }
 
 ${ ui.includeFragment("htmlformentryui", "htmlform/enterHtmlForm", [
+        visit: visit,
         encounter: encounter,
         patient: patient,
         returnUrl: returnUrl

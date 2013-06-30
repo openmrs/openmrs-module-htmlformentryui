@@ -16,4 +16,8 @@
                 changed_by="1" date_changed="2012-10-23 18:04:14"
                 retired="0" uuid="f01c54cb-2225-471a-9cd5-d348552c337c"/>
 
+
+    <visit visit_id="1001" patient_id="8" visit_type_id="1" date_started="2012-01-20 10:10:10.0" creator="1" date_created="2005-01-01 00:00:00.0" voided="1" voided_by="1" date_voided="2005-01-01 00:00:00.0" void_reason="no reason" uuid="e1428fea-6b78-22e0-93c3-18a905e044dc" />
+
+
 </dataset>

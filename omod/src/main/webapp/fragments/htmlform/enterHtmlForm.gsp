@@ -4,6 +4,7 @@
 
     // assumes jquery and jquery-ui from emr module
     ui.includeJavascript("emr", "dwr-util.js")
+    ui.includeJavascript("htmlformentryui", "htmlForm.js")
     // TODO setup "confirm before navigating" functionality
 %>
 
@@ -11,177 +12,46 @@
 <link href="/${ contextPath }/moduleResources/htmlformentry/htmlFormEntry.css" type="text/css" rel="stylesheet" />
 
 <script type="text/javascript">
-    \$j = jQuery;
 
-    var getValueIfLegal = function(idAndProperty) {
-        var jqField = getField(idAndProperty);
-        if (jqField && jqField.hasClass('illegalValue')) {
-            return null;
-        }
-        return getValue(idAndProperty);
-    }
-
-    var showDiv = function(id) {
-        var div = document.getElementById(id);
-        if ( div ) { div.style.display = ""; }
-    }
-
-    var hideDiv = function(id) {
-        var div = document.getElementById(id);
-        if ( div ) { div.style.display = "none"; }
-    }
-</script>
-
-<script type="text/javascript">
-    var propertyAccessorInfo = new Array();
-
-    // individual forms can define their own functions to execute before a form validation or submission by adding them to these lists
-    // if any function returns false, no further functions are called and the validation or submission is cancelled
-    var beforeValidation = new Array();     // a list of functions that will be executed before the validation of a form
-    var beforeSubmit = new Array(); 		// a list of functions that will be executed before the submission of a form
-
-    var tryingToSubmit = false;
-
+    // for now we just expose these in the global scope for compatibility with htmlFormEntry.js and legacy forms
     function submitHtmlForm() {
-        if (!tryingToSubmit) {
-            tryingToSubmit = true;
-            //ui.disableConfirmBeforeNavigating();
-            jq.getJSON(emr.fragmentActionLink('htmlformentryui', 'htmlform/enterHtmlForm', 'checkIfLoggedIn'), function(result) {
-                checkIfLoggedInAndErrorsCallback(result.isLoggedIn);
-            });
-        }
+        htmlForm.submitHtmlForm();
+        return false;
     }
 
-    function findAndHighlightErrors(){
-        /* see if there are error fields */
-        var containError = false
-        var ary = jq(".autoCompleteHidden");
-        jq.each(ary, function(index, value){
-            if(value.value == "ERROR"){
-                if(!containError){
-                    alert("${ ui.message("htmlformentry.error.autoCompleteAnswerNotValid") }");
-                    var id = value.id;
-                    id = id.substring(0,id.length-4);
-                    jq("#"+id).focus();
-                }
-                containError=true;
-            }
-        });
-        return containError;
+    function showDiv(id) {
+        htmlForm.showDiv(id);
     }
 
-    /*
-     It seems the logic of  showAuthenticateDialog and
-     findAndHighlightErrors should be in the same callback function.
-     i.e. only authenticated user can see the error msg of
-     */
-    function checkIfLoggedInAndErrorsCallback(isLoggedIn) {
-
-        var state_beforeValidation=true;
-
-        if (!isLoggedIn) {
-            showAuthenticateDialog();
-        }else{
-
-            // first call any beforeValidation functions that may have been defined by the html form
-            if (beforeValidation.length > 0){
-                for (var i=0, l = beforeValidation.length; i < l; i++){
-                    if (state_beforeValidation){
-                        var fncn=beforeValidation[i];
-                        state_beforeValidation=eval(fncn);
-                    }
-                    else{
-                        // forces the end of the loop
-                        i=l;
-                    }
-                }
-            }
-
-            // only do the validation if all the beforeValidationk functions returned "true"
-            if (state_beforeValidation){
-                var anyErrors = findAndHighlightErrors();
-
-                if (anyErrors) {
-                    tryingToSubmit = false;
-                    return;
-                }else{
-                    doSubmitHtmlForm();
-                }
-            }
-        }
+    function hideDiv() {
+        htmlForm.hideDiv(id);
     }
 
-    function showAuthenticateDialog() {
-        jq('#passwordPopup').show();
-        tryingToSubmit = false;
+    function getValueIfLegal(idAndProperty) {
+        htmlForm.getValueIfLegal(idAndProperty);
     }
 
     function loginThenSubmitHtmlForm() {
-        jq('#passwordPopup').hide();
-        var username = jq('#passwordPopupUsername').val();
-        var password = jq('#passwordPopupPassword').val();
-        jq('#passwordPopupUsername').val('');
-        jq('#passwordPopupPassword').val('');
-        jq.getJSON(emr.fragmentActionLink('htmlformentryui', 'htmlform/enterHtmlForm', 'checkIfLoggedIn', { user: username, pass: password }), submitHtmlForm);
+        html.loginThenSubmitHtmlForm();
     }
 
-    function doSubmitHtmlForm() {
+    var beforeSubmit = htmlForm.getBeforeSubmit();
+    var beforeValidation = htmlForm.getBeforeValidation();
+    var propertyAccessorInfo = htmlForm.getPropertyAccessorInfo();
 
-        // first call any beforeSubmit functions that may have been defined by the form
-        var state_beforeSubmit=true;
-        if (beforeSubmit.length > 0){
-            for (var i=0, l = beforeSubmit.length; i < l; i++){
-                if (state_beforeSubmit){
-                    var fncn=beforeSubmit[i];
-                    state_beforeSubmit=fncn();
-                }
-                else{
-                    // forces the end of the loop
-                    i=l;
-                }
-            }
-        }
+    <% if (command.returnUrl) { %>
+        htmlForm.setReturnUrl('${ command.returnUrl }');
+    <% } %>
 
-        // only do the submit if all the beforeSubmit functions returned "true"
-        if (state_beforeSubmit){
-            var form = jq('#htmlform');
-            // TODO hide all errors
-            //ui.openLoadingDialog('Submitting Form');
-            jq.post(form.attr('action'), form.serialize(), function(result) {
-                if (result.success) {
-                    <% if (command.returnUrl) { %>
-                    location.href = '${ command.returnUrl }';
-                    <% } else { %>
-                    if (typeof(parent) !== 'undefined') {
-                        parent.location.reload();
-                    } else {
-                        location.reload();
-                    }
-                    <% } %>
-                } else {
-                    //ui.closeLoadingDialog();
-                    for (key in result.errors) {
-                        showError(key, result.errors[key]);
-                    }
-                    //ui.enableConfirmBeforeNavigating();
-                }
-            }, 'json')
-                    .error(function(jqXHR, textStatus, errorThrown) {
-                        //ui.closeLoadingDialog();
-                        //ui.enableConfirmBeforeNavigating();
-                        emr.errorAlert('Unexpected error, please contact your System Administrator: ' + textStatus);
-                    });
-        }
-        tryingToSubmit = false;
-    }
+    jq(function() {
+        <% if (visit) { %>
+            htmlForm.setEncounterStartDateRange(new Date('${ visit.startDatetime }'));
+            htmlForm.setEncounterStopDateRange(new Date('${ visit.stopDatetime ?: new Date() }'));
+        <% } else { %>
+            htmlForm.setEncounterStopDateRange(new Date());
+        <% } %>
+    });
 
-    function handleDeleteButton() {
-        jq('#confirmDeleteFormPopup').show();
-    }
-
-    function cancelDeleteForm() {
-        jq('#confirmDeleteFormPopup').hide();
-    }
 </script>
 
 <div id="${ config.id }" <% if (config.style) { %>style="${ config.style }"<% } %> <% if (config.cssClass) { %>class="${config.cssClass}"<% } %>>
