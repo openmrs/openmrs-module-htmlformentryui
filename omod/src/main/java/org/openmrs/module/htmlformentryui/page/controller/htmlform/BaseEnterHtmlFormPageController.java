@@ -68,8 +68,19 @@ public abstract class BaseEnterHtmlFormPageController {
 
         if (StringUtils.isEmpty(returnUrl)) {
             if (currentPatient != null) {
-                returnUrl = ui.pageLink("coreapps", "patientdashboard/patientDashboard", SimpleObject.create("patientId", currentPatient.getId()));
-            } else {
+
+                SimpleObject returnParams;
+
+                if (visit == null) {
+                    returnParams = SimpleObject.create("patientId", currentPatient.getId());
+                }
+                else {
+                    returnParams = SimpleObject.create("patientId", currentPatient.getId(), "visitId", visit.getId());
+                }
+
+                returnUrl = ui.pageLink("coreapps", "patientdashboard/patientDashboard", returnParams);
+            }
+            else {
                 returnUrl = "/" + ui.contextPath() + "index.html";
             }
         }
