@@ -23,7 +23,6 @@ import org.openmrs.module.appui.UiSessionContext;
 import org.openmrs.module.htmlformentry.HtmlForm;
 import org.openmrs.module.htmlformentry.HtmlFormEntryService;
 import org.openmrs.module.htmlformentryui.HtmlFormUtil;
-import org.openmrs.ui.framework.SimpleObject;
 import org.openmrs.ui.framework.UiUtils;
 import org.openmrs.ui.framework.annotation.SpringBean;
 import org.openmrs.ui.framework.page.PageModel;
@@ -33,7 +32,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 /**
  *
  */
-public abstract class BaseEnterHtmlFormPageController {
+public abstract class BaseEnterHtmlFormPageController extends BaseHtmlFormPageController {
 
     public void get(UiSessionContext sessionContext,
                     @RequestParam("patientId") Patient currentPatient,
@@ -49,6 +48,8 @@ public abstract class BaseEnterHtmlFormPageController {
                     @SpringBean("coreResourceFactory") ResourceFactory resourceFactory,
                     UiUtils ui,
                     PageModel model) throws Exception {
+
+        // TODO: EditHtmlFormWithStandardUiPageController should probably be merged into this
 
         sessionContext.requireAuthentication();
 
@@ -66,24 +67,7 @@ public abstract class BaseEnterHtmlFormPageController {
             throw new IllegalArgumentException("Couldn't find a form");
         }
 
-        if (StringUtils.isEmpty(returnUrl)) {
-            if (currentPatient != null) {
-
-                SimpleObject returnParams;
-
-                if (visit == null) {
-                    returnParams = SimpleObject.create("patientId", currentPatient.getId());
-                }
-                else {
-                    returnParams = SimpleObject.create("patientId", currentPatient.getId(), "visitId", visit.getId());
-                }
-
-                returnUrl = ui.pageLink("coreapps", "patientdashboard/patientDashboard", returnParams);
-            }
-            else {
-                returnUrl = "/" + ui.contextPath() + "index.html";
-            }
-        }
+        returnUrl = determineReturnUrl(returnUrl, currentPatient, visit, ui);
 
         model.addAttribute("htmlForm", htmlForm);
         model.addAttribute("patient", currentPatient);

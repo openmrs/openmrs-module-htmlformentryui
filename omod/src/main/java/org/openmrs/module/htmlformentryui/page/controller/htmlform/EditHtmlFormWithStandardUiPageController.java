@@ -18,17 +18,15 @@ import org.openmrs.Encounter;
 import org.openmrs.Patient;
 import org.openmrs.module.htmlformentry.HtmlForm;
 import org.openmrs.module.htmlformentry.HtmlFormEntryService;
-import org.openmrs.ui.framework.SimpleObject;
 import org.openmrs.ui.framework.UiUtils;
 import org.openmrs.ui.framework.annotation.SpringBean;
 import org.openmrs.ui.framework.page.PageModel;
-import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.RequestParam;
 
 /**
  *
  */
-public class EditHtmlFormWithStandardUiPageController {
+public class EditHtmlFormWithStandardUiPageController extends BaseHtmlFormPageController {
 
     public void get(@RequestParam("encounterId") Encounter encounter,
                     @RequestParam("patientId") Patient patient, // explicitly require this instead of inferring from encounter because this sets up the global context
@@ -38,9 +36,7 @@ public class EditHtmlFormWithStandardUiPageController {
                     UiUtils ui,
                     PageModel pageModel) {
 
-        if (!StringUtils.hasText(returnUrl)) {
-            returnUrl = ui.pageLink("coreapps", "patientdashboard/patientDashboard", SimpleObject.create("patientId", patient.getId()));
-        }
+        // TODO: this should probably be merged in with BaseEnterHtmlFormPageController
 
         if (!encounter.getPatient().equals(patient)) {
             throw new IllegalArgumentException("encounter.patient != patient");
@@ -58,6 +54,8 @@ public class EditHtmlFormWithStandardUiPageController {
         if (encounter.getVisit() != null) {
             pageModel.addAttribute("visit", encounter.getVisit());
         }
+
+        returnUrl = determineReturnUrl(returnUrl, patient, encounter.getVisit(), ui);
 
         pageModel.addAttribute("encounter", encounter);
         pageModel.addAttribute("patient", patient);
