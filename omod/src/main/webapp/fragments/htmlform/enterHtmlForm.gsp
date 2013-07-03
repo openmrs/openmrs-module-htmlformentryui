@@ -44,6 +44,9 @@
     <% } %>
 
     jq(function() {
+
+        // configure the encounter date widget
+        // TODO this probably should be handled in HFE itself when configuring the widget? could handle this when implementing HTML-480?
         <% if (visit) { %>
             <% if (command.context.mode.toString().equals('ENTER') && !visit.isOpen()) { %>
                 // set default date to the visit start date for retrospective visits
@@ -57,6 +60,10 @@
         <% } else { %>
             htmlForm.setEncounterStopDateRange(new Date());
         <% } %>
+
+        // for now, just disable manual entry until we figure out proper validation
+        htmlForm.disableEncounterDateManualEntry();
+
     });
 
 </script>

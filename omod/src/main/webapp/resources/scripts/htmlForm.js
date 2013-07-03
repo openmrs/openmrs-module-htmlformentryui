@@ -192,7 +192,7 @@ var htmlForm = (function(jq) {
                 returnUrl = url;
             },
 
-            // TODO: these 3 methods (getEncounter*Date*) will have to be modified when/if we switch datepickers
+            // TODO: these methods (getEncounter*Date*) will have to be modified when/if we switch datepickers
             // TODO: could/should be generalized so as not to be datepicker dependent?
             // TODO: note that for these methods to work, the id of the encounterDate field must be explicitly set to "encounterDate" until HTML-482 is implemented
 
@@ -211,6 +211,12 @@ var htmlForm = (function(jq) {
             setEncounterDate: function(date) {
                 if (getField('encounterDate.value')) {
                     getField('encounterDate.value').datepicker('setDate', date);
+                }
+            },
+
+            disableEncounterDateManualEntry: function() {
+                if (getField('encounterDate.value')) {
+                    getField('encounterDate.value').attr( 'readOnly' , 'true' );
                 }
             },
 
