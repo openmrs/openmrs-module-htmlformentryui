@@ -45,8 +45,15 @@
 
     jq(function() {
         <% if (visit) { %>
+            <% if (command.context.mode.toString().equals('ENTER') && !visit.isOpen()) { %>
+                // set default date to the visit start date for retrospective visits
+                htmlForm.setEncounterDate(new Date('${ visit.startDatetime }'));
+            <% } %>
+
+            // set valid date range based on visit
             htmlForm.setEncounterStartDateRange(new Date('${ visit.startDatetime }'));
             htmlForm.setEncounterStopDateRange(new Date('${ visit.stopDatetime ?: new Date() }'));
+
         <% } else { %>
             htmlForm.setEncounterStopDateRange(new Date());
         <% } %>

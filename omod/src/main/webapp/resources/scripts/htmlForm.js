@@ -192,8 +192,9 @@ var htmlForm = (function(jq) {
                 returnUrl = url;
             },
 
-            // TODO: these will have to be modified when/if we switch datepickers
+            // TODO: these 3 methods (getEncounter*Date*) will have to be modified when/if we switch datepickers
             // TODO: could/should be generalized so as not to be datepicker dependent?
+            // TODO: note that for these methods to work, the id of the encounterDate field must be explicitly set to "encounterDate" until HTML-482 is implemented
 
             setEncounterStartDateRange: function(date) {
                 if (getField('encounterDate.value')) {
@@ -204,6 +205,12 @@ var htmlForm = (function(jq) {
             setEncounterStopDateRange: function(date) {
                 if (getField('encounterDate.value')) {
                     getField('encounterDate.value').datepicker('option', 'maxDate', date);
+                }
+            },
+
+            setEncounterDate: function(date) {
+                if (getField('encounterDate.value')) {
+                    getField('encounterDate.value').datepicker('setDate', date);
                 }
             },
 
