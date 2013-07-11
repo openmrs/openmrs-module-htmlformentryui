@@ -59,7 +59,7 @@
 
         <% } else { %>
             // note that we need to get the current datetime from the *server*, in case the server and client are in different time zones
-            htmlForm.setEncounterStopDateRange(new Date(currentDatetime));
+            htmlForm.setEncounterStopDateRange(new Date('${ currentDatetime }'));
         <% } %>
 
         // for now, just disable manual entry until we figure out proper validation
