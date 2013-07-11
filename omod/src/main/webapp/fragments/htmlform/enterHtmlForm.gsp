@@ -2,7 +2,7 @@
     // config supports style (css style on div around form)
     // config supports cssClass (css class on div around form)
 
-    // assumes jquery and jquery-ui from emr module
+    // assumes jquery and jquery-ui from emr module                                                                                     fnew
     ui.includeJavascript("emr", "dwr-util.js")
     ui.includeJavascript("htmlformentryui", "htmlForm.js")
     // TODO setup "confirm before navigating" functionality
@@ -55,10 +55,11 @@
 
             // set valid date range based on visit
             htmlForm.setEncounterStartDateRange(new Date('${ visit.startDatetime }'));
-            htmlForm.setEncounterStopDateRange(new Date('${ visit.stopDatetime ?: new Date() }'));
+            htmlForm.setEncounterStopDateRange(new Date('${ visit.stopDatetime ?: currentDatetime }'));
 
         <% } else { %>
-            htmlForm.setEncounterStopDateRange(new Date());
+            // note that we need to get the current datetime from the *server*, in case the server and client are in different time zones
+            htmlForm.setEncounterStopDateRange(new Date(currentDatetime));
         <% } %>
 
         // for now, just disable manual entry until we figure out proper validation

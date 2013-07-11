@@ -137,6 +137,7 @@ public class EnterHtmlFormFragmentController {
             fes.setReturnUrl(returnUrl);
         }
 
+        model.addAttribute("currentDatetime", new Date());
         model.addAttribute("command", fes);
         model.addAttribute("visit", visit);
         if (createVisit!=null) {
