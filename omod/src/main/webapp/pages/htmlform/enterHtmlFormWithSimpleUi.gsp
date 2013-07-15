@@ -56,7 +56,7 @@ ${ ui.includeFragment("htmlformentryui", "htmlform/enterHtmlForm", [
     <div id="confirmation">
         <span class="title">${ ui.message("emr.simpleFormUi.confirm.title") }</span>
 
-        <div id="confirmationQuestion" class="container half-width">
+        <div id="confirmationQuestion" class="container">
             <h3>${ ui.message("emr.simpleFormUi.confirm.question") }</h3>
 
             <div class="before-dataCanvas"></div>
@@ -64,10 +64,10 @@ ${ ui.includeFragment("htmlformentryui", "htmlform/enterHtmlForm", [
             <div class="after-data-canvas"></div>
 
             <p style="display: inline">
-                <input type="submit" value="${ ui.message("emr.save") }" class="confirm right"/>
+                <input type="button" value="${ ui.message("emr.no") }" class="cancel" />
             </p>
             <p style="display: inline">
-                <input type="button" value="${ ui.message("emr.no") }" class="cancel" />
+                <input type="submit" value="${ ui.message("emr.save") }" class="confirm"/>
             </p>
             <p>
                 <span class="error field-error">${ ui.message("emr.simpleFormUi.error.emptyForm") }</span>
