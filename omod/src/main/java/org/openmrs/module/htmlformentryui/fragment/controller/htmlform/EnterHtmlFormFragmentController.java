@@ -236,7 +236,6 @@ public class EnterHtmlFormFragmentController {
         // (note that this currently only works in real-time mode)
         if (createVisit != null && (createVisit) && visit == null) {
             visit = adtService.ensureActiveVisit(patient, sessionContext.getSessionLocation());
-            visit.setStartDatetime(formEncounter.getEncounterDatetime());
         }
 
         // attach to the visit if it exists
