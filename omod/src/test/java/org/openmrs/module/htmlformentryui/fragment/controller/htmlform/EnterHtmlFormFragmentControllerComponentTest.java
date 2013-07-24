@@ -47,9 +47,11 @@ import org.openmrs.web.test.BaseModuleWebContextSensitiveTest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.mock.web.MockHttpServletRequest;
+import uk.co.it.modular.hamcrest.date.DateMatchers;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.concurrent.TimeUnit;
 
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertNotNull;
@@ -221,7 +223,8 @@ public class EnterHtmlFormFragmentControllerComponentTest extends BaseModuleWebC
         Encounter created = encounterService.getEncountersByPatient(patient).get(0);
 
         assertNotNull(created.getVisit());
-        assertThat(created.getVisit().getStartDatetime(), is(date));
+        assertThat(created.getEncounterDatetime(), DateMatchers.within(1, TimeUnit.SECONDS, new Date()));
+        assertThat(created.getVisit().getStartDatetime(), DateMatchers.within(1, TimeUnit.SECONDS, new Date()));
         assertNull(created.getVisit().getStopDatetime());
     }
 
