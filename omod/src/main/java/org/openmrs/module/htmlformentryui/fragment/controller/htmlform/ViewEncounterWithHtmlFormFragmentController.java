@@ -16,11 +16,13 @@ package org.openmrs.module.htmlformentryui.fragment.controller.htmlform;
 
 import org.openmrs.Encounter;
 import org.openmrs.Form;
+import org.openmrs.module.appui.UiSessionContext;
 import org.openmrs.module.htmlformentry.FormEntryContext;
 import org.openmrs.module.htmlformentry.FormEntrySession;
 import org.openmrs.module.htmlformentry.HtmlForm;
 import org.openmrs.module.htmlformentry.HtmlFormEntryService;
 import org.openmrs.ui.framework.SimpleObject;
+import org.openmrs.ui.framework.UiUtils;
 import org.openmrs.ui.framework.annotation.FragmentParam;
 import org.openmrs.ui.framework.annotation.SpringBean;
 import org.openmrs.ui.framework.fragment.FragmentConfiguration;
@@ -39,23 +41,29 @@ public class ViewEncounterWithHtmlFormFragmentController {
                            @FragmentParam("encounter") Encounter encounter,
                            @FragmentParam(value = "htmlFormId", required = false) HtmlForm hf,
                            HttpSession httpSession,
+                           UiUtils ui,
+                           UiSessionContext sessionContext,
                            FragmentModel model) throws Exception {
 
-        model.addAttribute("html", getFormHtml(htmlFormEntryService, encounter, hf, httpSession));
+        model.addAttribute("html", getFormHtml(htmlFormEntryService, encounter, hf, ui, sessionContext, httpSession));
     }
 
     public SimpleObject getAsHtml(@SpringBean("htmlFormEntryService") HtmlFormEntryService htmlFormEntryService,
                                   @RequestParam("encounterId") Encounter encounter,
                                   @RequestParam(value = "htmlFormId", required = false) HtmlForm hf,
+                                  UiUtils ui,
+                                  UiSessionContext sessionContext,
                                   HttpSession httpSession) throws Exception {
         SimpleObject simpleObject = new SimpleObject();
-        simpleObject.put("html", getFormHtml(htmlFormEntryService, encounter, hf, httpSession));
+        simpleObject.put("html", getFormHtml(htmlFormEntryService, encounter, hf, ui, sessionContext, httpSession));
         return simpleObject;
     }
 
     private String getFormHtml(HtmlFormEntryService htmlFormEntryService,
                               Encounter encounter,
                               HtmlForm hf,
+                              UiUtils ui,
+                              UiSessionContext sessionContext,
                               HttpSession httpSession) throws Exception {
         if (hf == null) {
             Form form = encounter.getForm();
@@ -69,6 +77,8 @@ public class ViewEncounterWithHtmlFormFragmentController {
         }
 
         FormEntrySession fes = new FormEntrySession(encounter.getPatient(), encounter, FormEntryContext.Mode.VIEW, hf, httpSession);
+        fes.setAttribute("uiSessionContext", sessionContext);
+        fes.setAttribute("uiUtils", ui);
         return fes.getHtmlToDisplay();
     }
 

@@ -81,6 +81,7 @@ public class EnterHtmlFormFragmentController {
      */
     public void controller(FragmentConfiguration config,
                            UiSessionContext sessionContext,
+                           UiUtils ui,
                            @SpringBean("htmlFormEntryService") HtmlFormEntryService htmlFormEntryService,
                            @SpringBean("formService") FormService formService,
                            @SpringBean("coreResourceFactory") ResourceFactory resourceFactory,
@@ -132,6 +133,8 @@ public class EnterHtmlFormFragmentController {
         else {
             fes = new FormEntrySession(patient, hf, FormEntryContext.Mode.ENTER, sessionContext.getSessionLocation(), httpSession, automaticValidation, !automaticValidation);
         }
+        fes.setAttribute("uiSessionContext", sessionContext);
+        fes.setAttribute("uiUtils", ui);
 
         if (StringUtils.hasText(returnUrl)) {
             fes.setReturnUrl(returnUrl);
@@ -205,10 +208,13 @@ public class EnterHtmlFormFragmentController {
         } else {
             fes = new FormEntrySession(patient, hf, FormEntryContext.Mode.ENTER, request.getSession());
         }
+        fes.setAttribute("uiSessionContext", sessionContext);
+        fes.setAttribute("uiUtils", ui);
 
         if (returnUrl != null) {
             fes.setReturnUrl(returnUrl);
         }
+        fes.getHtmlToDisplay();
 
         // Validate and return with errors if any are found
         List<FormSubmissionError> validationErrors = fes.getSubmissionController().validateSubmission(fes.getContext(), request);
