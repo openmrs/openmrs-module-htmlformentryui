@@ -3,7 +3,7 @@
     // config supports cssClass (css class on div around form)
 
     // assumes jquery and jquery-ui from emr module                                                                                     fnew
-    ui.includeJavascript("emr", "dwr-util.js")
+    ui.includeJavascript("htmlformentryui", "dwr-util.js")
     ui.includeJavascript("htmlformentryui", "htmlForm.js")
     // TODO setup "confirm before navigating" functionality
 %>
