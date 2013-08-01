@@ -87,6 +87,19 @@ var htmlForm = (function(jq) {
         tryingToSubmit = false;
     }
 
+    goToReturnUrl = function() {
+        if (returnUrl) {
+            location.href = returnUrl;
+        }
+        else {
+            if (typeof(parent) !== 'undefined') {
+                parent.location.reload();
+            } else {
+                location.reload();
+            }
+        }
+    }
+
     doSubmitHtmlForm = function() {
 
         // first call any beforeSubmit functions that may have been defined by the form
@@ -112,16 +125,7 @@ var htmlForm = (function(jq) {
             //ui.openLoadingDialog('Submitting Form');
             jq.post(form.attr('action'), form.serialize(), function(result) {
                 if (result.success) {
-                    if(returnUrl) {
-                        location.href = returnUrl;
-                    }
-                    else {
-                        if (typeof(parent) !== 'undefined') {
-                            parent.location.reload();
-                        } else {
-                            location.reload();
-                        }
-                     }
+                    goToReturnUrl();
                 } else {
                     //ui.closeLoadingDialog();
                     enableSubmitButton();
@@ -166,6 +170,10 @@ var htmlForm = (function(jq) {
                 jq('#passwordPopupUsername').val('');
                 jq('#passwordPopupPassword').val('');
                 jq.getJSON(emr.fragmentActionLink('htmlformentryui', 'htmlform/enterHtmlForm', 'checkIfLoggedIn', { user: username, pass: password }), submitHtmlForm);
+            },
+
+            cancel: function() {
+                goToReturnUrl();
             },
 
             getValueIfLegal: function(idAndProperty) {

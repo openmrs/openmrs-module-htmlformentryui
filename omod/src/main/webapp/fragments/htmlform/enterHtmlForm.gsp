@@ -2,7 +2,7 @@
     // config supports style (css style on div around form)
     // config supports cssClass (css class on div around form)
 
-    // assumes jquery and jquery-ui from emr module                                                                                     fnew
+    // assumes jquery and jquery-ui from emr module
     ui.includeJavascript("htmlformentryui", "dwr-util.js")
     ui.includeJavascript("htmlformentryui", "htmlForm.js")
     // TODO setup "confirm before navigating" functionality
@@ -64,6 +64,8 @@
 
         // for now, just disable manual entry until we figure out proper validation
         htmlForm.disableEncounterDateManualEntry();
+
+        jq('.cancel').click(htmlForm.cancel);
 
     });
 
