@@ -65,8 +65,6 @@
         // for now, just disable manual entry until we figure out proper validation
         htmlForm.disableEncounterDateManualEntry();
 
-        jq('.cancel').click(htmlForm.cancel);
-
     });
 
 </script>

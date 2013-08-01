@@ -12,6 +12,10 @@
         ${ breadcrumbMiddle },
         { label: "${ ui.escapeJs(ui.message("emr.editHtmlForm.breadcrumb", ui.format(htmlForm.form))) }" }
     ]);
+
+    jq(function() {
+        jq('.cancel').click(htmlForm.cancel);
+    });
 </script>
 
 ${ ui.includeFragment("coreapps", "patientHeader", [ patient: patient ]) }
