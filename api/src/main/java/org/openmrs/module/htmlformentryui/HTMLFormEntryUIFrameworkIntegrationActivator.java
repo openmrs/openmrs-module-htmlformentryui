@@ -14,11 +14,46 @@
 package org.openmrs.module.htmlformentryui;
 
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.openmrs.api.context.Context;
 import org.openmrs.module.BaseModuleActivator;
+import org.openmrs.module.Module;
+import org.openmrs.module.ModuleFactory;
+import org.openmrs.module.htmlformentry.HtmlFormEntryService;
+import org.openmrs.module.htmlformentryui.tag.UiMessageTagHandler;
 
 /**
  * This class contains the logic that is run every time this module is either started or stopped.
  */
 public class HTMLFormEntryUIFrameworkIntegrationActivator extends BaseModuleActivator {
 
+    protected final Log log = LogFactory.getLog(getClass());
+
+    @Override
+    public void started() {
+        try {
+            HtmlFormEntryService htmlFormEntryService = Context.getService(HtmlFormEntryService.class);
+            htmlFormEntryService.addHandler(HtmlFormEntryUiConstants.HTMLFORMENTRY_UI_MESSAGE_TAG_NAME, new UiMessageTagHandler());
+        }
+        catch (Exception e) {
+            Module mod = ModuleFactory.getModuleById(HtmlFormEntryUiConstants.MODULE_ID);
+            ModuleFactory.stopModule(mod);
+            throw new RuntimeException("failed to setup the " + HtmlFormEntryUiConstants.MODULE_ID + " module", e);
+        }
+
+        log.info("HTML Form Entry UI Framework Integration module started");
+    }
+
+    @Override
+    public void stopped() {
+        try {
+            HtmlFormEntryService htmlFormEntryService = Context.getService(HtmlFormEntryService.class);
+            htmlFormEntryService.getHandlers().remove(HtmlFormEntryUiConstants.HTMLFORMENTRY_UI_MESSAGE_TAG_NAME);
+        }
+        catch (Exception ex) {
+            // pass
+        }
+        log.info("HTML Form Entry UI Framework Integration module stopped");
+    }
 }
