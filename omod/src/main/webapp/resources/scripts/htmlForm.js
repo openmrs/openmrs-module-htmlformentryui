@@ -6,6 +6,8 @@ var htmlForm = (function(jq) {
     var beforeSubmit = new Array(); 		// a list of functions that will be executed before the submission of a form
     var propertyAccessorInfo = new Array();
 
+    var whenObsHasValueThenDisplaySection = { };
+
     var tryingToSubmit = false;
 
     var returnUrl = '';
@@ -97,6 +99,22 @@ var htmlForm = (function(jq) {
             } else {
                 location.reload();
             }
+        }
+    }
+
+    var onObsChangedCheck = function() {
+        var whenValueThenDisplaySection = $(this).data('whenValueThenDisplaySection');
+        if (whenValueThenDisplaySection) {
+            var val = $(this).val();
+            jQuery.each(whenValueThenDisplaySection, function(ifValue, thenSection) {
+                if (val == ifValue) {
+                    $(thenSection).show();
+                } else {
+                    $(thenSection).hide();
+                    $(thenSection).find('input:text, input:password, input:file, select, textarea').val('');
+                    $(thenSection).find('input:checkbox, input:radio').removeAttr('checked').removeAttr('selected');
+                }
+            });
         }
     }
 
@@ -236,8 +254,13 @@ var htmlForm = (function(jq) {
             hideDiv: function(id) {
                 var div = document.getElementById(id);
                 if ( div ) { div.style.display = "none"; }
-            }
+            },
 
+            setupWhenThenDisplay: function(obsId, valueToSection) {
+                var field = getField(obsId + '.value');
+                field.data('whenValueThenDisplaySection', valueToSection);
+                field.change(onObsChangedCheck);
+            }
 
         }
 
