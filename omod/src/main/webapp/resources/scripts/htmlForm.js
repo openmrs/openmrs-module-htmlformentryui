@@ -89,9 +89,11 @@ var htmlForm = (function(jq) {
         tryingToSubmit = false;
     }
 
-    goToReturnUrl = function() {
+    // if an encounter id is passed in, that is appended to the return string
+    goToReturnUrl = function(encounterId) {
         if (returnUrl) {
-            location.href = returnUrl;
+            location.href = returnUrl
+                + (encounterId ? (returnUrl.indexOf('?') != -1 ? '&' : '?') +"encounterId=" + encounterId : '');
         }
         else {
             if (typeof(parent) !== 'undefined') {
@@ -143,7 +145,7 @@ var htmlForm = (function(jq) {
             //ui.openLoadingDialog('Submitting Form');
             jq.post(form.attr('action'), form.serialize(), function(result) {
                 if (result.success) {
-                    goToReturnUrl();
+                    goToReturnUrl(result.encounterId);
                 } else {
                     //ui.closeLoadingDialog();
                     enableSubmitButton();

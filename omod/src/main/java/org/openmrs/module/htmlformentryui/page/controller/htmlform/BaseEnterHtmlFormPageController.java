@@ -42,6 +42,8 @@ public abstract class BaseEnterHtmlFormPageController extends BaseHtmlFormPageCo
                     @RequestParam(value = "visitId", required = false) Visit visit,
                     @RequestParam(value = "createVisit", required = false) Boolean createVisit,
                     @RequestParam(value = "returnUrl", required = false) String returnUrl,
+                    @RequestParam(value = "returnProvider", required =  false) String returnProvider,
+                    @RequestParam(value = "returnPage", required = false) String returnPage,
                     @RequestParam(value = "breadcrumbOverride", required = false) String breadcrumbOverride,
                     @SpringBean("htmlFormEntryService") HtmlFormEntryService htmlFormEntryService,
                     @SpringBean("formService") FormService formService,
@@ -67,7 +69,7 @@ public abstract class BaseEnterHtmlFormPageController extends BaseHtmlFormPageCo
             throw new IllegalArgumentException("Couldn't find a form");
         }
 
-        returnUrl = determineReturnUrl(returnUrl, currentPatient, visit, ui);
+        returnUrl = determineReturnUrl(returnUrl, returnProvider, returnPage, currentPatient, visit, ui);
 
         model.addAttribute("htmlForm", htmlForm);
         model.addAttribute("patient", currentPatient);

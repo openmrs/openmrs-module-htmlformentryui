@@ -31,6 +31,8 @@ public class EditHtmlFormWithStandardUiPageController extends BaseHtmlFormPageCo
     public void get(@RequestParam("encounterId") Encounter encounter,
                     @RequestParam("patientId") Patient patient, // explicitly require this instead of inferring from encounter because this sets up the global context
                     @RequestParam(value = "returnUrl", required = false) String returnUrl,
+                    @RequestParam(value = "returnProvider", required =  false) String returnProvider,
+                    @RequestParam(value = "returnPage", required = false) String returnPage,
                     @RequestParam(value = "breadcrumbOverride", required = false) String breadcrumbOverride,
                     @SpringBean("htmlFormEntryService") HtmlFormEntryService htmlFormEntryService,
                     UiUtils ui,
@@ -55,7 +57,7 @@ public class EditHtmlFormWithStandardUiPageController extends BaseHtmlFormPageCo
             pageModel.addAttribute("visit", encounter.getVisit());
         }
 
-        returnUrl = determineReturnUrl(returnUrl, patient, encounter.getVisit(), ui);
+        returnUrl = determineReturnUrl(returnUrl, returnProvider, returnPage, patient, encounter.getVisit(), ui);
 
         pageModel.addAttribute("encounter", encounter);
         pageModel.addAttribute("patient", patient);

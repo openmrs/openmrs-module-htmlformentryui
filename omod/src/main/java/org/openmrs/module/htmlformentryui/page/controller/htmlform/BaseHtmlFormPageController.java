@@ -12,26 +12,37 @@ import org.openmrs.ui.framework.UiUtils;
 public abstract class BaseHtmlFormPageController {
 
 
-    protected String determineReturnUrl(String returnUrl, Patient patient, Visit visit, UiUtils ui) {
+    protected String determineReturnUrl(String returnUrl, String returnProviderName, String returnPageName, Patient patient, Visit visit, UiUtils ui) {
 
-        if (StringUtils.isEmpty(returnUrl)) {
-            if (patient != null) {
+        SimpleObject returnParams = null;
 
-                SimpleObject returnParams;
-
-                if (visit == null) {
-                    returnParams = SimpleObject.create("patientId", patient.getId());
-                }
-                else {
-                    returnParams = SimpleObject.create("patientId", patient.getId(), "visitId", visit.getId());
-                }
-                returnUrl = ui.pageLink("coreapps", "patientdashboard/patientDashboard", returnParams);
+        if (patient != null) {
+            if (visit == null) {
+                returnParams = SimpleObject.create("patientId", patient.getId());
             }
             else {
-                returnUrl = "/" + ui.contextPath() + "index.html";
+                returnParams = SimpleObject.create("patientId", patient.getId(), "visitId", visit.getId());
             }
         }
-        return returnUrl;
+
+        // first see if a return provider and page have been specified
+        if (StringUtils.isNotBlank(returnProviderName) && StringUtils.isNotBlank(returnPageName)) {
+            return ui.pageLink(returnProviderName, returnPageName, returnParams);
+        }
+
+        // if not, see if a returnUrl has been specified
+        if (StringUtils.isNotBlank(returnUrl)) {
+            return "/" + ui.contextPath() + returnUrl;
+        }
+
+        // otherwise return to patient dashboard if we have a patient, but index if not
+        if (returnParams != null && returnParams.containsKey("patientId")) {
+            return ui.pageLink("coreapps", "patientdashboard/patientDashboard", returnParams);
+        }
+        else {
+            return "/" + ui.contextPath() + "index.html";
+        }
+
     }
 
 }

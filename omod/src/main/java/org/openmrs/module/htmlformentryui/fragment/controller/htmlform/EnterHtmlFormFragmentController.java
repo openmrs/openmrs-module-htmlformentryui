@@ -219,7 +219,7 @@ public class EnterHtmlFormFragmentController {
         // Validate and return with errors if any are found
         List<FormSubmissionError> validationErrors = fes.getSubmissionController().validateSubmission(fes.getContext(), request);
         if (validationErrors.size() > 0) {
-            return returnHelper(validationErrors, fes.getContext());
+            return returnHelper(validationErrors, fes.getContext(), null);
         }
 
         // No validation errors found so process form submission
@@ -257,7 +257,7 @@ public class EnterHtmlFormFragmentController {
             }
 
             if (validationErrors.size() > 0) {
-                return returnHelper(validationErrors, fes.getContext());
+                return returnHelper(validationErrors, fes.getContext(), null);
             }
         }
 
@@ -268,12 +268,13 @@ public class EnterHtmlFormFragmentController {
                 ui.message(editMode ? "emr.editHtmlForm.successMessage" : "emr.task.enterHtmlForm.successMessage", ui.format(hf.getForm()), ui.format(patient)));
         request.getSession().setAttribute(UiCommonsConstants.SESSION_ATTRIBUTE_TOAST_MESSAGE, "true");
 
-        return returnHelper(null, null);
+        return returnHelper(null, null, formEncounter);
     }
 
-    private SimpleObject returnHelper(List<FormSubmissionError> validationErrors, FormEntryContext context) {
+    private SimpleObject returnHelper(List<FormSubmissionError> validationErrors, FormEntryContext context,
+                                      Encounter encounter) {
         if (validationErrors == null || validationErrors.size() == 0) {
-            return SimpleObject.create("success", true);
+            return SimpleObject.create("success", true, "encounterId", encounter.getId());
         } else {
             Map<String, String> errors = new HashMap<String, String>();
             for (FormSubmissionError err : validationErrors) {
