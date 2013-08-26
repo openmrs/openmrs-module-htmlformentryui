@@ -32,7 +32,7 @@ public abstract class BaseHtmlFormPageController {
 
         // if not, see if a returnUrl has been specified
         if (StringUtils.isNotBlank(returnUrl)) {
-            return "/" + ui.contextPath() + returnUrl;
+            return returnUrl;
         }
 
         // otherwise return to patient dashboard if we have a patient, but index if not

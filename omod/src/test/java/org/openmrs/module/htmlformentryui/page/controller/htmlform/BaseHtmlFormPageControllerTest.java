@@ -37,7 +37,7 @@ public class BaseHtmlFormPageControllerTest {
 
     @Test
     public void test_shouldReturnUrlIfNoPageOrProviderSpecified() {
-        assertThat(controller.determineReturnUrl("someReturnUrl.html", null, null, patient, visit, uiUtils), is("/openmrs/someReturnUrl.html"));
+        assertThat(controller.determineReturnUrl("/openmrs/someReturnUrl.html", null, null, patient, visit, uiUtils), is("/openmrs/someReturnUrl.html"));
     }
 
     @Test
