@@ -12,17 +12,17 @@ var htmlForm = (function(jq) {
 
     var returnUrl = '';
 
-    disableSubmitButton = function() {
+    var disableSubmitButton = function() {
         jq('.submitButton').attr('disabled', 'true');
         jq('.submitButton').addClass("disabled");
     }
 
-    enableSubmitButton = function() {
+    var enableSubmitButton = function() {
         jq('.submitButton').removeAttr('disabled');
         jq('.submitButton').removeClass("disabled");
     }
 
-    findAndHighlightErrors = function() {
+    var findAndHighlightErrors = function() {
         /* see if there are error fields */
         var containError = false
         var ary = jq(".autoCompleteHidden");
@@ -48,7 +48,7 @@ var htmlForm = (function(jq) {
      findAndHighlightErrors should be in the same callback function.
      i.e. only authenticated user can see the error msg of
      */
-    checkIfLoggedInAndErrorsCallback = function(isLoggedIn) {
+    var checkIfLoggedInAndErrorsCallback = function(isLoggedIn) {
 
         var state_beforeValidation=true;
 
@@ -84,13 +84,13 @@ var htmlForm = (function(jq) {
         }
     }
 
-    showAuthenticateDialog = function() {
+    var showAuthenticateDialog = function() {
         jq('#passwordPopup').show();
         tryingToSubmit = false;
     }
 
     // if an encounter id is passed in, that is appended to the return string
-    goToReturnUrl = function(encounterId) {
+    var goToReturnUrl = function(encounterId) {
         if (returnUrl) {
             location.href = returnUrl
                 + (encounterId ? (returnUrl.indexOf('?') != -1 ? '&' : '?') +"encounterId=" + encounterId : '');
@@ -120,7 +120,7 @@ var htmlForm = (function(jq) {
         }
     }
 
-    doSubmitHtmlForm = function() {
+    var doSubmitHtmlForm = function() {
 
         // first call any beforeSubmit functions that may have been defined by the form
         var state_beforeSubmit=true;
