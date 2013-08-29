@@ -16,10 +16,8 @@ package org.openmrs.module.htmlformentryui.fragment.controller.htmlform;
 
 import javax.servlet.http.HttpSession;
 
-import org.apache.commons.lang.time.DateFormatUtils;
 import org.openmrs.Encounter;
 import org.openmrs.Form;
-import org.openmrs.api.context.Context;
 import org.openmrs.module.appui.UiSessionContext;
 import org.openmrs.module.htmlformentry.FormEntryContext;
 import org.openmrs.module.htmlformentry.FormEntrySession;
@@ -48,7 +46,7 @@ public class ViewEncounterWithHtmlFormFragmentController {
                            FragmentModel model) throws Exception {
 
     	model.addAttribute("encounterDatetime", encounter.getEncounterDatetime());
-    	model.addAttribute("formattedEncounterDatetime", DateFormatUtils.format(encounter.getEncounterDatetime(), "dd MMM yyyy hh:mm a", Context.getLocale()));
+    	model.addAttribute("formattedEncounterDatetime", ui.formatDatetimePretty(encounter.getEncounterDatetime()));
         model.addAttribute("html", getFormHtml(htmlFormEntryService, encounter, hf, ui, sessionContext, httpSession));
     }
 
@@ -60,7 +58,7 @@ public class ViewEncounterWithHtmlFormFragmentController {
                                   HttpSession httpSession) throws Exception {
         SimpleObject simpleObject = new SimpleObject();
         simpleObject.put("encounterDatetime", encounter.getEncounterDatetime());
-        simpleObject.put("formattedEncounterDatetime", DateFormatUtils.format(encounter.getEncounterDatetime(), "dd MMM yyyy hh:mm a", Context.getLocale()));
+        simpleObject.put("formattedEncounterDatetime", ui.formatDatetimePretty(encounter.getEncounterDatetime()));
         simpleObject.put("html", getFormHtml(htmlFormEntryService, encounter, hf, ui, sessionContext, httpSession));
         return simpleObject;
     }
