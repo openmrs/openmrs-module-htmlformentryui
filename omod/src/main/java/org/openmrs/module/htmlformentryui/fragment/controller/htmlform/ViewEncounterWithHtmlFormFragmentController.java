@@ -46,6 +46,7 @@ public class ViewEncounterWithHtmlFormFragmentController {
                            FragmentModel model) throws Exception {
 
     	model.addAttribute("encounterDatetime", encounter.getEncounterDatetime());
+    	model.addAttribute("formattedEncounterDatetime", ui.dateToString(encounter.getEncounterDatetime()));
         model.addAttribute("html", getFormHtml(htmlFormEntryService, encounter, hf, ui, sessionContext, httpSession));
     }
 
@@ -57,6 +58,7 @@ public class ViewEncounterWithHtmlFormFragmentController {
                                   HttpSession httpSession) throws Exception {
         SimpleObject simpleObject = new SimpleObject();
         simpleObject.put("encounterDatetime", encounter.getEncounterDatetime());
+        simpleObject.put("formattedEncounterDatetime", ui.dateToString(encounter.getEncounterDatetime()));
         simpleObject.put("html", getFormHtml(htmlFormEntryService, encounter, hf, ui, sessionContext, httpSession));
         return simpleObject;
     }
