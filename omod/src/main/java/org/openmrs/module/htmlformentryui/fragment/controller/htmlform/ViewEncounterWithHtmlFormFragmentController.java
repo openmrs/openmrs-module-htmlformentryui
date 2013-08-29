@@ -14,8 +14,12 @@
 
 package org.openmrs.module.htmlformentryui.fragment.controller.htmlform;
 
+import javax.servlet.http.HttpSession;
+
+import org.apache.commons.lang.time.DateFormatUtils;
 import org.openmrs.Encounter;
 import org.openmrs.Form;
+import org.openmrs.api.context.Context;
 import org.openmrs.module.appui.UiSessionContext;
 import org.openmrs.module.htmlformentry.FormEntryContext;
 import org.openmrs.module.htmlformentry.FormEntrySession;
@@ -28,8 +32,6 @@ import org.openmrs.ui.framework.annotation.SpringBean;
 import org.openmrs.ui.framework.fragment.FragmentConfiguration;
 import org.openmrs.ui.framework.fragment.FragmentModel;
 import org.springframework.web.bind.annotation.RequestParam;
-
-import javax.servlet.http.HttpSession;
 
 /**
  *
@@ -46,7 +48,7 @@ public class ViewEncounterWithHtmlFormFragmentController {
                            FragmentModel model) throws Exception {
 
     	model.addAttribute("encounterDatetime", encounter.getEncounterDatetime());
-    	model.addAttribute("formattedEncounterDatetime", ui.dateToString(encounter.getEncounterDatetime()));
+    	model.addAttribute("formattedEncounterDatetime", DateFormatUtils.format(encounter.getEncounterDatetime(), "dd MMM yyyy hh:mm a", Context.getLocale()));
         model.addAttribute("html", getFormHtml(htmlFormEntryService, encounter, hf, ui, sessionContext, httpSession));
     }
 
@@ -58,7 +60,7 @@ public class ViewEncounterWithHtmlFormFragmentController {
                                   HttpSession httpSession) throws Exception {
         SimpleObject simpleObject = new SimpleObject();
         simpleObject.put("encounterDatetime", encounter.getEncounterDatetime());
-        simpleObject.put("formattedEncounterDatetime", ui.dateToString(encounter.getEncounterDatetime()));
+        simpleObject.put("formattedEncounterDatetime", DateFormatUtils.format(encounter.getEncounterDatetime(), "dd MMM yyyy hh:mm a", Context.getLocale()));
         simpleObject.put("html", getFormHtml(htmlFormEntryService, encounter, hf, ui, sessionContext, httpSession));
         return simpleObject;
     }
