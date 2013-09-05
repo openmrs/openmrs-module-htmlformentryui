@@ -1,4 +1,6 @@
-var htmlForm = (function(jq) {
+//Uses the namespace pattern from http://stackoverflow.com/a/5947280
+// expects to extend htmlForm defined in the core HFE module
+(function( htmlForm, jq, undefined) {
 
     // individual forms can define their own functions to execute before a form validation or submission by adding them to these lists
     // if any function returns false, no further functions are called and the validation or submission is cancelled
@@ -104,22 +106,6 @@ var htmlForm = (function(jq) {
         }
     }
 
-    var onObsChangedCheck = function() {
-        var whenValueThenDisplaySection = $(this).data('whenValueThenDisplaySection');
-        if (whenValueThenDisplaySection) {
-            var val = $(this).val();
-            jQuery.each(whenValueThenDisplaySection, function(ifValue, thenSection) {
-                if (val == ifValue) {
-                    $(thenSection).show();
-                } else {
-                    $(thenSection).hide();
-                    $(thenSection).find('input:text, input:password, input:file, select, textarea').val('');
-                    $(thenSection).find('input:checkbox, input:radio').removeAttr('checked').removeAttr('selected');
-                }
-            });
-        }
-    }
-
     var doSubmitHtmlForm = function() {
 
         // first call any beforeSubmit functions that may have been defined by the form
@@ -168,102 +154,92 @@ var htmlForm = (function(jq) {
 
                         emr.errorAlert('Unexpected error, please contact your System Administrator: ' + textStatus);
                     });
-            }
-            tryingToSubmit = false;
         }
+        tryingToSubmit = false;
+    };
 
-        return {
-
-            submitHtmlForm: function()  {
-                if (!tryingToSubmit) {
-                    tryingToSubmit = true;
-                    jq.getJSON(emr.fragmentActionLink('htmlformentryui', 'htmlform/enterHtmlForm', 'checkIfLoggedIn'), function(result) {
-                        checkIfLoggedInAndErrorsCallback(result.isLoggedIn);
-                    });
-                }
-            },
-
-            loginThenSubmitHtmlForm: function() {
-                jq('#passwordPopup').hide();
-                var username = jq('#passwordPopupUsername').val();
-                var password = jq('#passwordPopupPassword').val();
-                jq('#passwordPopupUsername').val('');
-                jq('#passwordPopupPassword').val('');
-                jq.getJSON(emr.fragmentActionLink('htmlformentryui', 'htmlform/enterHtmlForm', 'checkIfLoggedIn', { user: username, pass: password }), submitHtmlForm);
-            },
-
-            cancel: function() {
-                goToReturnUrl();
-            },
-
-            getValueIfLegal: function(idAndProperty) {
-                var jqField = getField(idAndProperty);
-                if (jqField && jqField.hasClass('illegalValue')) {
-                    return null;
-                }
-                return getValue(idAndProperty);
-            },
-
-            getPropertyAccessorInfo: function() {
-                return propertyAccessorInfo;
-            },
-
-            getBeforeSubmit: function() {
-                return beforeSubmit;
-            },
-
-            getBeforeValidation: function() {
-                return beforeValidation;
-            },
-
-            setReturnUrl: function(url) {
-                returnUrl = url;
-            },
-
-            // TODO: these methods (getEncounter*Date*) will have to be modified when/if we switch datepickers
-            // TODO: could/should be generalized so as not to be datepicker dependent?
-            // TODO: note that for these methods to work, the id of the encounterDate field must be explicitly set to "encounterDate" until HTML-482 is implemented
-
-            setEncounterStartDateRange: function(date) {
-                if (getField('encounterDate.value')) {
-                    getField('encounterDate.value').datepicker('option', 'minDate', date);
-                }
-            },
-
-            setEncounterStopDateRange: function(date) {
-                if (getField('encounterDate.value')) {
-                    getField('encounterDate.value').datepicker('option', 'maxDate', date);
-                }
-            },
-
-            setEncounterDate: function(date) {
-                if (getField('encounterDate.value')) {
-                    getField('encounterDate.value').datepicker('setDate', date);
-                }
-            },
-
-            disableEncounterDateManualEntry: function() {
-                if (getField('encounterDate.value')) {
-                    getField('encounterDate.value').attr( 'readOnly' , 'true' );
-                }
-            },
-
-            showDiv: function(id) {
-                var div = document.getElementById(id);
-                if ( div ) { div.style.display = ""; }
-            },
-
-            hideDiv: function(id) {
-                var div = document.getElementById(id);
-                if ( div ) { div.style.display = "none"; }
-            },
-
-            setupWhenThenDisplay: function(obsId, valueToSection) {
-                var field = getField(obsId + '.value');
-                field.data('whenValueThenDisplaySection', valueToSection);
-                field.change(onObsChangedCheck);
-            }
-
+    htmlForm.submitHtmlForm = function()  {
+        if (!tryingToSubmit) {
+            tryingToSubmit = true;
+            jq.getJSON(emr.fragmentActionLink('htmlformentryui', 'htmlform/enterHtmlForm', 'checkIfLoggedIn'), function(result) {
+                checkIfLoggedInAndErrorsCallback(result.isLoggedIn);
+            });
         }
+    };
 
-    })(jQuery);
+    htmlForm.loginThenSubmitHtmlForm = function() {
+        jq('#passwordPopup').hide();
+        var username = jq('#passwordPopupUsername').val();
+        var password = jq('#passwordPopupPassword').val();
+        jq('#passwordPopupUsername').val('');
+        jq('#passwordPopupPassword').val('');
+        jq.getJSON(emr.fragmentActionLink('htmlformentryui', 'htmlform/enterHtmlForm', 'checkIfLoggedIn', { user: username, pass: password }), submitHtmlForm);
+    };
+
+    htmlForm.cancel = function() {
+        goToReturnUrl();
+    };
+
+    htmlForm.getValueIfLegal = function(idAndProperty) {
+        var jqField = getField(idAndProperty);
+        if (jqField && jqField.hasClass('illegalValue')) {
+            return null;
+        }
+        return getValue(idAndProperty);
+    };
+
+    htmlForm.getPropertyAccessorInfo = function() {
+        return propertyAccessorInfo;
+    };
+
+    htmlForm.getBeforeSubmit = function() {
+        return beforeSubmit;
+    };
+
+    htmlForm.getBeforeValidation = function() {
+        return beforeValidation;
+    };
+
+    htmlForm.setReturnUrl = function(url) {
+        returnUrl = url;
+    };
+
+    // TODO: these methods (getEncounter*Date*) will have to be modified when/if we switch datepickers
+    // TODO: could/should be generalized so as not to be datepicker dependent?
+    // TODO: note that for these methods to work, the id of the encounterDate field must be explicitly set to "encounterDate" until HTML-482 is implemented
+
+    htmlForm.setEncounterStartDateRange = function(date) {
+        if (getField('encounterDate.value')) {
+            getField('encounterDate.value').datepicker('option', 'minDate', date);
+        }
+    };
+
+    htmlForm.setEncounterStopDateRange = function(date) {
+        if (getField('encounterDate.value')) {
+            getField('encounterDate.value').datepicker('option', 'maxDate', date);
+        }
+    };
+
+    htmlForm.setEncounterDate = function(date) {
+        if (getField('encounterDate.value')) {
+            getField('encounterDate.value').datepicker('setDate', date);
+        }
+    };
+
+    htmlForm.disableEncounterDateManualEntry = function() {
+        if (getField('encounterDate.value')) {
+            getField('encounterDate.value').attr( 'readOnly' , 'true' );
+        }
+    };
+
+    htmlForm.showDiv = function(id) {
+        var div = document.getElementById(id);
+        if ( div ) { div.style.display = ""; }
+    };
+
+    htmlForm.hideDiv = function(id) {
+        var div = document.getElementById(id);
+        if ( div ) { div.style.display = "none"; }
+    }
+
+}( window.htmlForm = window.htmlForm || {}, jQuery ));

@@ -8,7 +8,9 @@
     // TODO setup "confirm before navigating" functionality
 %>
 
+<script type="text/javascript" src="/${ contextPath }/moduleResources/htmlformentry/handlebars.min.js"></script>
 <script type="text/javascript" src="/${ contextPath }/moduleResources/htmlformentry/htmlFormEntry.js"></script>
+<script type="text/javascript" src="/${ contextPath }/moduleResources/htmlformentry/htmlForm.js"></script>
 <link href="/${ contextPath }/moduleResources/htmlformentry/htmlFormEntry.css" type="text/css" rel="stylesheet" />
 
 <script type="text/javascript">
@@ -23,7 +25,7 @@
         htmlForm.showDiv(id);
     }
 
-    function hideDiv() {
+    function hideDiv(id) {
         htmlForm.hideDiv(id);
     }
 
