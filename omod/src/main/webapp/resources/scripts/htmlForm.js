@@ -63,7 +63,7 @@
                 for (var i=0, l = beforeValidation.length; i < l; i++){
                     if (state_beforeValidation){
                         var fncn=beforeValidation[i];
-                        state_beforeValidation=eval(fncn);
+                        state_beforeValidation=fncn.call(htmlForm);
                     }
                     else{
                         // forces the end of the loop
@@ -73,15 +73,18 @@
             }
 
             // only do the validation if all the beforeValidation functions returned "true"
-            if (state_beforeValidation){
+            if (state_beforeValidation) {
                 var anyErrors = findAndHighlightErrors();
 
                 if (anyErrors) {
                     tryingToSubmit = false;
                     return;
-                }else{
+                } else {
                     doSubmitHtmlForm();
                 }
+            }
+            else {
+                tryingToSubmit = false;
             }
         }
     }
