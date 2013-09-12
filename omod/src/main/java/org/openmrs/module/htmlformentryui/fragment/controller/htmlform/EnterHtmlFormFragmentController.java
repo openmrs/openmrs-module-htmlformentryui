@@ -128,10 +128,10 @@ public class EnterHtmlFormFragmentController {
         // the code below doesn't handle the HFFS case where you might want to _add_ data to an existing encounter
         FormEntrySession fes;
         if (encounter != null) {
-            fes = new FormEntrySession(patient, encounter, FormEntryContext.Mode.EDIT, hf, sessionContext.getSessionLocation(), httpSession, automaticValidation, !automaticValidation);
+            fes = new FormEntrySession(patient, encounter, FormEntryContext.Mode.EDIT, hf, null, httpSession, automaticValidation, !automaticValidation);
         }
         else {
-            fes = new FormEntrySession(patient, hf, FormEntryContext.Mode.ENTER, sessionContext.getSessionLocation(), httpSession, automaticValidation, !automaticValidation);
+            fes = new FormEntrySession(patient, hf, FormEntryContext.Mode.ENTER, null, httpSession, automaticValidation, !automaticValidation);
         }
         fes.setAttribute("uiSessionContext", sessionContext);
         fes.setAttribute("uiUtils", ui);
