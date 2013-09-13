@@ -9,7 +9,7 @@
     def createNewVisit = createVisit ?: false
 
     def breadcrumbMiddle = breadcrumbOverride ?: """
-        [ { label: "${ ui.escapeJs(ui.format(patient.familyName)) }, ${ ui.escapeJs(ui.format(patient.givenName)) }" , link: '${ui.pageLink("coreapps", "patientdashboard/patientDashboard", [patientId: patient.id])}'} ]
+        [ { label: "${ ui.escapeJs(ui.format(patient.familyName)) }, ${ ui.escapeJs(ui.format(patient.givenName)) }" , link: '${returnUrl}'} ]
     """
 %>
 
