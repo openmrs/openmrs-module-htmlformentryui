@@ -140,6 +140,10 @@ public class EnterHtmlFormFragmentController {
             fes.setReturnUrl(returnUrl);
         }
 
+        fes.addToVelocityContext("visit", visit);
+        fes.addToVelocityContext("sessionContext", sessionContext);
+        fes.addToVelocityContext("ui", ui);
+
         model.addAttribute("currentDatetime", new Date());
         model.addAttribute("command", fes);
         model.addAttribute("visit", visit);
@@ -210,6 +214,10 @@ public class EnterHtmlFormFragmentController {
         }
         fes.setAttribute("uiSessionContext", sessionContext);
         fes.setAttribute("uiUtils", ui);
+
+        fes.addToVelocityContext("visit", visit);
+        fes.addToVelocityContext("sessionContext", sessionContext);
+        fes.addToVelocityContext("ui", ui);
 
         if (returnUrl != null) {
             fes.setReturnUrl(returnUrl);

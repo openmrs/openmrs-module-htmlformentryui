@@ -35,7 +35,7 @@
 	<properties>
 		<openMRSVersion>1.9.4-SNAPSHOT</openMRSVersion>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <htmlformentryModuleVersion>2.1.4</htmlformentryModuleVersion>
+        <htmlformentryModuleVersion>2.1.6-SNAPSHOT</htmlformentryModuleVersion>
         <uiframeworkModuleVersion>3.1-SNAPSHOT</uiframeworkModuleVersion>
         <appframeworkModuleVersion>2.0-SNAPSHOT</appframeworkModuleVersion>
         <appuiModuleVersion>1.0-SNAPSHOT</appuiModuleVersion>
