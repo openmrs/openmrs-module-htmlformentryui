@@ -129,7 +129,7 @@
         // only do the submit if all the beforeSubmit functions returned "true"
         if (state_beforeSubmit){
             var form = jq('#htmlform');
-            // TODO hide all errors
+			jq(".error", form).text(""); //clear errors
             disableSubmitButton();
             //ui.openLoadingDialog('Submitting Form');
             jq.post(form.attr('action'), form.serialize(), function(result) {
