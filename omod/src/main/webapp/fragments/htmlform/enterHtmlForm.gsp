@@ -69,6 +69,18 @@
 
     });
 
+	jq(document).ready(function() {
+		jQuery.each(jq("htmlform").find('input'), function(){
+		    jq(this).bind('keypress', function(e){
+		       if (e.keyCode == 13) {
+		       		if (!jq(this).hasClass("submitButton")) {
+		       			e.preventDefault(); 
+		       		}
+		       }
+		    });
+		});
+    });
+    
 </script>
 
 <div id="${ config.id }" <% if (config.style) { %>style="${ config.style }"<% } %> <% if (config.cssClass) { %>class="${config.cssClass}"<% } %>>
