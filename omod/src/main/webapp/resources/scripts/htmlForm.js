@@ -17,11 +17,13 @@
     var disableSubmitButton = function() {
         jq('.submitButton').attr('disabled', 'true');
         jq('.submitButton').addClass("disabled");
+        jq('.submitButton .icon-spin').css('display', 'inline-block');
     }
 
     var enableSubmitButton = function() {
         jq('.submitButton').removeAttr('disabled');
         jq('.submitButton').removeClass("disabled");
+        jq('.submitButton .icon-spin').css('display', 'none');
     }
 
     var findAndHighlightErrors = function() {
