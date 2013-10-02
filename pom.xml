@@ -40,7 +40,7 @@
         <appframeworkModuleVersion>2.0</appframeworkModuleVersion>
         <appuiModuleVersion>1.0-SNAPSHOT</appuiModuleVersion>
         <emrapiModuleVersion>1.0-SNAPSHOT</emrapiModuleVersion>
-        <uicommonsModuleVersion>1.0-SNAPSHOT</uicommonsModuleVersion>
+        <uicommonsModuleVersion>1.0</uicommonsModuleVersion>
         <providermanagementModuleVersion>2.0</providermanagementModuleVersion>
     </properties>
 
