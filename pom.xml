@@ -38,8 +38,8 @@
         <htmlformentryModuleVersion>2.2</htmlformentryModuleVersion>
         <uiframeworkModuleVersion>3.1</uiframeworkModuleVersion>
         <appframeworkModuleVersion>2.0</appframeworkModuleVersion>
-        <appuiModuleVersion>1.0-SNAPSHOT</appuiModuleVersion>
-        <emrapiModuleVersion>1.0-SNAPSHOT</emrapiModuleVersion>
+        <appuiModuleVersion>1.0</appuiModuleVersion>
+        <emrapiModuleVersion>1.0</emrapiModuleVersion>
         <uicommonsModuleVersion>1.0</uicommonsModuleVersion>
         <providermanagementModuleVersion>2.0</providermanagementModuleVersion>
     </properties>
