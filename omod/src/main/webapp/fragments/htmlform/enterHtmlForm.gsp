@@ -51,8 +51,8 @@
         // TODO this probably should be handled in HFE itself when configuring the widget? could handle this when implementing HTML-480?
         <% if (visit) { %>
             <% if (command.context.mode.toString().equals('ENTER') && !visit.isOpen()) { %>
-                // set default date to the visit start date for retrospective visits
-                htmlForm.setEncounterDate(new Date('${ visit.startDatetime }'));
+                // set default date to the visit date for retrospective visits
+                htmlForm.setEncounterDate(new Date('${ visit.stopDatetime }'));
             <% } %>
 
             // set valid date range based on visit
