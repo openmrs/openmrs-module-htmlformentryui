@@ -64,10 +64,7 @@ ${ ui.includeFragment("htmlformentryui", "htmlform/enterHtmlForm", [
             <div class="after-data-canvas"></div>
 
             <p style="display: inline">
-                <button type="button" onclick="submitHtmlForm()" class="submitButton confirm right">
-                    ${ ui.message("emr.save") }
-                    <i class="icon-spinner icon-spin icon-2x" style="display: none; margin-left: 10px;"></i>
-                </button>
+                <input type="submit" value="${ ui.message("emr.save") }" class="confirm right"/>
             </p>
             <p style="display: inline">
                 <input type="button" value="${ ui.message("emr.no") }" class="cancel" />
