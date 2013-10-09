@@ -15,13 +15,15 @@
     var returnUrl = '';
 
     var disableSubmitButton = function() {
-        jq('.submitButton').attr('disabled', 'true');
-        jq('.submitButton').addClass("disabled");
+        jq('.submitButton.confirm').attr('disabled', 'disabled');
+        jq('.submitButton.confirm').addClass("disabled");
+        jq('.submitButton.confirm .icon-spin').css('display', 'inline-block');
     }
 
     var enableSubmitButton = function() {
-        jq('.submitButton').removeAttr('disabled');
-        jq('.submitButton').removeClass("disabled");
+        jq('.submitButton.confirm').removeAttr('disabled', 'disabled');
+        jq('.submitButton.confirm').removeClass("disabled");
+        jq('.submitButton.confirm .icon-spin').css('display', 'none');
     }
 
     var findAndHighlightErrors = function() {
@@ -80,7 +82,9 @@
                     tryingToSubmit = false;
                     return;
                 } else {
-                    doSubmitHtmlForm();
+                    if(!$(".submitButton.confirm").is(":disabled")) {
+                        doSubmitHtmlForm();
+                    }
                 }
             }
             else {
