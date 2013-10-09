@@ -82,9 +82,7 @@
                     tryingToSubmit = false;
                     return;
                 } else {
-                    if(!$(".submitButton.confirm").is(":disabled")) {
-                        doSubmitHtmlForm();
-                    }
+                    doSubmitHtmlForm();
                 }
             }
             else {
@@ -166,7 +164,7 @@
     };
 
     htmlForm.submitHtmlForm = function()  {
-        if (!tryingToSubmit) {
+        if (!tryingToSubmit && !$(".submitButton.confirm").is(":disabled")) {    // don't allow form submittal if submit button is disabled (disallows multiple submits)
             tryingToSubmit = true;
             jq.getJSON(emr.fragmentActionLink('htmlformentryui', 'htmlform/enterHtmlForm', 'checkIfLoggedIn'), function(result) {
                 checkIfLoggedInAndErrorsCallback(result.isLoggedIn);
