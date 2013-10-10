@@ -26,6 +26,10 @@
         jq('.submitButton.confirm .icon-spin').css('display', 'none');
     }
 
+    var submitButtonIsDisabled = function() {
+        return $(".submitButton.confirm").is(":disabled");
+    }
+
     var findAndHighlightErrors = function() {
         /* see if there are error fields */
         var containError = false
@@ -129,10 +133,11 @@
         }
 
         // only do the submit if all the beforeSubmit functions returned "true"
-        if (state_beforeSubmit){
+        // also, hack to double check to  disallow form submittal if submit button is disabled (prevent multiple submits)
+        if (state_beforeSubmit && !submitButtonIsDisabled()){
+            disableSubmitButton();
             var form = jq('#htmlform');
 			jq(".error", form).text(""); //clear errors
-            disableSubmitButton();
             //ui.openLoadingDialog('Submitting Form');
             jq.post(form.attr('action'), form.serialize(), function(result) {
                 if (result.success) {
@@ -164,7 +169,7 @@
     };
 
     htmlForm.submitHtmlForm = function()  {
-        if (!tryingToSubmit && !$(".submitButton.confirm").is(":disabled")) {    // don't allow form submittal if submit button is disabled (disallows multiple submits)
+        if (!tryingToSubmit) {    // don't allow form submittal if submit button is disabled (disallows multiple submits)
             tryingToSubmit = true;
             jq.getJSON(emr.fragmentActionLink('htmlformentryui', 'htmlform/enterHtmlForm', 'checkIfLoggedIn'), function(result) {
                 checkIfLoggedInAndErrorsCallback(result.isLoggedIn);
