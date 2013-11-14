@@ -86,7 +86,7 @@ public class EnterHtmlFormFragmentController {
                            @SpringBean("htmlFormEntryService") HtmlFormEntryService htmlFormEntryService,
                            @SpringBean("formService") FormService formService,
                            @SpringBean("coreResourceFactory") ResourceFactory resourceFactory,
-                           @SpringBean("featureToggleProperties") FeatureToggleProperties featureToggles,
+                           @SpringBean("featureToggles") FeatureToggleProperties featureToggles,
                            @FragmentParam("patient") Patient patient,
                            @FragmentParam(value = "htmlForm", required = false) HtmlForm hf,
                            @FragmentParam(value = "htmlFormId", required = false) Integer htmlFormId,
