@@ -23,6 +23,7 @@ import org.openmrs.api.EncounterService;
 import org.openmrs.api.FormService;
 import org.openmrs.api.context.Context;
 import org.openmrs.api.context.ContextAuthenticationException;
+import org.openmrs.module.appframework.feature.FeatureToggleProperties;
 import org.openmrs.module.appui.UiSessionContext;
 import org.openmrs.module.emrapi.adt.AdtService;
 import org.openmrs.module.emrapi.adt.exception.EncounterDateAfterVisitStopDateException;
@@ -85,6 +86,7 @@ public class EnterHtmlFormFragmentController {
                            @SpringBean("htmlFormEntryService") HtmlFormEntryService htmlFormEntryService,
                            @SpringBean("formService") FormService formService,
                            @SpringBean("coreResourceFactory") ResourceFactory resourceFactory,
+                           @SpringBean("featureToggleProperties") FeatureToggleProperties featureToggles,
                            @FragmentParam("patient") Patient patient,
                            @FragmentParam(value = "htmlForm", required = false) HtmlForm hf,
                            @FragmentParam(value = "htmlFormId", required = false) Integer htmlFormId,
@@ -143,6 +145,7 @@ public class EnterHtmlFormFragmentController {
         fes.addToVelocityContext("visit", visit);
         fes.addToVelocityContext("sessionContext", sessionContext);
         fes.addToVelocityContext("ui", ui);
+        fes.addToVelocityContext("featureToggles", featureToggles);
 
         model.addAttribute("currentDatetime", new Date());
         model.addAttribute("command", fes);
@@ -199,6 +202,7 @@ public class EnterHtmlFormFragmentController {
                          @SpringBean("encounterService") EncounterService encounterService,
                          @SpringBean("adtService") AdtService adtService,
                          @SpringBean("coreResourceFactory") ResourceFactory resourceFactory,
+                         @SpringBean("featureToggleProperties") FeatureToggleProperties featureToggles,
                          UiUtils ui,
                          HttpServletRequest request) throws Exception {
 
@@ -218,6 +222,7 @@ public class EnterHtmlFormFragmentController {
         fes.addToVelocityContext("visit", visit);
         fes.addToVelocityContext("sessionContext", sessionContext);
         fes.addToVelocityContext("ui", ui);
+        fes.addToVelocityContext("featureToggles", featureToggles);
 
         if (returnUrl != null) {
             fes.setReturnUrl(returnUrl);

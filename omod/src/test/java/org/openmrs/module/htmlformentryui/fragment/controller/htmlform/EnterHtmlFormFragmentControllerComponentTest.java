@@ -32,6 +32,7 @@ import org.openmrs.api.PatientService;
 import org.openmrs.api.PersonService;
 import org.openmrs.api.ProviderService;
 import org.openmrs.api.VisitService;
+import org.openmrs.module.appframework.feature.FeatureToggleProperties;
 import org.openmrs.module.appui.TestUiUtils;
 import org.openmrs.module.appui.UiSessionContext;
 import org.openmrs.module.emrapi.adt.AdtService;
@@ -101,6 +102,10 @@ public class EnterHtmlFormFragmentControllerComponentTest extends BaseModuleWebC
     @Autowired
     VisitService visitService;
 
+    @Qualifier("featureToggles")
+    @Autowired
+    FeatureToggleProperties featureToggles;
+
     ResourceFactory resourceFactory;
 
     UiUtils ui;
@@ -108,6 +113,9 @@ public class EnterHtmlFormFragmentControllerComponentTest extends BaseModuleWebC
     UiSessionContext sessionContext;
 
     public static final String FORM_DEFINITION = "<htmlform formUuid=\"form-uuid\" formName=\"Form Name\" formVersion=\"1.0\">Weight:<obs id=\"weight\" conceptId=\"5089\"/> <encounterDate showTime=\"true\"/> <encounterLocation/> <encounterProvider/></htmlform>";
+    public static final String FEATURE_TOGGLE_TEST_FORM_DEFINITION = "<htmlform formUuid=\"form-uuid\" formName=\"Form Name\" formVersion=\"1.0\"> <includeIf velocityTest=\"$featureToggles.isFeatureEnabled('someFeatureToggle')\"> featureToggledOn </includeIf>"
+            + "<encounterDate showTime=\"true\"/> <encounterLocation/> <encounterProvider/></htmlform>";
+
     private EnterHtmlFormFragmentController controller;
 
 
@@ -138,7 +146,7 @@ public class EnterHtmlFormFragmentControllerComponentTest extends BaseModuleWebC
         config.put("patient", patient);
         config.put("definitionResource", resourcePath);
 
-        controller.controller(config, sessionContext, ui, htmlFormEntryService, formService, resourceFactory, patient, null, null, null, null, resourcePath, null, null, null, null, true, model, null);
+        controller.controller(config, sessionContext, ui, htmlFormEntryService, formService, resourceFactory, featureToggles, patient, null, null, null, null, resourcePath, null, null, null, null, true, model, null);
 
         FormEntrySession command = (FormEntrySession) model.getAttribute("command");
         String html = command.getHtmlToDisplay();
@@ -177,7 +185,7 @@ public class EnterHtmlFormFragmentControllerComponentTest extends BaseModuleWebC
         request.addParameter("w7", "2"); // location = Xanadu
         request.addParameter("w9", "502"); // provider = Hippocrates
 
-        SimpleObject result = controller.submit(sessionContext, patient, hf, null, visit, null, null, encounterService, adtService, resourceFactory, ui, request);
+        SimpleObject result = controller.submit(sessionContext, patient, hf, null, visit, null, null, encounterService, adtService, resourceFactory, featureToggles, ui, request);
         assertThat((Boolean) result.get("success"), Matchers.is(Boolean.TRUE));
         assertThat(encounterService.getEncountersByPatient(patient).size(), Matchers.is(1));
         Encounter created = encounterService.getEncountersByPatient(patient).get(0);
@@ -217,7 +225,7 @@ public class EnterHtmlFormFragmentControllerComponentTest extends BaseModuleWebC
         request.addParameter("w7", "2"); // location = Xanadu
         request.addParameter("w9", "502"); // provider = Hippocrates
 
-        SimpleObject result = controller.submit(sessionContext, patient, hf, null, null, true, null, encounterService, adtService, resourceFactory, ui, request);
+        SimpleObject result = controller.submit(sessionContext, patient, hf, null, null, true, null, encounterService, adtService, resourceFactory, featureToggles, ui, request);
         assertThat((Boolean) result.get("success"), is(Boolean.TRUE));
         assertThat(encounterService.getEncountersByPatient(patient).size(), is(1));
         Encounter created = encounterService.getEncountersByPatient(patient).get(0);
@@ -256,7 +264,7 @@ public class EnterHtmlFormFragmentControllerComponentTest extends BaseModuleWebC
         request.addParameter("w7", "2"); // location = Xanadu
         request.addParameter("w9", "502"); // provider = Hippocrates
 
-        SimpleObject result = controller.submit(sessionContext, patient, hf, null, visit, true, null, encounterService, adtService, resourceFactory, ui, request);
+        SimpleObject result = controller.submit(sessionContext, patient, hf, null, visit, true, null, encounterService, adtService, resourceFactory, featureToggles, ui, request);
         assertThat((Boolean) result.get("success"), is(Boolean.TRUE));
         assertThat(encounterService.getEncountersByPatient(patient).size(), is(1));
         Encounter created = encounterService.getEncountersByPatient(patient).get(0);
@@ -292,7 +300,7 @@ public class EnterHtmlFormFragmentControllerComponentTest extends BaseModuleWebC
         request.addParameter("w7", "2"); // location = Xanadu
         request.addParameter("w9", "502"); // provider = Hippocrates
 
-        SimpleObject result = controller.submit(sessionContext, patient, hf, null, null, false, null, encounterService, adtService, resourceFactory, ui, request);
+        SimpleObject result = controller.submit(sessionContext, patient, hf, null, null, false, null, encounterService, adtService, resourceFactory, featureToggles, ui, request);
         assertThat((Boolean) result.get("success"), is(Boolean.TRUE));
         assertThat(encounterService.getEncountersByPatient(patient).size(), is(1));
         Encounter created = encounterService.getEncountersByPatient(patient).get(0);
@@ -306,7 +314,7 @@ public class EnterHtmlFormFragmentControllerComponentTest extends BaseModuleWebC
         editRequest.addParameter("w7", "2"); // location = Xanadu
         editRequest.addParameter("w9", "502"); // provider = Hippocrates
 
-        result = controller.submit(sessionContext, patient, hf, created, null, false, null, encounterService, adtService, resourceFactory, ui, editRequest);
+        result = controller.submit(sessionContext, patient, hf, created, null, false, null, encounterService, adtService, resourceFactory, featureToggles, ui, editRequest);
         assertThat((Boolean) result.get("success"), is(Boolean.TRUE));
         assertThat(encounterService.getEncountersByPatient(patient).size(), is(1));
 
@@ -342,7 +350,7 @@ public class EnterHtmlFormFragmentControllerComponentTest extends BaseModuleWebC
         request.addParameter("w7", "2"); // location = Xanadu
         request.addParameter("w9", "502"); // provider = Hippocrates
 
-        SimpleObject result = controller.submit(sessionContext, patient, hf, null, null, false, null, encounterService, adtService, resourceFactory, ui, request);
+        SimpleObject result = controller.submit(sessionContext, patient, hf, null, null, false, null, encounterService, adtService, resourceFactory, featureToggles, ui, request);
         assertThat((Boolean) result.get("success"), is(Boolean.TRUE));
         assertThat(encounterService.getEncountersByPatient(patient).size(), is(1));
         Encounter created = encounterService.getEncountersByPatient(patient).get(0);
@@ -359,7 +367,7 @@ public class EnterHtmlFormFragmentControllerComponentTest extends BaseModuleWebC
         editRequest.addParameter("w7", "2"); // location = Xanadu
         editRequest.addParameter("w9", "502"); // provider = Hippocrates
 
-        result = controller.submit(sessionContext, patient, hf, created, null, false, null, encounterService, adtService, resourceFactory, ui, editRequest);
+        result = controller.submit(sessionContext, patient, hf, created, null, false, null, encounterService, adtService, resourceFactory, featureToggles, ui, editRequest);
         assertThat((Boolean) result.get("success"), is(Boolean.TRUE));
         assertThat(encounterService.getEncountersByPatient(patient).size(), is(1));
 
@@ -395,7 +403,7 @@ public class EnterHtmlFormFragmentControllerComponentTest extends BaseModuleWebC
         request.addParameter("w7", "2"); // location = Xanadu
         request.addParameter("w9", "502"); // provider = Hippocrates
 
-        SimpleObject result = controller.submit(sessionContext, patient, hf, null, null, false, null, encounterService, adtService, resourceFactory, ui, request);
+        SimpleObject result = controller.submit(sessionContext, patient, hf, null, null, false, null, encounterService, adtService, resourceFactory, featureToggles, ui, request);
         assertThat((Boolean) result.get("success"), is(Boolean.TRUE));
         assertThat(encounterService.getEncountersByPatient(patient).size(), is(1));
         Encounter created = encounterService.getEncountersByPatient(patient).get(0);
@@ -412,7 +420,7 @@ public class EnterHtmlFormFragmentControllerComponentTest extends BaseModuleWebC
         editRequest.addParameter("w7", "2"); // location = Xanadu
         editRequest.addParameter("w9", "502"); // provider = Hippocrates
 
-        result = controller.submit(sessionContext, patient, hf, created, null, false, null, encounterService, adtService, resourceFactory, ui, editRequest);
+        result = controller.submit(sessionContext, patient, hf, created, null, false, null, encounterService, adtService, resourceFactory, featureToggles, ui, editRequest);
         assertThat((Boolean) result.get("success"), is(Boolean.TRUE));
         assertThat(encounterService.getEncountersByPatient(patient).size(), is(1));
 
@@ -420,4 +428,49 @@ public class EnterHtmlFormFragmentControllerComponentTest extends BaseModuleWebC
         assertThat(created.getEncounterDatetime(), is(updatedEncounterDate));
 
     }
+
+    @Test
+    public void testFeatureTogglingViaVelocityShouldNotShowFeatureIfToggledOff() throws Exception {
+        FragmentModel model = new FragmentModel();
+        Patient patient = new Patient();
+        String resourcePath = "emr:htmlforms/featureTogglesTest.xml";
+        when(resourceFactory.getResourceAsString("emr", "htmlforms/featureTogglesTest.xml")).thenReturn(FEATURE_TOGGLE_TEST_FORM_DEFINITION);
+
+        // overrride the feature toggles service with a mock
+        featureToggles = mock(FeatureToggleProperties.class);
+        when(featureToggles.isFeatureEnabled("someFeatureToggle")).thenReturn(false);
+
+        FragmentConfiguration config = new FragmentConfiguration();
+        config.put("patient", patient);
+        config.put("definitionResource", resourcePath);
+
+        controller.controller(config, sessionContext, ui, htmlFormEntryService, formService, resourceFactory, featureToggles, patient, null, null, null, null, resourcePath, null, null, null, null, true, model, null);
+
+        FormEntrySession command = (FormEntrySession) model.getAttribute("command");
+        String html = command.getHtmlToDisplay();
+        assertThat(html, Matchers.not(Matchers.containsString("featureToggledOn")));
+    }
+
+    @Test
+    public void testFeatureTogglingViaVelocityShouldShowFeatureIfToggledOn() throws Exception {
+        FragmentModel model = new FragmentModel();
+        Patient patient = new Patient();
+        String resourcePath = "emr:htmlforms/featureTogglesTest.xml";
+        when(resourceFactory.getResourceAsString("emr", "htmlforms/featureTogglesTest.xml")).thenReturn(FEATURE_TOGGLE_TEST_FORM_DEFINITION);
+
+        // overrride the feature toggles service with a mock
+        featureToggles = mock(FeatureToggleProperties.class);
+        when(featureToggles.isFeatureEnabled("someFeatureToggle")).thenReturn(true);
+
+        FragmentConfiguration config = new FragmentConfiguration();
+        config.put("patient", patient);
+        config.put("definitionResource", resourcePath);
+
+        controller.controller(config, sessionContext, ui, htmlFormEntryService, formService, resourceFactory, featureToggles, patient, null, null, null, null, resourcePath, null, null, null, null, true, model, null);
+
+        FormEntrySession command = (FormEntrySession) model.getAttribute("command");
+        String html = command.getHtmlToDisplay();
+        assertThat(html, Matchers.containsString("featureToggledOn"));
+    }
+
 }
