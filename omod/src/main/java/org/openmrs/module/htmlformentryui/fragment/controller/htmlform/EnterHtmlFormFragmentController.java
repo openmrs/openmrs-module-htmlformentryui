@@ -202,7 +202,7 @@ public class EnterHtmlFormFragmentController {
                          @SpringBean("encounterService") EncounterService encounterService,
                          @SpringBean("adtService") AdtService adtService,
                          @SpringBean("coreResourceFactory") ResourceFactory resourceFactory,
-                         @SpringBean("featureToggleProperties") FeatureToggleProperties featureToggles,
+                         @SpringBean("featureToggles") FeatureToggleProperties featureToggles,
                          UiUtils ui,
                          HttpServletRequest request) throws Exception {
 
