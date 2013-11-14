@@ -18,6 +18,10 @@ ${ ui.includeFragment("uicommons", "validationMessages")}
 ${ ui.includeFragment("coreapps", "patientHeader", [ patient: patient ]) }
 
 <script type="text/javascript">
+
+    // TODO expose this some other way than a global variable so we can support multiple navigators (if that will ever be needd)
+    var NavigatorController;
+
     var breadcrumbs = _.flatten([
         { icon: "icon-home", link: '/' + OPENMRS_CONTEXT_PATH + '/index.htm' },
         ${ breadcrumbMiddle } ,
@@ -27,7 +31,7 @@ ${ ui.includeFragment("coreapps", "patientHeader", [ patient: patient ]) }
     jQuery(function() {
         jq('input.submitButton').hide();
         jq('form#htmlform').append(jq('#confirmation-template').html());
-        KeyboardController(jq('#htmlform').first());
+        NavigatorController =  KeyboardController(jq('#htmlform').first());
 
         jq('input.confirm').click(function(){
 
