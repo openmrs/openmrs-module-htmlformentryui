@@ -5,7 +5,8 @@
     ui.includeJavascript("uicommons", "navigator/navigatorHandlers.js", Integer.MAX_VALUE - 21)
     ui.includeJavascript("uicommons", "navigator/navigatorModels.js", Integer.MAX_VALUE - 21)
     ui.includeJavascript("uicommons", "navigator/exitHandlers.js", Integer.MAX_VALUE - 22);
-
+    ui.includeJavascript("uicommons", "angular.min.js");
+    ui.includeJavascript("uicommons", "angular-resource.min.js");
     def createNewVisit = createVisit ?: false
 
     def breadcrumbMiddle = breadcrumbOverride ?: """
@@ -62,6 +63,8 @@ ${ ui.includeFragment("htmlformentryui", "htmlform/enterHtmlForm", [
 
         <div id="confirmationQuestion" class="container">
             <h3>${ ui.message("emr.simpleFormUi.confirm.question") }</h3>
+
+            <div id="confirmation-messages"></div>
 
             <div class="before-dataCanvas"></div>
             <div id="dataCanvas"></div>
