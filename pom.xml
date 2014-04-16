@@ -33,7 +33,7 @@
 	</modules>
 	
 	<properties>
-		<openMRSVersion>1.9.4</openMRSVersion>
+		<openMRSVersion>1.9.7</openMRSVersion>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <htmlformentryModuleVersion>2.2</htmlformentryModuleVersion>
         <uiframeworkModuleVersion>3.1</uiframeworkModuleVersion>
