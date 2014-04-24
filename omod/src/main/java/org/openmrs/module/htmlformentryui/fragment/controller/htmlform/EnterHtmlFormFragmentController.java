@@ -151,7 +151,7 @@ public class EnterHtmlFormFragmentController {
         // note that we pass the plain visit object to the form entry context, but the velocity context and the model get the "wrapped" visit--not sure if we want to pass the wrapped visit to HFE as well
         fes.getContext().setVisit(visit);
 
-        VisitDomainWrapper wrappedVisit= adtService.wrap(visit);
+        VisitDomainWrapper wrappedVisit = visit != null ? adtService.wrap(visit) : null;
         fes.addToVelocityContext("visit", wrappedVisit);
         fes.addToVelocityContext("sessionContext", sessionContext);
         fes.addToVelocityContext("ui", ui);
