@@ -14,6 +14,10 @@
 
 package org.openmrs.module.htmlformentryui.fragment.controller.htmlform;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.concurrent.TimeUnit;
+
 import org.hamcrest.Matchers;
 import org.hamcrest.core.IsCollectionContaining;
 import org.joda.time.DateMidnight;
@@ -49,10 +53,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.mock.web.MockHttpServletRequest;
 import uk.co.it.modular.hamcrest.date.DateMatchers;
-
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.concurrent.TimeUnit;
 
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertNotNull;
@@ -146,7 +146,7 @@ public class EnterHtmlFormFragmentControllerComponentTest extends BaseModuleWebC
         config.put("patient", patient);
         config.put("definitionResource", resourcePath);
 
-        controller.controller(config, sessionContext, ui, htmlFormEntryService, formService, resourceFactory, featureToggles, patient, null, null, null, null, resourcePath, null, null, null, null, true, model, null);
+        controller.controller(config, sessionContext, ui, htmlFormEntryService, adtService, formService, resourceFactory, featureToggles, patient, null, null, null, null, resourcePath, null, null, null, null, true, model, null);
 
         FormEntrySession command = (FormEntrySession) model.getAttribute("command");
         String html = command.getHtmlToDisplay();
@@ -444,7 +444,7 @@ public class EnterHtmlFormFragmentControllerComponentTest extends BaseModuleWebC
         config.put("patient", patient);
         config.put("definitionResource", resourcePath);
 
-        controller.controller(config, sessionContext, ui, htmlFormEntryService, formService, resourceFactory, featureToggles, patient, null, null, null, null, resourcePath, null, null, null, null, true, model, null);
+        controller.controller(config, sessionContext, ui, htmlFormEntryService, adtService, formService, resourceFactory, featureToggles, patient, null, null, null, null, resourcePath, null, null, null, null, true, model, null);
 
         FormEntrySession command = (FormEntrySession) model.getAttribute("command");
         String html = command.getHtmlToDisplay();
@@ -466,7 +466,7 @@ public class EnterHtmlFormFragmentControllerComponentTest extends BaseModuleWebC
         config.put("patient", patient);
         config.put("definitionResource", resourcePath);
 
-        controller.controller(config, sessionContext, ui, htmlFormEntryService, formService, resourceFactory, featureToggles, patient, null, null, null, null, resourcePath, null, null, null, null, true, model, null);
+        controller.controller(config, sessionContext, ui, htmlFormEntryService, adtService, formService, resourceFactory, featureToggles, patient, null, null, null, null, resourcePath, null, null, null, null, true, model, null);
 
         FormEntrySession command = (FormEntrySession) model.getAttribute("command");
         String html = command.getHtmlToDisplay();

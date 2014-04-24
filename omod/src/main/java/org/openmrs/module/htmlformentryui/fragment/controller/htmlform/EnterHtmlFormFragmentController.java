@@ -14,6 +14,13 @@
 
 package org.openmrs.module.htmlformentryui.fragment.controller.htmlform;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import org.joda.time.DateMidnight;
 import org.openmrs.Encounter;
 import org.openmrs.Form;
@@ -49,13 +56,6 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 /**
  *
  */
@@ -84,6 +84,7 @@ public class EnterHtmlFormFragmentController {
                            UiSessionContext sessionContext,
                            UiUtils ui,
                            @SpringBean("htmlFormEntryService") HtmlFormEntryService htmlFormEntryService,
+                           @SpringBean("adtService") AdtService adtService,
                            @SpringBean("formService") FormService formService,
                            @SpringBean("coreResourceFactory") ResourceFactory resourceFactory,
                            @SpringBean("featureToggles") FeatureToggleProperties featureToggles,
@@ -94,7 +95,7 @@ public class EnterHtmlFormFragmentController {
                            @FragmentParam(value = "formUuid", required = false) String formUuid,
                            @FragmentParam(value = "definitionUiResource", required = false) String definitionUiResource,
                            @FragmentParam(value = "encounter", required = false) Encounter encounter,
-                           @FragmentParam(value = "visit", required = false) VisitDomainWrapper visit,
+                           @FragmentParam(value = "visit", required = false) Visit visit,
                            @FragmentParam(value = "createVisit", required = false) Boolean createVisit,
                            @FragmentParam(value = "returnUrl", required = false) String returnUrl,
                            @FragmentParam(value = "automaticValidation", defaultValue = "true") boolean automaticValidation,
@@ -142,14 +143,23 @@ public class EnterHtmlFormFragmentController {
             fes.setReturnUrl(returnUrl);
         }
 
-        fes.addToVelocityContext("visit", visit);
+        // if we don't have a visit, but the encounter has a visit, use that
+        if (visit == null && encounter != null) {
+            visit = encounter.getVisit();
+        }
+
+        // note that we pass the plain visit object to the form entry context, but the velocity context and the model get the "wrapped" visit--not sure if we want to pass the wrapped visit to HFE as well
+        fes.getContext().setVisit(visit);
+
+        VisitDomainWrapper wrappedVisit= adtService.wrap(visit);
+        fes.addToVelocityContext("visit", wrappedVisit);
         fes.addToVelocityContext("sessionContext", sessionContext);
         fes.addToVelocityContext("ui", ui);
         fes.addToVelocityContext("featureToggles", featureToggles);
 
         model.addAttribute("currentDatetime", new Date());
         model.addAttribute("command", fes);
-        model.addAttribute("visit", visit);
+        model.addAttribute("visit", wrappedVisit);
         if (createVisit!=null) {
             model.addAttribute("createVisit", createVisit.toString());
         } else {
