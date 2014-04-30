@@ -33,12 +33,13 @@ public class EditHtmlFormWithStandardUiPageController extends BaseHtmlFormPageCo
                     @RequestParam(value = "returnUrl", required = false) String returnUrl,
                     @RequestParam(value = "returnProvider", required =  false) String returnProvider,
                     @RequestParam(value = "returnPage", required = false) String returnPage,
+                    @RequestParam(value = "returnLabel", required = false) String returnLabel,
                     @RequestParam(value = "breadcrumbOverride", required = false) String breadcrumbOverride,
                     @SpringBean("htmlFormEntryService") HtmlFormEntryService htmlFormEntryService,
                     UiUtils ui,
                     PageModel pageModel) {
 
-        // TODO: this should probably be merged in with BaseEnterHtmlFormPageController
+        // TODO: maybe this should be merged in with BaseEnterHtmlFormPageController?
 
         if (!encounter.getPatient().equals(patient)) {
             throw new IllegalArgumentException("encounter.patient != patient");
@@ -58,11 +59,13 @@ public class EditHtmlFormWithStandardUiPageController extends BaseHtmlFormPageCo
         }
 
         returnUrl = determineReturnUrl(returnUrl, returnProvider, returnPage, patient, encounter.getVisit(), ui);
+        returnLabel = determineReturnLabel(returnLabel, patient, ui);
 
         pageModel.addAttribute("encounter", encounter);
         pageModel.addAttribute("patient", patient);
         pageModel.addAttribute("htmlForm", htmlForm);
         pageModel.addAttribute("returnUrl", returnUrl);
+        pageModel.addAttribute("returnLabel", returnLabel);
         pageModel.addAttribute("breadcrumbOverride", breadcrumbOverride);
     }
 

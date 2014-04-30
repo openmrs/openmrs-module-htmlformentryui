@@ -45,4 +45,16 @@ public abstract class BaseHtmlFormPageController {
 
     }
 
+
+    protected String determineReturnLabel(String returnLabel, Patient patient, UiUtils ui) {
+
+        if (StringUtils.isNotBlank(returnLabel)) {
+            return ui.message(returnLabel);
+        }
+        else {
+            return ui.escapeJs(ui.format(patient.getFamilyName())) + ", " + ui.escapeJs(ui.format(patient.getGivenName()));
+        }
+
+    }
+
 }

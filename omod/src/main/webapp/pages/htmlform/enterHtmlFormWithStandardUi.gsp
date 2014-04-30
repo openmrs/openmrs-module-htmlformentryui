@@ -5,7 +5,7 @@
     ui.includeJavascript("uicommons", "angular-resource.min.js");
 
     def breadcrumbMiddle = breadcrumbOverride ?: """
-        [ { label: "${ ui.escapeJs(ui.format(patient.familyName)) }, ${ ui.escapeJs(ui.format(patient.givenName)) }" , link: '${returnUrl}'} ]
+        [ { label: '${ returnLabel }' , link: '${ returnUrl }'} ]
     """
 %>
 

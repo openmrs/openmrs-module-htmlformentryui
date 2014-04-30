@@ -44,6 +44,7 @@ public abstract class BaseEnterHtmlFormPageController extends BaseHtmlFormPageCo
                     @RequestParam(value = "returnUrl", required = false) String returnUrl,
                     @RequestParam(value = "returnProvider", required =  false) String returnProvider,
                     @RequestParam(value = "returnPage", required = false) String returnPage,
+                    @RequestParam(value = "returnLabel", required = false) String returnLabel,
                     @RequestParam(value = "breadcrumbOverride", required = false) String breadcrumbOverride,
                     @SpringBean("htmlFormEntryService") HtmlFormEntryService htmlFormEntryService,
                     @SpringBean("formService") FormService formService,
@@ -51,7 +52,7 @@ public abstract class BaseEnterHtmlFormPageController extends BaseHtmlFormPageCo
                     UiUtils ui,
                     PageModel model) throws Exception {
 
-        // TODO: EditHtmlFormWithStandardUiPageController should probably be merged into this
+        // TODO: maybe EditHtmlFormWithStandardUiPageController should probably be merged into this?
 
         sessionContext.requireAuthentication();
 
@@ -70,12 +71,14 @@ public abstract class BaseEnterHtmlFormPageController extends BaseHtmlFormPageCo
         }
 
         returnUrl = determineReturnUrl(returnUrl, returnProvider, returnPage, currentPatient, visit, ui);
+        returnLabel = determineReturnLabel(returnLabel, currentPatient, ui);
 
         model.addAttribute("htmlForm", htmlForm);
         model.addAttribute("patient", currentPatient);
         model.addAttribute("visit", visit);
         model.addAttribute("createVisit", createVisit);
         model.addAttribute("returnUrl", returnUrl);
+        model.addAttribute("returnLabel", returnLabel);
         model.addAttribute("breadcrumbOverride", breadcrumbOverride);
     }
 
