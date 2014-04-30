@@ -83,15 +83,7 @@ public class BaseHtmlFormPageControllerTest {
         when(uiUtils.escapeJs("Tom")).thenReturn("Tom");
         when(uiUtils.escapeJs("Smith")).thenReturn("Smith");
         String returnLabel = controller.determineReturnLabel(null, patient, uiUtils);
-
-        verify(uiUtils).format("Tom");
-        verify(uiUtils).format("Smith");
-
-        verify(uiUtils).escapeJs("Tom");
-        verify(uiUtils).escapeJs("Smith");
-
         assertThat(returnLabel, is("Smith, Tom"));
-
     }
 
     private class NonAbstractBaseHtmlPageController extends BaseHtmlFormPageController {
