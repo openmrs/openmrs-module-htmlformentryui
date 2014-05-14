@@ -14,13 +14,6 @@
 
 package org.openmrs.module.htmlformentryui.fragment.controller.htmlform;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import org.joda.time.DateMidnight;
 import org.openmrs.Encounter;
 import org.openmrs.Form;
@@ -55,6 +48,13 @@ import org.openmrs.ui.framework.resource.ResourceFactory;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.RequestParam;
+
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 
 /**
  *
@@ -263,8 +263,10 @@ public class EnterHtmlFormFragmentController {
 
         // create a visit if necessary
         // (note that this currently only works in real-time mode)
-        if (createVisit != null && (createVisit) && visit == null) {
+        if (createVisit != null && (createVisit) && visit == null && fes.getContext().getVisit() == null) {
             visit = adtService.ensureActiveVisit(patient, sessionContext.getSessionLocation());
+            // add the visit to the context (so that actions have access to it in applyActions call)
+            fes.getContext().setVisit(visit);
         }
 
         // attach to the visit if it exists
