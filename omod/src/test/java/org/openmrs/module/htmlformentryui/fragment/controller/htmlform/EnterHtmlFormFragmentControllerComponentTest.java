@@ -14,10 +14,6 @@
 
 package org.openmrs.module.htmlformentryui.fragment.controller.htmlform;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.concurrent.TimeUnit;
-
 import org.hamcrest.Matchers;
 import org.hamcrest.core.IsCollectionContaining;
 import org.joda.time.DateMidnight;
@@ -53,6 +49,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.mock.web.MockHttpServletRequest;
 import uk.co.it.modular.hamcrest.date.DateMatchers;
+
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.concurrent.TimeUnit;
 
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertNotNull;
@@ -185,7 +185,7 @@ public class EnterHtmlFormFragmentControllerComponentTest extends BaseModuleWebC
         request.addParameter("w7", "2"); // location = Xanadu
         request.addParameter("w9", "502"); // provider = Hippocrates
 
-        SimpleObject result = controller.submit(sessionContext, patient, hf, null, visit, null, null, encounterService, adtService, resourceFactory, featureToggles, ui, request);
+        SimpleObject result = controller.submit(sessionContext, patient, hf, null, visit, null, null, adtService, featureToggles, ui, request);
         assertThat((Boolean) result.get("success"), Matchers.is(Boolean.TRUE));
         assertThat(encounterService.getEncountersByPatient(patient).size(), Matchers.is(1));
         Encounter created = encounterService.getEncountersByPatient(patient).get(0);
@@ -225,7 +225,7 @@ public class EnterHtmlFormFragmentControllerComponentTest extends BaseModuleWebC
         request.addParameter("w7", "2"); // location = Xanadu
         request.addParameter("w9", "502"); // provider = Hippocrates
 
-        SimpleObject result = controller.submit(sessionContext, patient, hf, null, null, true, null, encounterService, adtService, resourceFactory, featureToggles, ui, request);
+        SimpleObject result = controller.submit(sessionContext, patient, hf, null, null, true, null, adtService, featureToggles, ui, request);
         assertThat((Boolean) result.get("success"), is(Boolean.TRUE));
         assertThat(encounterService.getEncountersByPatient(patient).size(), is(1));
         Encounter created = encounterService.getEncountersByPatient(patient).get(0);
@@ -264,7 +264,7 @@ public class EnterHtmlFormFragmentControllerComponentTest extends BaseModuleWebC
         request.addParameter("w7", "2"); // location = Xanadu
         request.addParameter("w9", "502"); // provider = Hippocrates
 
-        SimpleObject result = controller.submit(sessionContext, patient, hf, null, visit, true, null, encounterService, adtService, resourceFactory, featureToggles, ui, request);
+        SimpleObject result = controller.submit(sessionContext, patient, hf, null, visit, true, null, adtService, featureToggles, ui, request);
         assertThat((Boolean) result.get("success"), is(Boolean.TRUE));
         assertThat(encounterService.getEncountersByPatient(patient).size(), is(1));
         Encounter created = encounterService.getEncountersByPatient(patient).get(0);
@@ -300,7 +300,7 @@ public class EnterHtmlFormFragmentControllerComponentTest extends BaseModuleWebC
         request.addParameter("w7", "2"); // location = Xanadu
         request.addParameter("w9", "502"); // provider = Hippocrates
 
-        SimpleObject result = controller.submit(sessionContext, patient, hf, null, null, false, null, encounterService, adtService, resourceFactory, featureToggles, ui, request);
+        SimpleObject result = controller.submit(sessionContext, patient, hf, null, null, false, null, adtService, featureToggles, ui,request);
         assertThat((Boolean) result.get("success"), is(Boolean.TRUE));
         assertThat(encounterService.getEncountersByPatient(patient).size(), is(1));
         Encounter created = encounterService.getEncountersByPatient(patient).get(0);
@@ -314,7 +314,7 @@ public class EnterHtmlFormFragmentControllerComponentTest extends BaseModuleWebC
         editRequest.addParameter("w7", "2"); // location = Xanadu
         editRequest.addParameter("w9", "502"); // provider = Hippocrates
 
-        result = controller.submit(sessionContext, patient, hf, created, null, false, null, encounterService, adtService, resourceFactory, featureToggles, ui, editRequest);
+        result = controller.submit(sessionContext, patient, hf, created, null, false, null, adtService, featureToggles, ui, editRequest);
         assertThat((Boolean) result.get("success"), is(Boolean.TRUE));
         assertThat(encounterService.getEncountersByPatient(patient).size(), is(1));
 
@@ -350,7 +350,7 @@ public class EnterHtmlFormFragmentControllerComponentTest extends BaseModuleWebC
         request.addParameter("w7", "2"); // location = Xanadu
         request.addParameter("w9", "502"); // provider = Hippocrates
 
-        SimpleObject result = controller.submit(sessionContext, patient, hf, null, null, false, null, encounterService, adtService, resourceFactory, featureToggles, ui, request);
+        SimpleObject result = controller.submit(sessionContext, patient, hf, null, null, false, null, adtService, featureToggles, ui, request);
         assertThat((Boolean) result.get("success"), is(Boolean.TRUE));
         assertThat(encounterService.getEncountersByPatient(patient).size(), is(1));
         Encounter created = encounterService.getEncountersByPatient(patient).get(0);
@@ -367,7 +367,7 @@ public class EnterHtmlFormFragmentControllerComponentTest extends BaseModuleWebC
         editRequest.addParameter("w7", "2"); // location = Xanadu
         editRequest.addParameter("w9", "502"); // provider = Hippocrates
 
-        result = controller.submit(sessionContext, patient, hf, created, null, false, null, encounterService, adtService, resourceFactory, featureToggles, ui, editRequest);
+        result = controller.submit(sessionContext, patient, hf, created, null, false, null, adtService,  featureToggles, ui, editRequest);
         assertThat((Boolean) result.get("success"), is(Boolean.TRUE));
         assertThat(encounterService.getEncountersByPatient(patient).size(), is(1));
 
@@ -403,7 +403,7 @@ public class EnterHtmlFormFragmentControllerComponentTest extends BaseModuleWebC
         request.addParameter("w7", "2"); // location = Xanadu
         request.addParameter("w9", "502"); // provider = Hippocrates
 
-        SimpleObject result = controller.submit(sessionContext, patient, hf, null, null, false, null, encounterService, adtService, resourceFactory, featureToggles, ui, request);
+        SimpleObject result = controller.submit(sessionContext, patient, hf, null, null, false, null, adtService, featureToggles, ui, request);
         assertThat((Boolean) result.get("success"), is(Boolean.TRUE));
         assertThat(encounterService.getEncountersByPatient(patient).size(), is(1));
         Encounter created = encounterService.getEncountersByPatient(patient).get(0);
@@ -420,7 +420,7 @@ public class EnterHtmlFormFragmentControllerComponentTest extends BaseModuleWebC
         editRequest.addParameter("w7", "2"); // location = Xanadu
         editRequest.addParameter("w9", "502"); // provider = Hippocrates
 
-        result = controller.submit(sessionContext, patient, hf, created, null, false, null, encounterService, adtService, resourceFactory, featureToggles, ui, editRequest);
+        result = controller.submit(sessionContext, patient, hf, created, null, false, null, adtService, featureToggles, ui, editRequest);
         assertThat((Boolean) result.get("success"), is(Boolean.TRUE));
         assertThat(encounterService.getEncountersByPatient(patient).size(), is(1));
 

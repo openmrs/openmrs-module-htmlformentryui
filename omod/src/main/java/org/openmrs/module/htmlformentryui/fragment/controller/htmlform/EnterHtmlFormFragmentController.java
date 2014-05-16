@@ -19,7 +19,6 @@ import org.openmrs.Encounter;
 import org.openmrs.Form;
 import org.openmrs.Patient;
 import org.openmrs.Visit;
-import org.openmrs.api.EncounterService;
 import org.openmrs.api.FormService;
 import org.openmrs.api.context.Context;
 import org.openmrs.api.context.ContextAuthenticationException;
@@ -136,35 +135,12 @@ public class EnterHtmlFormFragmentController {
         else {
             fes = new FormEntrySession(patient, hf, FormEntryContext.Mode.ENTER, null, httpSession, automaticValidation, !automaticValidation);
         }
-        fes.setAttribute("uiSessionContext", sessionContext);
-        fes.setAttribute("uiUtils", ui);
 
-        if (StringUtils.hasText(returnUrl)) {
-            fes.setReturnUrl(returnUrl);
-        }
+        VisitDomainWrapper visitDomainWrapper = getVisitDomainWrapper(visit, encounter, adtService);
+        setupVelocityContext(fes, visitDomainWrapper, ui, sessionContext,featureToggles);
+        setupFormEntrySession(fes, visitDomainWrapper, ui, sessionContext, returnUrl);
+        setupModel(model, fes, visitDomainWrapper, createVisit);
 
-        // if we don't have a visit, but the encounter has a visit, use that
-        if (visit == null && encounter != null) {
-            visit = encounter.getVisit();
-        }
-
-        // note that we pass the plain visit object to the form entry context, but the velocity context and the model get the "wrapped" visit--not sure if we want to pass the wrapped visit to HFE as well
-        fes.getContext().setVisit(visit);
-
-        VisitDomainWrapper wrappedVisit = visit != null ? adtService.wrap(visit) : null;
-        fes.addToVelocityContext("visit", wrappedVisit);
-        fes.addToVelocityContext("sessionContext", sessionContext);
-        fes.addToVelocityContext("ui", ui);
-        fes.addToVelocityContext("featureToggles", featureToggles);
-
-        model.addAttribute("currentDatetime", new Date());
-        model.addAttribute("command", fes);
-        model.addAttribute("visit", wrappedVisit);
-        if (createVisit!=null) {
-            model.addAttribute("createVisit", createVisit.toString());
-        } else {
-            model.addAttribute("createVisit", "false");
-        }
     }
 
     /**
@@ -209,9 +185,7 @@ public class EnterHtmlFormFragmentController {
                          @RequestParam(value = "visitId", required = false) Visit visit,
                          @RequestParam(value = "createVisit", required = false) Boolean createVisit,
                          @RequestParam(value = "returnUrl", required = false) String returnUrl,
-                         @SpringBean("encounterService") EncounterService encounterService,
                          @SpringBean("adtService") AdtService adtService,
-                         @SpringBean("coreResourceFactory") ResourceFactory resourceFactory,
                          @SpringBean("featureToggles") FeatureToggleProperties featureToggles,
                          UiUtils ui,
                          HttpServletRequest request) throws Exception {
@@ -226,18 +200,11 @@ public class EnterHtmlFormFragmentController {
         } else {
             fes = new FormEntrySession(patient, hf, FormEntryContext.Mode.ENTER, request.getSession());
         }
-        fes.setAttribute("uiSessionContext", sessionContext);
-        fes.setAttribute("uiUtils", ui);
 
-        fes.addToVelocityContext("visit", visit);
-        fes.addToVelocityContext("sessionContext", sessionContext);
-        fes.addToVelocityContext("ui", ui);
-        fes.addToVelocityContext("featureToggles", featureToggles);
-
-        if (returnUrl != null) {
-            fes.setReturnUrl(returnUrl);
-        }
-        fes.getHtmlToDisplay();
+        VisitDomainWrapper visitDomainWrapper = getVisitDomainWrapper(visit, encounter, adtService);
+        setupVelocityContext(fes, visitDomainWrapper, ui, sessionContext,featureToggles);
+        setupFormEntrySession(fes, visitDomainWrapper, ui, sessionContext, returnUrl);
+        fes.getHtmlToDisplay();  // needs to happen before we validate or process a form
 
         // Validate and return with errors if any are found
         List<FormSubmissionError> validationErrors = fes.getSubmissionController().validateSubmission(fes.getContext(), request);
@@ -261,11 +228,9 @@ public class EnterHtmlFormFragmentController {
             keepTimeComponentOfEncounterIfDateComponentHasNotChanged(fes.getContext().getPreviousEncounterDate(), formEncounter);
         }
 
-        // create a visit if necessary
-        // (note that this currently only works in real-time mode)
-        if (createVisit != null && (createVisit) && visit == null && fes.getContext().getVisit() == null) {
+        // create a visit if necessary (note that this currently only works in real-time mode)
+        if (createVisit != null && (createVisit) && visit == null) {
             visit = adtService.ensureActiveVisit(patient, sessionContext.getSessionLocation());
-            // add the visit to the context (so that actions have access to it in applyActions call)
             fes.getContext().setVisit(visit);
         }
 
@@ -323,6 +288,58 @@ public class EnterHtmlFormFragmentController {
             formEncounter.setEncounterDatetime(previousEncounterDate);
         }
 
+    }
+
+    private void setupVelocityContext(FormEntrySession fes, VisitDomainWrapper visitDomainWrapper, UiUtils ui,
+                                      UiSessionContext sessionContext, FeatureToggleProperties featureToggles) {
+
+        fes.addToVelocityContext("visit", visitDomainWrapper);
+        fes.addToVelocityContext("sessionContext", sessionContext);
+        fes.addToVelocityContext("ui", ui);
+        fes.addToVelocityContext("featureToggles", featureToggles);
+
+    }
+
+    private void setupFormEntrySession(FormEntrySession fes, VisitDomainWrapper visitDomainWrapper, UiUtils ui,
+                                       UiSessionContext sessionContext, String returnUrl) {
+
+        fes.setAttribute("uiSessionContext", sessionContext);
+        fes.setAttribute("uiUtils", ui);
+
+        // note that we pass the plain visit object to the form entry context, but the velocity context and the model get the "wrapped" visit--not sure if we want to pass the wrapped visit to HFE as well
+        fes.getContext().setVisit(visitDomainWrapper != null ? visitDomainWrapper.getVisit() : null);
+
+        if (StringUtils.hasText(returnUrl)) {
+            fes.setReturnUrl(returnUrl);
+
+        }
+    }
+
+    private void setupModel(FragmentModel model, FormEntrySession fes, VisitDomainWrapper visitDomainWrapper, Boolean createVisit) {
+
+        model.addAttribute("currentDatetime", new Date());
+        model.addAttribute("command", fes);
+        model.addAttribute("visit", visitDomainWrapper);
+        if (createVisit!=null) {
+            model.addAttribute("createVisit", createVisit.toString());
+        } else {
+            model.addAttribute("createVisit", "false");
+        }
+
+    }
+
+    private VisitDomainWrapper getVisitDomainWrapper(Visit visit, Encounter encounter, AdtService adtService) {
+        // if we don't have a visit, but the encounter has a visit, use that
+        if (visit == null && encounter != null) {
+            visit = encounter.getVisit();
+        }
+
+        if (visit == null) {
+            return null;
+        }
+        else {
+            return adtService.wrap(visit);
+        }
     }
 
 }
