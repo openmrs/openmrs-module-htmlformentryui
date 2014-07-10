@@ -39,7 +39,7 @@
         <uiframeworkModuleVersion>3.1</uiframeworkModuleVersion>
         <appframeworkModuleVersion>2.0</appframeworkModuleVersion>
         <appuiModuleVersion>1.0</appuiModuleVersion>
-        <emrapiModuleVersion>1.0</emrapiModuleVersion>
+        <emrapiModuleVersion>1.2</emrapiModuleVersion>
         <uicommonsModuleVersion>1.0</uicommonsModuleVersion>
         <providermanagementModuleVersion>2.0</providermanagementModuleVersion>
     </properties>
