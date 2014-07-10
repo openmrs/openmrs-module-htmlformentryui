@@ -42,6 +42,9 @@
         <emrapiModuleVersion>1.2</emrapiModuleVersion>
         <uicommonsModuleVersion>1.0</uicommonsModuleVersion>
         <providermanagementModuleVersion>2.0</providermanagementModuleVersion>
+        <reportingModuleVersion>0.9.1</reportingModuleVersion>
+        <calculationModuleVersion>1.0</calculationModuleVersion>
+        <serializationXstreamModuleVersion>0.2.7</serializationXstreamModuleVersion>
     </properties>
 
 		<dependencies>
@@ -138,6 +141,30 @@
                 <artifactId>servlet-api</artifactId>
                 <version>2.5</version>
                 <scope>provided</scope>
+            </dependency>
+
+            <!-- OpenMRS modules simply required to fire up the application context when running component tests -->
+
+            <dependency>
+                <groupId>org.openmrs.module</groupId>
+                <artifactId>reporting-api</artifactId>
+                <version>${reportingModuleVersion}</version>
+                <scope>test</scope>
+            </dependency>
+
+
+            <dependency>
+                <groupId>org.openmrs.module</groupId>
+                <artifactId>calculation-api</artifactId>
+                <version>${calculationModuleVersion}</version>
+                <scope>test</scope>
+            </dependency>
+
+            <dependency>
+                <groupId>org.openmrs.module</groupId>
+                <artifactId>serialization.xstream-api</artifactId>
+                <version>${serializationXstreamModuleVersion}</version>
+                <scope>test</scope>
             </dependency>
 
 		</dependencies>
