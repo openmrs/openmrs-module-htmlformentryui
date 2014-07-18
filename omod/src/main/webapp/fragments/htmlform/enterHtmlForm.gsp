@@ -5,6 +5,7 @@
     // assumes jquery and jquery-ui from emr module
     ui.includeJavascript("htmlformentryui", "dwr-util.js")
     ui.includeJavascript("htmlformentryui", "htmlForm.js")
+    ui.includeJavascript("uicommons", "emr.js")
     // TODO setup "confirm before navigating" functionality
 %>
 
