@@ -20,7 +20,8 @@ ${ ui.includeFragment("coreapps", "patientHeader", [ patient: patient ]) }
 
 <script type="text/javascript">
 
-    // TODO expose this some other way than a global variable so we can support multiple navigators (if that will ever be needd)
+    // we expose this as a global variable so that HTML forms can call the API methods associated with the Keyboard Controller
+    // TODO expose this some other way than a global variable so we can support multiple navigators (if that will ever be needed)
     var NavigatorController;
 
     var breadcrumbs = _.flatten([
