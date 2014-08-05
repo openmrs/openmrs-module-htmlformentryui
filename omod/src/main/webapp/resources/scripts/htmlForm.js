@@ -141,7 +141,11 @@
             //ui.openLoadingDialog('Submitting Form');
             jq.post(form.attr('action'), form.serialize(), function(result) {
                 if (result.success) {
-                    goToReturnUrl(result.encounterId);
+                    if (result.goToUrl) {
+                        emr.navigateTo({ applicationUrl: result.goToUrl });
+                    } else {
+                        goToReturnUrl(result.encounterId);
+                    }
                 } else {
                     //ui.closeLoadingDialog();
                     enableSubmitButton();

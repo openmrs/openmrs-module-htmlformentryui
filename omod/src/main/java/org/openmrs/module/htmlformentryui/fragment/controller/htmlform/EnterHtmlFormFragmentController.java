@@ -48,12 +48,12 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
 
 /**
  *
@@ -209,7 +209,7 @@ public class EnterHtmlFormFragmentController {
         // Validate and return with errors if any are found
         List<FormSubmissionError> validationErrors = fes.getSubmissionController().validateSubmission(fes.getContext(), request);
         if (validationErrors.size() > 0) {
-            return returnHelper(validationErrors, fes.getContext(), null);
+            return returnHelper(validationErrors, fes, null);
         }
 
         // No validation errors found so process form submission
@@ -247,7 +247,7 @@ public class EnterHtmlFormFragmentController {
             }
 
             if (validationErrors.size() > 0) {
-                return returnHelper(validationErrors, fes.getContext(), null);
+                return returnHelper(validationErrors, fes, null);
             }
         }
 
@@ -258,18 +258,23 @@ public class EnterHtmlFormFragmentController {
                 ui.message(editMode ? "emr.editHtmlForm.successMessage" : "emr.task.enterHtmlForm.successMessage", ui.format(hf.getForm()), ui.format(patient)));
         request.getSession().setAttribute(UiCommonsConstants.SESSION_ATTRIBUTE_TOAST_MESSAGE, "true");
 
-        return returnHelper(null, null, formEncounter);
+        return returnHelper(null, fes, formEncounter);
     }
 
-    private SimpleObject returnHelper(List<FormSubmissionError> validationErrors, FormEntryContext context,
+    private SimpleObject returnHelper(List<FormSubmissionError> validationErrors, FormEntrySession session,
                                       Encounter encounter) {
         if (validationErrors == null || validationErrors.size() == 0) {
-            return SimpleObject.create("success", true, "encounterId", encounter.getId());
+            String afterSaveUrl = session.getAfterSaveUrlTemplate();
+            if (afterSaveUrl != null) {
+                afterSaveUrl = afterSaveUrl.replaceAll("\\{\\{patient.id\\}\\}", session.getPatient().getId().toString());
+                afterSaveUrl = afterSaveUrl.replaceAll("\\{\\{encounter.id\\}\\}", session.getEncounter().getId().toString());
+            }
+            return SimpleObject.create("success", true, "encounterId", encounter.getId(), "goToUrl", afterSaveUrl);
         } else {
             Map<String, String> errors = new HashMap<String, String>();
             for (FormSubmissionError err : validationErrors) {
                 if (err.getSourceWidget() != null)
-                    errors.put(context.getErrorFieldId(err.getSourceWidget()), err.getError());
+                    errors.put(session.getContext().getErrorFieldId(err.getSourceWidget()), err.getError());
                 else
                     errors.put(err.getId(), err.getError());
             }
