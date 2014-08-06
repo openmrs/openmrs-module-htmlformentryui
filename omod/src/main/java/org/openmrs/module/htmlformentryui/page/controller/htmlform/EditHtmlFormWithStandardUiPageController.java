@@ -53,11 +53,6 @@ public class EditHtmlFormWithStandardUiPageController extends BaseHtmlFormPageCo
             throw new IllegalArgumentException("encounter.form is not an HTML Form: " + encounter.getForm());
         }
 
-        // if there is a visit for this encounter, add it to the model
-        if (encounter.getVisit() != null) {
-            pageModel.addAttribute("visit", encounter.getVisit());
-        }
-
         returnUrl = determineReturnUrl(returnUrl, returnProvider, returnPage, patient, encounter.getVisit(), ui);
         returnLabel = determineReturnLabel(returnLabel, patient, ui);
 
