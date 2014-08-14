@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 public class ViewEncounterWithHtmlFormPageController {
 
     public void get(@RequestParam("encounter") Encounter encounter,
+                    @RequestParam(value = "showPatientHeader", defaultValue = "true") boolean showPatientHeader,
                     @RequestParam(value = "returnUrl", required = false) String returnUrl,
                     @RequestParam(value = "returnLabel", required = false) String returnLabel,
                     @InjectBeans PatientDomainWrapper patient,
@@ -36,6 +37,7 @@ public class ViewEncounterWithHtmlFormPageController {
         model.addAttribute("encounter", encounter);
         model.addAttribute("returnUrl", returnUrl);
         model.addAttribute("returnLabel", returnLabel);
+        model.addAttribute("showPatientHeader", showPatientHeader);
 
         HtmlForm htmlForm = htmlFormEntryService.getHtmlFormByForm(encounter.getForm());
         if (htmlForm == null) {

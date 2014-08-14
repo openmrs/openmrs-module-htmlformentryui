@@ -34,6 +34,10 @@
     </div>
 <% } %>
 
+<% if (showPatientHeader) { %>
+    ${ ui.includeFragment("coreapps", "patientHeader", [ patient: patient ]) }
+<% } %>
+
 <span id="form-actions">
     <a class="button" href="javascript:window.print()">
         <i class="icon-print"></i>
