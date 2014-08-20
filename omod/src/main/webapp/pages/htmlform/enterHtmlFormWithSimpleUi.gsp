@@ -4,9 +4,10 @@
     ui.includeJavascript("uicommons", "navigator/navigator.js", Integer.MAX_VALUE - 20)
     ui.includeJavascript("uicommons", "navigator/navigatorHandlers.js", Integer.MAX_VALUE - 21)
     ui.includeJavascript("uicommons", "navigator/navigatorModels.js", Integer.MAX_VALUE - 21)
-    ui.includeJavascript("uicommons", "navigator/exitHandlers.js", Integer.MAX_VALUE - 22);
+    ui.includeJavascript("uicommons", "navigator/exitHandlers.js", Integer.MAX_VALUE - 22)
     ui.includeJavascript("uicommons", "angular.min.js");
     ui.includeJavascript("uicommons", "angular-resource.min.js");
+    ui.includeJavascript("htmlformentryui", "htmlFormSimple.js", Integer.MIN_VALUE)
     def createNewVisit = createVisit ?: false
 
     def breadcrumbMiddle = breadcrumbOverride ?: """
