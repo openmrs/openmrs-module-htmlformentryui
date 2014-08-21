@@ -38,7 +38,7 @@
     ${ ui.includeFragment("coreapps", "patientHeader", [ patient: patient ]) }
 <% } %>
 
-<span id="form-actions">
+<span id="form-actions" class="no-print">
     <a class="button" href="javascript:window.print()">
         <i class="icon-print"></i>
         ${ ui.message("uicommons.print") }
