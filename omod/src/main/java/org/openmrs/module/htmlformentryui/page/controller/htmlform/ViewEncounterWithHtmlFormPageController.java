@@ -18,6 +18,7 @@ public class ViewEncounterWithHtmlFormPageController {
                     @RequestParam(value = "showPatientHeader", defaultValue = "true") boolean showPatientHeader,
                     @RequestParam(value = "returnUrl", required = false) String returnUrl,
                     @RequestParam(value = "returnLabel", required = false) String returnLabel,
+                    @RequestParam(value = "editStyle", defaultValue = "standard") String editStyle,
                     @InjectBeans PatientDomainWrapper patient,
                     @SpringBean("htmlFormEntryService") HtmlFormEntryService htmlFormEntryService,
                     UiUtils ui,
@@ -37,6 +38,7 @@ public class ViewEncounterWithHtmlFormPageController {
         model.addAttribute("encounter", encounter);
         model.addAttribute("returnUrl", returnUrl);
         model.addAttribute("returnLabel", returnLabel);
+        model.addAttribute("editStyle", fixCase(editStyle));
         model.addAttribute("showPatientHeader", showPatientHeader);
 
         HtmlForm htmlForm = htmlFormEntryService.getHtmlFormByForm(encounter.getForm());
@@ -44,6 +46,14 @@ public class ViewEncounterWithHtmlFormPageController {
             throw new IllegalArgumentException("encounter.form is not an HTML Form: " + encounter.getForm());
         }
         model.addAttribute("htmlForm", htmlForm);
+    }
+
+    /**
+     * @param word
+     * @return word with the first letter uppercase, and the rest lowercase
+     */
+    private String fixCase(String word) {
+        return Character.toUpperCase(word.charAt(0)) + word.substring(1).toLowerCase();
     }
 
 }
