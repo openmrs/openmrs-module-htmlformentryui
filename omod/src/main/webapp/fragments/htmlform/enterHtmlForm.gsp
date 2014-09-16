@@ -3,13 +3,13 @@
     // config supports cssClass (css class on div around form)
 
     // assumes jquery and jquery-ui from emr module
+    ui.includeJavascript("uicommons", "handlebars/handlebars.min.js", Integer.MAX_VALUE - 1);
     ui.includeJavascript("htmlformentryui", "dwr-util.js")
     ui.includeJavascript("htmlformentryui", "htmlForm.js")
     ui.includeJavascript("uicommons", "emr.js")
     // TODO setup "confirm before navigating" functionality
 %>
 
-<script type="text/javascript" src="/${ contextPath }/moduleResources/htmlformentry/handlebars.min.js"></script>
 <script type="text/javascript" src="/${ contextPath }/moduleResources/htmlformentry/htmlFormEntry.js"></script>
 <script type="text/javascript" src="/${ contextPath }/moduleResources/htmlformentry/htmlForm.js"></script>
 <link href="/${ contextPath }/moduleResources/htmlformentry/htmlFormEntry.css" type="text/css" rel="stylesheet" />
