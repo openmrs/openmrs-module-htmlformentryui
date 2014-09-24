@@ -8,7 +8,8 @@
     ui.includeJavascript("uicommons", "navigator/exitHandlers.js", Integer.MAX_VALUE - 22)
     ui.includeJavascript("uicommons", "angular.min.js");
     ui.includeJavascript("uicommons", "angular-resource.min.js");
-    ui.includeJavascript("htmlformentryui", "htmlFormSimple.js", Integer.MIN_VALUE)
+    ui.includeJavascript("htmlformentryui", "htmlform/htmlFormSimple.js", Integer.MIN_VALUE)
+    ui.includeCss("htmlformentryui", "htmlFormSimple.css")
 
     def breadcrumbMiddle = breadcrumbOverride ?: """
         [ { label: '${ returnLabel }' , link: '${ returnUrl }'} ]
@@ -48,6 +49,15 @@ ${ ui.includeFragment("coreapps", "patientHeader", [ patient: patient ]) }
         });
     });
 </script>
+
+<% if (returnUrl) { %>
+    <div id="exit-form-container">
+        <a href="${ ui.escapeAttribute(returnUrl) }">
+            <i class="icon-signout small"></i>
+            ${ ui.message("htmlformentryui.exitForm") }
+        </a>
+    </div>
+<% } %>
 
 ${ ui.includeFragment("htmlformentryui", "htmlform/enterHtmlForm", [
         patient: patient,

@@ -9,6 +9,7 @@
     ui.includeJavascript("uicommons", "angular.min.js");
     ui.includeJavascript("uicommons", "angular-resource.min.js");
     ui.includeJavascript("htmlformentryui", "htmlFormSimple.js", Integer.MIN_VALUE)
+    ui.includeCss("htmlformentryui", "htmlform/htmlFormSimple.css")
     def createNewVisit = createVisit ?: false
 
     def breadcrumbMiddle = breadcrumbOverride ?: """
@@ -49,6 +50,15 @@ ${ ui.includeFragment("coreapps", "patientHeader", [ patient: patient ]) }
         });
     });
 </script>
+
+<% if (returnUrl) { %>
+    <div id="exit-form-container">
+        <a href="${ ui.escapeAttribute(returnUrl) }">
+            <i class="icon-signout small"></i>
+            ${ ui.message("htmlformentryui.exitForm") }
+        </a>
+    </div>
+<% } %>
 
 ${ ui.includeFragment("htmlformentryui", "htmlform/enterHtmlForm", [
         patient: patient,

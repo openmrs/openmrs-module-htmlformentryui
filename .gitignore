@@ -1,5 +1,7 @@
 *.iml
 *.idea
+*.sass-cache
+*.css
 target
 api/target
 omod/target
@@ -9,5 +11,6 @@ omod/target
 /.DS_Store
 
 omod/.DS_Store
+omod/src/main/compass/sass-external/*
 
 /.classpath
