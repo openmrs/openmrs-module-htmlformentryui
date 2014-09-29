@@ -187,7 +187,7 @@
         var password = jq('#passwordPopupPassword').val();
         jq('#passwordPopupUsername').val('');
         jq('#passwordPopupPassword').val('');
-        jq.getJSON(emr.fragmentActionLink('htmlformentryui', 'htmlform/enterHtmlForm', 'checkIfLoggedIn', { user: username, pass: password }), submitHtmlForm);
+        jq.getJSON(emr.fragmentActionLink('htmlformentryui', 'htmlform/enterHtmlForm', 'authenticate', { user: username, pass: password }), submitHtmlForm);
     };
 
     htmlForm.cancel = function() {

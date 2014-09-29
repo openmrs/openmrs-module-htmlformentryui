@@ -35,7 +35,7 @@
     }
 
     function loginThenSubmitHtmlForm() {
-        html.loginThenSubmitHtmlForm();
+        htmlForm.loginThenSubmitHtmlForm();
     }
 
     var beforeSubmit = htmlForm.getBeforeSubmit();

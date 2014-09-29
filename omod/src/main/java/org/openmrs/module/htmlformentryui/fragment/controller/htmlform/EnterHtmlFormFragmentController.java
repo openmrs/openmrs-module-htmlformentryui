@@ -24,6 +24,7 @@ import org.openmrs.api.context.Context;
 import org.openmrs.api.context.ContextAuthenticationException;
 import org.openmrs.module.appframework.feature.FeatureToggleProperties;
 import org.openmrs.module.appui.UiSessionContext;
+import org.openmrs.module.emrapi.EmrApiProperties;
 import org.openmrs.module.emrapi.adt.AdtService;
 import org.openmrs.module.emrapi.adt.exception.EncounterDateAfterVisitStopDateException;
 import org.openmrs.module.emrapi.adt.exception.EncounterDateBeforeVisitStartDateException;
@@ -48,12 +49,12 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 
 /**
  *
@@ -157,12 +158,16 @@ public class EnterHtmlFormFragmentController {
      * @param pass the password
      * @return a simple object to record if successful
      */
-    public SimpleObject authenticate(@RequestParam("user") String user, @RequestParam("pass") String pass) {
+    public SimpleObject authenticate(@RequestParam("user") String user, @RequestParam("pass") String pass, UiSessionContext context, @SpringBean EmrApiProperties emrApiProperties) {
         try {
             Context.authenticate(user, pass);
-        } catch (ContextAuthenticationException ex) {
-            // do nothing
+            context.setSessionLocation(emrApiProperties.getUnknownLocation());
         }
+        catch (ContextAuthenticationException ex) {
+
+        }
+
+
         return checkIfLoggedIn();
     }
 
