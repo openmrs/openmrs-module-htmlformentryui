@@ -30,7 +30,7 @@
         <dependency>
             <groupId>org.openmrs.module</groupId>
             <artifactId>appui-omod</artifactId>
-            <version>${appuiModuleVersion}</version>
+            <version>${appuiVersion}</version>
             <scope>provided</scope>
         </dependency>
 
@@ -197,7 +197,7 @@
                                 <artifactItem>
                                     <groupId>org.openmrs.module</groupId>
                                     <artifactId>uicommons-scss</artifactId>
-                                    <version>${uicommonsModuleVersion}</version>
+                                    <version>${uicommonsVersion}</version>
                                     <type>zip</type>
                                     <overWrite>true</overWrite>
                                     <outputDirectory>src/main/compass/sass-external</outputDirectory>

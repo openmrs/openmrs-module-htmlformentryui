@@ -35,16 +35,16 @@
 	<properties>
 		<openMRSVersion>1.9.7</openMRSVersion>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <htmlformentryModuleVersion>2.4-SNAPSHOT</htmlformentryModuleVersion>
-        <uiframeworkModuleVersion>3.1</uiframeworkModuleVersion>
-        <appframeworkModuleVersion>2.0</appframeworkModuleVersion>
-        <appuiModuleVersion>1.0</appuiModuleVersion>
-        <emrapiModuleVersion>1.3-SNAPSHOT</emrapiModuleVersion>
-        <uicommonsModuleVersion>1.0</uicommonsModuleVersion>
-        <providermanagementModuleVersion>2.0</providermanagementModuleVersion>
-        <reportingModuleVersion>0.9.1</reportingModuleVersion>
-        <calculationModuleVersion>1.0</calculationModuleVersion>
-        <serializationXstreamModuleVersion>0.2.7</serializationXstreamModuleVersion>
+        <htmlformentryVersion>2.4</htmlformentryVersion>
+        <uiframeworkVersion>3.1</uiframeworkVersion>
+        <appframeworkVersion>2.0</appframeworkVersion>
+        <appuiVersion>1.0</appuiVersion>
+        <emrapiVersion>1.3</emrapiVersion>
+        <uicommonsVersion>1.0</uicommonsVersion>
+        <providermanagementVersion>2.0</providermanagementVersion>
+        <reportingVersion>0.9.1</reportingVersion>
+        <calculationVersion>1.0</calculationVersion>
+        <serializationXstreamVersion>0.2.7</serializationXstreamVersion>
     </properties>
 
     <dependencyManagement>
@@ -66,34 +66,34 @@
 			<dependency>
 				<groupId>org.openmrs.module</groupId>
 				<artifactId>htmlformentry-api</artifactId>
-				<version>${htmlformentryModuleVersion}</version>
+				<version>${htmlformentryVersion}</version>
 				<scope>provided</scope>
 			</dependency>
 						
 			<dependency>
 				<groupId>org.openmrs.module</groupId>
 				<artifactId>uiframework-api</artifactId>
-				<version>${uiframeworkModuleVersion}</version>
+				<version>${uiframeworkVersion}</version>
 				<scope>provided</scope>
 			</dependency>
 
             <dependency>
                 <groupId>org.openmrs.module</groupId>
                 <artifactId>appframework-api</artifactId>
-                <version>${appframeworkModuleVersion}</version>
+                <version>${appframeworkVersion}</version>
                 <scope>provided</scope>
             </dependency>
 
             <dependency>
                 <groupId>org.openmrs.module</groupId>
                 <artifactId>appui-api</artifactId>
-                <version>${appuiModuleVersion}</version>
+                <version>${appuiVersion}</version>
                 <scope>provided</scope>
             </dependency>
             <dependency>
                 <groupId>org.openmrs.module</groupId>
                 <artifactId>appui-api</artifactId>
-                <version>${appuiModuleVersion}</version>
+                <version>${appuiVersion}</version>
                 <type>test-jar</type>
                 <scope>test</scope>
             </dependency>
@@ -101,21 +101,21 @@
             <dependency>
                 <groupId>org.openmrs.module</groupId>
                 <artifactId>uicommons-api</artifactId>
-                <version>${uicommonsModuleVersion}</version>
+                <version>${uicommonsVersion}</version>
                 <scope>provided</scope>
             </dependency>
 
             <dependency>
                 <groupId>org.openmrs.module</groupId>
                 <artifactId>emrapi-api-1.9</artifactId>
-                <version>${emrapiModuleVersion}</version>
+                <version>${emrapiVersion}</version>
                 <scope>provided</scope>
             </dependency>
 
             <dependency>
                 <groupId>org.openmrs.module</groupId>
                 <artifactId>providermanagement-api</artifactId>
-                <version>${providermanagementModuleVersion}</version>
+                <version>${providermanagementVersion}</version>
                 <scope>provided</scope>
             </dependency>
 			<!-- End OpenMRS modules -->
@@ -161,7 +161,7 @@
             <dependency>
                 <groupId>org.openmrs.module</groupId>
                 <artifactId>reporting-api</artifactId>
-                <version>${reportingModuleVersion}</version>
+                <version>${reportingVersion}</version>
                 <scope>test</scope>
             </dependency>
 
@@ -169,14 +169,14 @@
             <dependency>
                 <groupId>org.openmrs.module</groupId>
                 <artifactId>calculation-api</artifactId>
-                <version>${calculationModuleVersion}</version>
+                <version>${calculationVersion}</version>
                 <scope>test</scope>
             </dependency>
 
             <dependency>
                 <groupId>org.openmrs.module</groupId>
                 <artifactId>serialization.xstream-api</artifactId>
-                <version>${serializationXstreamModuleVersion}</version>
+                <version>${serializationXstreamVersion}</version>
                 <scope>test</scope>
             </dependency>
 
