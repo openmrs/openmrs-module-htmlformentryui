@@ -8,7 +8,7 @@
     ui.includeJavascript("uicommons", "navigator/exitHandlers.js", Integer.MAX_VALUE - 22)
     ui.includeJavascript("uicommons", "angular.min.js");
     ui.includeJavascript("uicommons", "angular-resource.min.js");
-    ui.includeJavascript("htmlformentryui", "htmlform/htmlFormSimple.js", Integer.MIN_VALUE)
+    ui.includeJavascript("htmlformentryui", "htmlFormSimple.js", Integer.MIN_VALUE)
     ui.includeCss("htmlformentryui", "htmlFormSimple.css")
 
     def breadcrumbMiddle = breadcrumbOverride ?: """
