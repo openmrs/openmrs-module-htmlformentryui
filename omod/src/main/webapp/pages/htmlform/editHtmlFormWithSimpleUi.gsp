@@ -9,7 +9,7 @@
     ui.includeJavascript("uicommons", "angular.min.js");
     ui.includeJavascript("uicommons", "angular-resource.min.js");
     ui.includeJavascript("htmlformentryui", "htmlFormSimple.js", Integer.MIN_VALUE)
-    ui.includeCss("htmlformentryui", "htmlFormSimple.css")
+    ui.includeCss("htmlformentryui", "htmlform/htmlFormSimple.css")
 
     def breadcrumbMiddle = breadcrumbOverride ?: """
         [ { label: '${ returnLabel }' , link: '${ returnUrl }'} ]
