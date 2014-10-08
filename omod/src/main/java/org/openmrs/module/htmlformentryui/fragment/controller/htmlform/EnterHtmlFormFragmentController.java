@@ -46,20 +46,19 @@ import org.openmrs.ui.framework.fragment.FragmentConfiguration;
 import org.openmrs.ui.framework.fragment.FragmentModel;
 import org.openmrs.ui.framework.resource.ResourceFactory;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
 
 /**
  *
  */
-public class EnterHtmlFormFragmentController {
+public class EnterHtmlFormFragmentController extends BaseHtmlFormFragmentController {
 
     /**
      * @param config
@@ -298,31 +297,6 @@ public class EnterHtmlFormFragmentController {
             formEncounter.setEncounterDatetime(previousEncounterDate);
         }
 
-    }
-
-    private void setupVelocityContext(FormEntrySession fes, VisitDomainWrapper visitDomainWrapper, UiUtils ui,
-                                      UiSessionContext sessionContext, FeatureToggleProperties featureToggles) {
-
-        fes.addToVelocityContext("visit", visitDomainWrapper);
-        fes.addToVelocityContext("sessionContext", sessionContext);
-        fes.addToVelocityContext("ui", ui);
-        fes.addToVelocityContext("featureToggles", featureToggles);
-
-    }
-
-    private void setupFormEntrySession(FormEntrySession fes, VisitDomainWrapper visitDomainWrapper, UiUtils ui,
-                                       UiSessionContext sessionContext, String returnUrl) {
-
-        fes.setAttribute("uiSessionContext", sessionContext);
-        fes.setAttribute("uiUtils", ui);
-
-        // note that we pass the plain visit object to the form entry context, but the velocity context and the model get the "wrapped" visit--not sure if we want to pass the wrapped visit to HFE as well
-        fes.getContext().setVisit(visitDomainWrapper != null ? visitDomainWrapper.getVisit() : null);
-
-        if (StringUtils.hasText(returnUrl)) {
-            fes.setReturnUrl(returnUrl);
-
-        }
     }
 
     private void setupModel(FragmentModel model, FormEntrySession fes, VisitDomainWrapper visitDomainWrapper, Boolean createVisit) {
