@@ -115,11 +115,11 @@
                         <td colspan="2"><b>${ ui.message("htmlformentry.loginAgainMessage") }</b></td>
                     </tr>
                     <tr>
-                        <td align="right"><b>${ ui.message("emr.user.username") }:</b></td>
+                        <td align="right"><b>${ ui.message("coreapps.user.username") }:</b></td>
                         <td><input type="text" id="passwordPopupUsername"/></td>
                     </tr>
                     <tr>
-                        <td align="right"><b>${ ui.message("emr.user.password") }:</b></td>
+                        <td align="right"><b>${ ui.message("coreapps.user.password") }:</b></td>
                         <td><input type="password" id="passwordPopupPassword"/></td>
                     </tr>
                     <tr>
