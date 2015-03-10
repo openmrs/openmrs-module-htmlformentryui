@@ -72,10 +72,10 @@ ${ ui.includeFragment("htmlformentryui", "htmlform/enterHtmlForm", [
 
 <script type="text/template" id="confirmation-template">
     <div id="confirmation">
-        <span class="title">${ ui.message("emr.simpleFormUi.confirm.title") }</span>
+        <span class="title">${ ui.message("coreapps.simpleFormUi.confirm.title") }</span>
 
         <div id="confirmationQuestion" class="container">
-            <h3>${ ui.message("emr.simpleFormUi.confirm.question") }</h3>
+            <h3>${ ui.message("coreapps.simpleFormUi.confirm.question") }</h3>
 
             <div id="confirmation-messages"></div>
 
@@ -85,15 +85,15 @@ ${ ui.includeFragment("htmlformentryui", "htmlform/enterHtmlForm", [
 
             <p style="display: inline">
                 <button type="submit" onclick="submitHtmlForm()" class="submitButton confirm right">
-                    ${ ui.message("emr.save") }
+                    ${ ui.message("coreapps.save") }
                     <i class="icon-spinner icon-spin icon-2x" style="display: none; margin-left: 10px;"></i>
                 </button>
             </p>
             <p style="display: inline">
-                <input type="button" value="${ ui.message("emr.no") }" class="cancel" />
+                <input type="button" value="${ ui.message("coreapps.no") }" class="cancel" />
             </p>
             <p>
-                <span class="error field-error">${ ui.message("emr.simpleFormUi.error.emptyForm") }</span>
+                <span class="error field-error">${ ui.message("coreapps.simpleFormUi.error.emptyForm") }</span>
             </p>
         </div>
     </div>
