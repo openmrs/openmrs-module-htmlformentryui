@@ -24,5 +24,7 @@ ${ ui.includeFragment("htmlformentryui", "htmlform/enterHtmlForm", [
         visit: encounter.visit,
         encounter: encounter,
         patient: patient,
-        returnUrl: returnUrl
+        returnUrl: returnUrl,
+        definitionUiResource: definitionUiResource ?: ""
+
 ]) }
