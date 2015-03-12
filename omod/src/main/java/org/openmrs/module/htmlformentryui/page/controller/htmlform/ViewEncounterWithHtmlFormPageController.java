@@ -30,7 +30,7 @@ public class ViewEncounterWithHtmlFormPageController {
             returnUrl = ui.pageLink("coreapps", "patientdashboard/patientDashboard", SimpleObject.create("patientId", patient.getId()));
         }
         if (StringUtils.isEmpty(returnLabel)) {
-            returnLabel = ui.format(patient.getFormattedName());
+            returnLabel = ui.escapeJs(ui.format(patient));
         }
 
         model.addAttribute("patient", patient);

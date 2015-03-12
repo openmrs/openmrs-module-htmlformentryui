@@ -52,7 +52,7 @@ public abstract class BaseHtmlFormPageController {
             return ui.message(returnLabel);
         }
         else {
-            return ui.escapeJs(ui.format(patient.getFamilyName())) + ", " + ui.escapeJs(ui.format(patient.getGivenName()));
+            return ui.escapeJs(ui.format(patient));
         }
 
     }

@@ -48,12 +48,12 @@ import org.openmrs.ui.framework.resource.ResourceFactory;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 
 /**
  *
@@ -259,7 +259,7 @@ public class EnterHtmlFormFragmentController extends BaseHtmlFormFragmentControl
         fes.applyActions();
 
         request.getSession().setAttribute(UiCommonsConstants.SESSION_ATTRIBUTE_INFO_MESSAGE,
-                ui.message(editMode ? "emr.editHtmlForm.successMessage" : "emr.task.enterHtmlForm.successMessage", ui.format(hf.getForm()), ui.format(patient)));
+                ui.message(editMode ? "emr.editHtmlForm.successMessage" : "emr.task.enterHtmlForm.successMessage", ui.format(hf.getForm()), ui.escapeJs(ui.format(patient))));
         request.getSession().setAttribute(UiCommonsConstants.SESSION_ATTRIBUTE_TOAST_MESSAGE, "true");
 
         return returnHelper(null, fes, formEncounter);
