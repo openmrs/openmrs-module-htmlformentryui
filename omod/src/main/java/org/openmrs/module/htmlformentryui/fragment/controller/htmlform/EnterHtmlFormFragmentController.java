@@ -14,6 +14,7 @@
 
 package org.openmrs.module.htmlformentryui.fragment.controller.htmlform;
 
+import org.apache.commons.lang.StringUtils;
 import org.joda.time.DateMidnight;
 import org.openmrs.Encounter;
 import org.openmrs.Form;
@@ -111,7 +112,7 @@ public class EnterHtmlFormFragmentController extends BaseHtmlFormFragmentControl
             } else if (formUuid != null) {
                 form = formService.getFormByUuid(formUuid);
                 hf = htmlFormEntryService.getHtmlFormByForm(form);
-            } else if (definitionUiResource != null) {
+            } else if (StringUtils.isNotBlank(definitionUiResource)) {
                 hf = HtmlFormUtil.getHtmlFormFromUiResource(resourceFactory, formService, htmlFormEntryService, definitionUiResource);
             }
         }
