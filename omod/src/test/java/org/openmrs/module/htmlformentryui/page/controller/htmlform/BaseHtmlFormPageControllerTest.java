@@ -1,12 +1,5 @@
 package org.openmrs.module.htmlformentryui.page.controller.htmlform;
 
-import static org.hamcrest.Matchers.is;
-import static org.junit.Assert.assertThat;
-import static org.mockito.Matchers.eq;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.openmrs.Patient;
@@ -14,6 +7,13 @@ import org.openmrs.PersonName;
 import org.openmrs.Visit;
 import org.openmrs.ui.framework.SimpleObject;
 import org.openmrs.ui.framework.UiUtils;
+
+import static org.hamcrest.Matchers.is;
+import static org.junit.Assert.assertThat;
+import static org.mockito.Matchers.eq;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 public class BaseHtmlFormPageControllerTest {
 
@@ -78,10 +78,8 @@ public class BaseHtmlFormPageControllerTest {
 
     @Test
     public void test_shouldReturnPatientName() {
-        when(uiUtils.format("Tom")).thenReturn("Tom");
-        when(uiUtils.format("Smith")).thenReturn("Smith");
-        when(uiUtils.escapeJs("Tom")).thenReturn("Tom");
-        when(uiUtils.escapeJs("Smith")).thenReturn("Smith");
+        when(uiUtils.format(patient)).thenReturn("Smith, Tom");
+        when(uiUtils.escapeJs("Smith, Tom")).thenReturn("Smith, Tom");
         String returnLabel = controller.determineReturnLabel(null, patient, uiUtils);
         assertThat(returnLabel, is("Smith, Tom"));
     }
