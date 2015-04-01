@@ -14,7 +14,10 @@
     ]);
 
     jq(function() {
-        jq('.cancel').click(htmlForm.cancel);
+        jq('.cancel').click(function(event) {
+            event.preventDefault();
+            htmlForm.cancel();
+        });
     });
 </script>
 
