@@ -47,7 +47,10 @@ public class HtmlFormUtil {
             throw new IllegalArgumentException("No resource found at " + providerName + ":" + resourcePath);
         }
 
-        Form form = null;
+        return getHtmlFormFromResourceXml(formService, htmlFormEntryService, xml);
+    }
+
+    public static HtmlForm getHtmlFormFromResourceXml(FormService formService, HtmlFormEntryService htmlFormEntryService, String xml) {
         try {
             Document doc = HtmlFormEntryUtil.stringToDocument(xml);
             Node htmlFormNode = HtmlFormEntryUtil.findChild(doc, "htmlform");
@@ -55,7 +58,7 @@ public class HtmlFormUtil {
             if (formUuid == null) {
                 throw new IllegalArgumentException("formUuid is required");
             }
-            form = formService.getFormByUuid(formUuid);
+            Form form = formService.getFormByUuid(formUuid);
             boolean needToSaveForm = false;
             if (form == null) {
                 form = new Form();
