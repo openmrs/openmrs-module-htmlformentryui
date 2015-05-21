@@ -23,4 +23,6 @@ public class HtmlFormEntryUiConstants {
 
     public static final String HTMLFORMENTRY_UI_MESSAGE_TAG_NAME = "uimessage";
 
+    public static final String HTMLFORMENTRY_UI_INCLUDE_TAG_NAME = "uiInclude";
+
 }
