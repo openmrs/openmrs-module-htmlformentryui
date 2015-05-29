@@ -24,6 +24,7 @@ public class UiIncludeTagHandler extends AbstractTagHandler {
 
     @Override
     public boolean doStartTag(FormEntrySession formEntrySession, PrintWriter out, Node parent, Node node) throws BadFormDesignException {
+
         UiUtils uiUtils = (UiUtils) formEntrySession.getAttribute("uiUtils");
         if (uiUtils == null) {
             throw new IllegalArgumentException("Cannot use " + node.getNodeName() + " tag if no UiUtils object is available");
@@ -42,12 +43,24 @@ public class UiIncludeTagHandler extends AbstractTagHandler {
 
         String js = getAttribute(node, "javascript", null);
         if (StringUtils.isNotEmpty(js)) {
-            uiUtils.includeJavascript(provider, js, priority);
+            try {
+                uiUtils.includeJavascript(provider, js, priority);
+            }
+            catch (NullPointerException e) {
+                // there will be a NPE if the form is processed via FragmentAction (which can happen when viewing or submitting a form)
+                // because FragmentAction does not contain a resource Includer; we want to fail soft in this case
+                // (the takeaway here for form developers is that resources included via uiInclude may not be available when viewing a form)
+            }
         }
 
         String css = getAttribute(node, "css", null);
         if (StringUtils.isNotEmpty(css)) {
-            uiUtils.includeCss(provider, css, priority);
+            try {
+                uiUtils.includeCss(provider, css, priority);
+            }
+            catch (NullPointerException e) {
+                // see note above in previous NPE catch block
+            }
         }
 
         String fragment = getAttribute(node, "fragment", null);
@@ -56,6 +69,9 @@ public class UiIncludeTagHandler extends AbstractTagHandler {
                 out.print(uiUtils.includeFragment(provider, fragment));
             } catch (PageAction pageAction) {
                 throw new IllegalStateException("Tried to include a fragment that threw a PageAction", pageAction);
+            }
+            catch (NullPointerException e) {
+                // see note above in previous NPE catch block
             }
         }
 
