@@ -14,6 +14,7 @@
 
 package org.openmrs.module.htmlformentryui;
 
+import org.apache.commons.lang3.StringUtils;
 import org.openmrs.EncounterType;
 import org.openmrs.Form;
 import org.openmrs.api.FormService;
@@ -101,7 +102,16 @@ public class HtmlFormUtil {
                 htmlForm = new HtmlForm();
                 htmlForm.setForm(form);
                 needToSaveHtmlForm = true;
+
             }
+
+            // if there is a html form uuid specified, make sure the htmlform uuid is set to that value
+            String htmlformUuid = getAttributeValue(htmlFormNode, "htmlformUuid");
+            if (StringUtils.isNotBlank(htmlformUuid) && !OpenmrsUtil.nullSafeEquals(htmlformUuid, htmlForm.getUuid())) {
+                htmlForm.setUuid(htmlformUuid);
+                needToSaveHtmlForm = true;
+            }
+
             if (!OpenmrsUtil.nullSafeEquals(trim(htmlForm.getXmlData()), trim(xml))) { // trim because if the file ends with a newline the db will have trimmed it
                 htmlForm.setXmlData(xml);
                 needToSaveHtmlForm = true;
