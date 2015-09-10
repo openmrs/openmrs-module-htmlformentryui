@@ -53,17 +53,17 @@
         <% if (visit) { %>
             <% if (command.context.mode.toString().equals('ENTER') && !visit.isOpen()) { %>
                 // set default date to the visit start date for retrospective visits
-                htmlForm.setEncounterDate(new Date('${ visit.startDatetime }'));
+                htmlForm.setEncounterDate(new Date('${ visit.startDate }'));
             <% } %>
 
             // set valid date range based on visit
-            htmlForm.setEncounterStartDateRange(new Date('${ visit.startDatetime }'));
-            htmlForm.setEncounterStopDateRange(new Date('${ visit.stopDatetime ?: currentDatetime }'));
+            htmlForm.setEncounterStartDateRange(new Date('${ visit.startDate }'));
+            htmlForm.setEncounterStopDateRange(new Date('${ visit.stopDate ?: currentDate }'));
 
         <% } else { %>
             // note that we need to get the current datetime from the *server*, in case the server and client are in different time zones
-            htmlForm.setEncounterStopDateRange(new Date('${ currentDatetime }'));
-            htmlForm.setEncounterDate(new Date('${ currentDatetime }'));
+            htmlForm.setEncounterStopDateRange(new Date('${ currentDate }'));
+            htmlForm.setEncounterDate(new Date('${ currentDate }'));
         <% } %>
 
         // for now, just disable manual entry until we figure out proper validation

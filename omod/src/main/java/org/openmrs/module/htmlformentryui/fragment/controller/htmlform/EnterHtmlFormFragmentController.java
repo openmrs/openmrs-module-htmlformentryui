@@ -302,7 +302,7 @@ public class EnterHtmlFormFragmentController extends BaseHtmlFormFragmentControl
 
     private void setupModel(FragmentModel model, FormEntrySession fes, VisitDomainWrapper visitDomainWrapper, Boolean createVisit) {
 
-        model.addAttribute("currentDatetime", new Date());
+        model.addAttribute("currentDate", (new DateMidnight()).toDate());
         model.addAttribute("command", fes);
         model.addAttribute("visit", visitDomainWrapper);
         if (createVisit!=null) {
