@@ -41,7 +41,7 @@
         <appuiVersion>1.0</appuiVersion>
         <emrapiVersion>1.11-SNAPSHOT</emrapiVersion>
         <uicommonsVersion>1.0</uicommonsVersion>
-        <providermanagementVersion>2.0</providermanagementVersion>
+        <providermanagementVersion>2.3-SNAPSHOT</providermanagementVersion>
         <reportingVersion>0.9.1</reportingVersion>
         <calculationVersion>1.0</calculationVersion>
         <serializationXstreamVersion>0.2.7</serializationXstreamVersion>
