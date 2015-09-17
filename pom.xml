@@ -39,7 +39,7 @@
         <uiframeworkVersion>3.4-SNAPSHOT</uiframeworkVersion>
         <appframeworkVersion>2.0</appframeworkVersion>
         <appuiVersion>1.0</appuiVersion>
-        <emrapiVersion>1.10</emrapiVersion>
+        <emrapiVersion>1.11-SNAPSHOT</emrapiVersion>
         <uicommonsVersion>1.0</uicommonsVersion>
         <providermanagementVersion>2.0</providermanagementVersion>
         <reportingVersion>0.9.1</reportingVersion>
