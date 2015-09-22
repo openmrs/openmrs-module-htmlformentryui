@@ -22,21 +22,29 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.stereotype.Component;
 
+import java.util.regex.Pattern;
+
 /**
- * Treats the string as a pk id of an HtmlForm
+ * Treats the string as a pk id or uuid of an HtmlForm
  */
 @Component
 public class StringToHtmlFormConverter implements Converter<String, HtmlForm> {
+
+    private Pattern onlyDigits = Pattern.compile("\\d+");
 
     @Autowired
     @Qualifier("htmlFormEntryService")
     HtmlFormEntryService htmlFormEntryService;
 
-    @Override
-    public HtmlForm convert(String id) {
-        if (StringUtils.isBlank(id))
+    public HtmlForm convert(String source) {
+        if (StringUtils.isBlank(source)) {
             return null;
-        return htmlFormEntryService.getHtmlForm(Integer.valueOf(id));
+        }
+        else if (onlyDigits.matcher(source).matches()) {
+            return htmlFormEntryService.getHtmlForm(Integer.valueOf(source));
+        }
+        else {
+            return htmlFormEntryService.getHtmlFormByUuid(source);
+        }
     }
-
 }
