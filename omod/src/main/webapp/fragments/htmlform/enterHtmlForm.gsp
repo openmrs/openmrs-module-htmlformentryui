@@ -7,6 +7,7 @@
     ui.includeJavascript("htmlformentryui", "dwr-util.js")
     ui.includeJavascript("htmlformentryui", "htmlForm.js")
     ui.includeJavascript("uicommons", "emr.js")
+    ui.includeJavascript("uicommons", "moment.js")
     // TODO setup "confirm before navigating" functionality
 %>
 
@@ -50,20 +51,27 @@
 
         // configure the encounter date widget
         // TODO this probably should be handled in HFE itself when configuring the widget? could handle this when implementing HTML-480?
+        // TODO use a utility method to strip the time component (and replace the split('T')[0]
+        // we use this convoluted approach because:
+        // 1) if we don't strip off the time component, and the client time zone is different than the server time zone, the client will convert to it's time zone when parsing (potentially leading to the wrong date)
+        // 2) if we strip off the time component, but just do a straight new Date("2014-05-05"), some browsers will interpret the time zone as UTC and convert (again potentially leading to the wrong date)
+        // so we use moment, which uses the local time zone when parsing "2014-05-05" and then convert back to a date object (toDate()) since that is what the set method is expecting
+
+
         <% if (visit) { %>
             <% if (command.context.mode.toString().equals('ENTER') && !visit.isOpen()) { %>
                 // set default date to the visit start date for retrospective visits
-                htmlForm.setEncounterDate(new Date('${ ui.dateToISOString(visit.startDate) }'));
+                htmlForm.setEncounterDate(moment('${ ui.dateToISOString(visit.startDate).split('T')[0] }').toDate());
             <% } %>
 
             // set valid date range based on visit
-            htmlForm.setEncounterStartDateRange(new Date('${  ui.dateToISOString(visit.startDate) }'));
-            htmlForm.setEncounterStopDateRange(new Date('${ visit.stopDate ? ui.dateToISOString(visit.stopDate) : ui.dateToISOString(currentDate) }'));
+            htmlForm.setEncounterStartDateRange(moment('${  ui.dateToISOString(visit.startDate).split('T')[0] }').toDate());
+            htmlForm.setEncounterStopDateRange(moment('${ visit.stopDate ? ui.dateToISOString(visit.stopDate).split('T')[0] : ui.dateToISOString(currentDate).split('T')[0] }').toDate());
 
         <% } else { %>
             // note that we need to get the current datetime from the *server*, in case the server and client are in different time zones
-            htmlForm.setEncounterStopDateRange(new Date('${  ui.dateToISOString(currentDate) }'));
-            htmlForm.setEncounterDate(new Date('${  ui.dateToISOString(currentDate) }'));
+            htmlForm.setEncounterStopDateRange(moment('${  ui.dateToISOString(currentDate).split('T')[0] }').toDate());
+            htmlForm.setEncounterDate(moment('${  ui.dateToISOString(currentDate).split('T')[0] }').toDate());
         <% } %>
 
         // for now, just disable manual entry until we figure out proper validation
