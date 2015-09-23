@@ -36,12 +36,12 @@
 		<openMRSVersion>1.9.7</openMRSVersion>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <htmlformentryVersion>2.4</htmlformentryVersion>
-        <uiframeworkVersion>3.4-SNAPSHOT</uiframeworkVersion>
+        <uiframeworkVersion>3.4</uiframeworkVersion>
         <appframeworkVersion>2.0</appframeworkVersion>
         <appuiVersion>1.0</appuiVersion>
         <emrapiVersion>1.11-SNAPSHOT</emrapiVersion>
         <uicommonsVersion>1.0</uicommonsVersion>
-        <providermanagementVersion>2.3-SNAPSHOT</providermanagementVersion>
+        <providermanagementVersion>2.3</providermanagementVersion>
         <reportingVersion>0.9.1</reportingVersion>
         <calculationVersion>1.0</calculationVersion>
         <serializationXstreamVersion>0.2.7</serializationXstreamVersion>
