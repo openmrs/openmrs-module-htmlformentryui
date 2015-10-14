@@ -102,7 +102,7 @@ public class EnterHtmlFormFragmentController extends BaseHtmlFormFragmentControl
                            FragmentModel model,
                            HttpSession httpSession) throws Exception {
 
-        config.require("patient", "htmlForm | htmlFormId | formId | formUuid | definitionResource | encounter");
+        config.require("patient", "htmlForm | htmlFormId | formId | formUuid | definitionUiResource | encounter");
 
         if (hf == null) {
             if (htmlFormId != null) {
