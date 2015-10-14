@@ -144,7 +144,7 @@ public class EnterHtmlFormFragmentControllerComponentTest extends BaseModuleWebC
 
         FragmentConfiguration config = new FragmentConfiguration();
         config.put("patient", patient);
-        config.put("definitionResource", resourcePath);
+        config.put("definitionUiResource", resourcePath);
 
         controller.controller(config, sessionContext, ui, htmlFormEntryService, adtService, formService, resourceFactory, featureToggles, patient, null, null, null, null, resourcePath, null, null, null, null, true, model, null);
 
@@ -442,7 +442,7 @@ public class EnterHtmlFormFragmentControllerComponentTest extends BaseModuleWebC
 
         FragmentConfiguration config = new FragmentConfiguration();
         config.put("patient", patient);
-        config.put("definitionResource", resourcePath);
+        config.put("definitionUiResource", resourcePath);
 
         controller.controller(config, sessionContext, ui, htmlFormEntryService, adtService, formService, resourceFactory, featureToggles, patient, null, null, null, null, resourcePath, null, null, null, null, true, model, null);
 
@@ -464,7 +464,7 @@ public class EnterHtmlFormFragmentControllerComponentTest extends BaseModuleWebC
 
         FragmentConfiguration config = new FragmentConfiguration();
         config.put("patient", patient);
-        config.put("definitionResource", resourcePath);
+        config.put("definitionUiResource", resourcePath);
 
         controller.controller(config, sessionContext, ui, htmlFormEntryService, adtService, formService, resourceFactory, featureToggles, patient, null, null, null, null, resourcePath, null, null, null, null, true, model, null);
 
