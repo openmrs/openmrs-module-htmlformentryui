@@ -14,6 +14,14 @@
 
     var returnUrl = '';
 
+    var successFunction = function(result) {
+        if (result.goToUrl) {
+            emr.navigateTo({ applicationUrl: result.goToUrl });
+        } else {
+            goToReturnUrl(result.encounterId);
+        }
+    }
+
     var disableSubmitButton = function() {
         jq('.submitButton.confirm').attr('disabled', 'disabled');
         jq('.submitButton.confirm').addClass("disabled");
@@ -141,12 +149,9 @@
             //ui.openLoadingDialog('Submitting Form');
             jq.post(form.attr('action'), form.serialize(), function(result) {
                 if (result.success) {
-                    if (result.goToUrl) {
-                        emr.navigateTo({ applicationUrl: result.goToUrl });
-                    } else {
-                        goToReturnUrl(result.encounterId);
-                    }
-                } else {
+                    successFunction(result);
+                }
+                else {
                     //ui.closeLoadingDialog();
                     enableSubmitButton();
                     for (key in result.errors) {
@@ -216,6 +221,10 @@
 
     htmlForm.setReturnUrl = function(url) {
         returnUrl = url;
+    };
+
+    htmlForm.setSuccessFunction = function(fn) {
+        successFunction = fn;
     };
 
     // TODO: these methods (getEncounter*Date*) will have to be modified when/if we switch datepickers
