@@ -25,7 +25,9 @@
     var disableSubmitButton = function() {
         jq('.submitButton.confirm').attr('disabled', 'disabled');
         jq('.submitButton.confirm').addClass("disabled");
-        jq('.submitButton.confirm .icon-spin').css('display', 'inline-block');
+        if (tryingToSubmit) {
+            jq('.submitButton.confirm .icon-spin').css('display', 'inline-block');
+        }
     }
 
     var enableSubmitButton = function() {
@@ -154,6 +156,7 @@
                 else {
                     //ui.closeLoadingDialog();
                     enableSubmitButton();
+                    tryingToSubmit = false;
                     for (key in result.errors) {
                         showError(key, result.errors[key]);
                     }
@@ -174,7 +177,9 @@
                         emr.errorAlert('Unexpected error, please contact your System Administrator: ' + textStatus);
                     });
         }
-        tryingToSubmit = false;
+        else {
+            tryingToSubmit = false;
+        }
     };
 
     htmlForm.submitHtmlForm = function()  {
@@ -263,5 +268,17 @@
         var div = document.getElementById(id);
         if ( div ) { div.style.display = "none"; }
     }
+
+    htmlForm.disableSubmitButton = function() {
+        disableSubmitButton();
+    }
+
+    htmlForm.enableSubmitButton = function() {
+        // don't allow the submit button to be enabled if trying to submit
+        if (!tryingToSubmit) {
+            enableSubmitButton();
+        }
+    }
+
 
 }( window.htmlForm = window.htmlForm || {}, jQuery ));
