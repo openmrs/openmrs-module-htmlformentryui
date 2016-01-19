@@ -151,6 +151,7 @@
             //ui.openLoadingDialog('Submitting Form');
             jq.post(form.attr('action'), form.serialize(), function(result) {
                 if (result.success) {
+                    tryingToSubmit = false;
                     successFunction(result);
                 }
                 else {
