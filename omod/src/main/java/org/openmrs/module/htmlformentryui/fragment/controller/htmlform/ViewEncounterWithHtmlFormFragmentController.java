@@ -15,8 +15,10 @@
 package org.openmrs.module.htmlformentryui.fragment.controller.htmlform;
 
 import org.apache.commons.lang.StringUtils;
+import org.openmrs.Concept;
 import org.openmrs.Encounter;
 import org.openmrs.Form;
+import org.openmrs.Obs;
 import org.openmrs.api.FormService;
 import org.openmrs.module.appframework.feature.FeatureToggleProperties;
 import org.openmrs.module.appui.UiSessionContext;
@@ -32,11 +34,11 @@ import org.openmrs.ui.framework.SimpleObject;
 import org.openmrs.ui.framework.UiUtils;
 import org.openmrs.ui.framework.annotation.FragmentParam;
 import org.openmrs.ui.framework.annotation.SpringBean;
-import org.openmrs.ui.framework.fragment.FragmentConfiguration;
 import org.openmrs.ui.framework.fragment.FragmentModel;
 import org.openmrs.ui.framework.resource.ResourceFactory;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import java.util.Map;
 import javax.servlet.http.HttpSession;
 
 /**
@@ -44,8 +46,7 @@ import javax.servlet.http.HttpSession;
  */
 public class ViewEncounterWithHtmlFormFragmentController extends BaseHtmlFormFragmentController {
 
-    public void controller(FragmentConfiguration config,
-                           @SpringBean("htmlFormEntryService") HtmlFormEntryService htmlFormEntryService,
+    public void controller(@SpringBean("htmlFormEntryService") HtmlFormEntryService htmlFormEntryService,
                            @SpringBean("formService") FormService formService,
                            @SpringBean("coreResourceFactory") ResourceFactory resourceFactory,
                            @SpringBean EmrApiProperties emrApiProperties,
@@ -63,8 +64,11 @@ public class ViewEncounterWithHtmlFormFragmentController extends BaseHtmlFormFra
 
         model.addAttribute("encounterDatetime", encounter.getEncounterDatetime());
         model.addAttribute("formattedEncounterDatetime", ui.formatDatetimePretty(encounter.getEncounterDatetime()));
-        model.addAttribute("html", getFormHtml(htmlFormEntryService, formService, resourceFactory, encounter, hf,
-                definitionUiResource, ui, sessionContext, httpSession, visitWrapper, featureToggleProperties));
+
+        FormEntrySession fes = getFormEntrySession(htmlFormEntryService, formService, resourceFactory, encounter, hf,
+                definitionUiResource, ui, sessionContext, httpSession, visitWrapper, featureToggleProperties);
+
+        generateHtmlAndAddToModel(model, fes);
     }
 
     public SimpleObject getAsHtml(@SpringBean("htmlFormEntryService") HtmlFormEntryService htmlFormEntryService,
@@ -85,12 +89,15 @@ public class ViewEncounterWithHtmlFormFragmentController extends BaseHtmlFormFra
         SimpleObject simpleObject = new SimpleObject();
         simpleObject.put("encounterDatetime", encounter.getEncounterDatetime());
         simpleObject.put("formattedEncounterDatetime", ui.formatDatetimePretty(encounter.getEncounterDatetime()));
-        simpleObject.put("html", getFormHtml(htmlFormEntryService, formService, resourceFactory, encounter, hf,
-                definitionUiResource, ui, sessionContext, httpSession, visitWrapper, featureToggleProperties));
+
+        FormEntrySession fes = getFormEntrySession(htmlFormEntryService, formService, resourceFactory, encounter, hf,
+                definitionUiResource, ui, sessionContext, httpSession, visitWrapper, featureToggleProperties);
+
+        generateHtmlAndAddToModel(simpleObject, fes);
         return simpleObject;
     }
 
-    private String getFormHtml(HtmlFormEntryService htmlFormEntryService,
+    private FormEntrySession getFormEntrySession(HtmlFormEntryService htmlFormEntryService,
                                FormService formService,
                                ResourceFactory resourceFactory,
                                Encounter encounter,
@@ -124,7 +131,60 @@ public class ViewEncounterWithHtmlFormFragmentController extends BaseHtmlFormFra
         fes.setAttribute("uiUtils", ui);
         setupVelocityContext(fes, visitDomainWrapper, ui, sessionContext, featureToggleProperties);
         setupFormEntrySession(fes, visitDomainWrapper, ui, sessionContext, null);
-        return fes.getHtmlToDisplay();
+        return fes;
+
     }
 
+
+
+    private void generateHtmlAndAddToModel(Map<String,Object> map, FormEntrySession fes) throws Exception {
+
+        // "hasExistingObs"is a bit of a hack: we count the number of existing obs before and after rendering the html--when creating the form entry session,
+        // the HFE module populates the "existingObs" list with all obs from the associated encounter; then, when rendering the form, as the HFE module
+        // matches the existing obs to obs tags on the form, it removes the obs from the list; therefore, we assume that if
+        // numberOfExistingObs - numberOfExistingObsAfterFormGeneration > 0, it means the form has a match; (we don't just base this on the initial
+        // size of the existingObs on the encounter for the use case where a form represents only *part* of an encounter, and so although the
+        // encounter may have obs, the form does not)
+        // example use case: in PIH Core we use "hasExistingObs" to determine the background color of section, which indicates whether a section has been completed or not
+
+        int numberOfExistingObs = getNumberOfExistingObs(fes);
+        int numberOfExistingObsInGroups = getNumberOfExistingObsInGroups(fes);
+
+        String htmlToDisplay = fes.getHtmlToDisplay();
+        map.put("html", htmlToDisplay);
+
+        int numberOfExistingObsAfterFormGeneration = getNumberOfExistingObs(fes);
+        int numberOfExistingObsInGroupsAfterFormGeneration = getNumberOfExistingObsInGroups(fes);
+
+        map.put("hasExistingObs", numberOfExistingObs - numberOfExistingObsAfterFormGeneration > 0
+                || numberOfExistingObsInGroups - numberOfExistingObsInGroupsAfterFormGeneration > 0);
+
+    }
+
+    private int getNumberOfExistingObs(FormEntrySession fes) {
+        if (fes.getContext().getExistingObs() == null) {
+            return 0;
+        }
+        else {
+            int count = 0;
+            for (Concept concept : fes.getContext().getExistingObs().keySet()) {
+                count = count + fes.getContext().getExistingObs().get(concept).size();
+            }
+            return count;
+        }
+    }
+
+    // currently does not handle nested obs groups
+    private int getNumberOfExistingObsInGroups(FormEntrySession fes) {
+        if (fes.getContext().getExistingObsInGroups() == null) {
+            return 0;
+        }
+        else {
+            int count = 0;
+            for (Obs obs : fes.getContext().getExistingObsInGroups().keySet()) {
+                count = count + fes.getContext().getExistingObsInGroups().get(obs).size();
+            }
+            return count;
+        }
+    }
 }
