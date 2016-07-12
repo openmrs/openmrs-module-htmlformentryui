@@ -37,7 +37,7 @@
     }
 
     var submitButtonIsDisabled = function() {
-        return $(".submitButton.confirm").is(":disabled");
+        return jq(".submitButton.confirm").is(":disabled");
     }
 
     var findAndHighlightErrors = function() {
