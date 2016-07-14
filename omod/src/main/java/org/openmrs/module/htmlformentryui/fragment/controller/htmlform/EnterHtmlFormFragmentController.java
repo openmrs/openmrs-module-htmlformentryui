@@ -49,6 +49,8 @@ import org.openmrs.ui.framework.resource.ResourceFactory;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -217,9 +219,18 @@ public class EnterHtmlFormFragmentController extends BaseHtmlFormFragmentControl
             return returnHelper(validationErrors, fes, null);
         }
 
-        // No validation errors found so process form submission
-        fes.prepareForSubmit();
-        fes.getSubmissionController().handleFormSubmission(fes, request);
+        try {
+            // No validation errors found so process form submission
+            fes.prepareForSubmit();
+            fes.getSubmissionController().handleFormSubmission(fes, request);
+        } catch (Exception ex) {
+            StringWriter sw = new StringWriter();
+            ex.printStackTrace(new PrintWriter(sw));
+            validationErrors.add(new FormSubmissionError("general-form-error", "Form submission error " + ex
+                    .getMessage() +
+                    "<br/>" + sw.toString()));
+            return returnHelper(validationErrors, fes, null);
+        }
 
         // Check this form will actually create an encounter if its supposed to
         if (fes.getContext().getMode() == FormEntryContext.Mode.ENTER && fes.hasEncouterTag() && (fes.getSubmissionActions().getEncountersToCreate() == null || fes.getSubmissionActions().getEncountersToCreate().size() == 0)) {
