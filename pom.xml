@@ -144,6 +144,11 @@
 				<version>${openMRSVersion}</version>
 				<type>jar</type>
 				<scope>provided</scope>
+                <!-- The javassist version that comes with the platform doesn't support java 8
+                     powermock-module-junit4 which is another dependency that comes with the platform
+                     also ships with a later version of javassist that is actually compatible anyways,
+                     therefore we need to exclude the javassist version that comes the platform
+                     otherwise some tests that use mocks will fail -->
                 <exclusions>
                     <exclusion>
                         <groupId>javassist</groupId>
