@@ -3,7 +3,7 @@
 
 	<groupId>org.openmrs.module</groupId>
 	<artifactId>htmlformentryui</artifactId>
-	<version>1.6-SNAPSHOT</version>
+	<version>1.6.0</version>
 	<packaging>pom</packaging>
 	<name>HTML Form Entry UI Framework Integration Module</name>
 	<description>Pages and Fragments for using the HTML Form Entry module along with the UI Framework</description>
@@ -24,7 +24,7 @@
         <connection>scm:git:git@github.com:openmrs/openmrs-module-htmlformentryui.git</connection>
         <developerConnection>scm:git:git@github.com:openmrs/openmrs-module-htmlformentryui.git</developerConnection>
         <url>scm:git:git@github.com:openmrs/openmrs-module-htmlformentryui.git</url>
-	  <tag>HEAD</tag>
+	  <tag>1.6.0</tag>
   </scm>
 
 	<modules>
