@@ -33,18 +33,18 @@
 	</modules>
 	
 	<properties>
-		<openMRSVersion>1.10.2</openMRSVersion>
+		<openMRSVersion>1.10.4</openMRSVersion>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <htmlformentryVersion>2.6</htmlformentryVersion>
-        <uiframeworkVersion>3.4</uiframeworkVersion>
-        <appframeworkVersion>2.0</appframeworkVersion>
-        <appuiVersion>1.0</appuiVersion>
-        <emrapiVersion>1.12</emrapiVersion>
-        <uicommonsVersion>1.0</uicommonsVersion>
-        <providermanagementVersion>2.3</providermanagementVersion>
-        <reportingVersion>0.9.1</reportingVersion>
-        <calculationVersion>1.0</calculationVersion>
-        <serializationXstreamVersion>0.2.7</serializationXstreamVersion>
+        <htmlformentryVersion>3.3.0</htmlformentryVersion>
+        <uiframeworkVersion>3.9</uiframeworkVersion>
+        <appframeworkVersion>2.9</appframeworkVersion>
+        <appuiVersion>1.7</appuiVersion>
+        <emrapiVersion>1.18</emrapiVersion>
+        <uicommonsVersion>2.1</uicommonsVersion>
+        <providermanagementVersion>2.5.0</providermanagementVersion>
+        <reportingVersion>0.10.4</reportingVersion>
+        <calculationVersion>1.2</calculationVersion>
+        <serializationXstreamVersion>0.2.12</serializationXstreamVersion>
     </properties>
 
     <dependencyManagement>
@@ -208,6 +208,13 @@
             <dependency>
                 <groupId>org.openmrs.module</groupId>
                 <artifactId>serialization.xstream-api</artifactId>
+                <version>${serializationXstreamVersion}</version>
+                <scope>test</scope>
+            </dependency>
+            
+            <dependency>
+                <groupId>org.openmrs.module</groupId>
+                <artifactId>serialization.xstream-api-1.10</artifactId>
                 <version>${serializationXstreamVersion}</version>
                 <scope>test</scope>
             </dependency>
