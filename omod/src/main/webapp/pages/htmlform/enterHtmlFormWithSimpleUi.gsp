@@ -48,17 +48,27 @@ ${ ui.includeFragment("coreapps", "patientHeader", [ patient: patient ]) }
             jq(this).addClass("disabled");
 
         });
+
+        // clicking the save form link should have the same functionality as clicking on the confirmation section title (ie, jumps to confirmation)
+        jq('#save-form').click(function() {
+            NavigatorController.getSectionById("confirmation").title.click();
+        })
+
     });
 </script>
 
-<% if (returnUrl) { %>
-    <div id="exit-form-container">
-        <a href="${ ui.escapeAttribute(returnUrl) }">
-            <i class="icon-signout small"></i>
-            ${ ui.message("htmlformentryui.exitForm") }
-        </a>
-    </div>
-<% } %>
+<div id="form-actions-container">
+    <a id="save-form">
+        <i class="icon-save small"></i>
+        ${ ui.message("htmlformentryui.saveForm") }
+    </a>
+    <% if (returnUrl) { %>
+    <a href="${ ui.escapeAttribute(returnUrl) }">
+        <i class="icon-signout small"></i>
+        ${ ui.message("htmlformentryui.exitForm") }
+    </a>
+    <% } %>
+</div>
 
 ${ ui.includeFragment("htmlformentryui", "htmlform/enterHtmlForm", [
         patient: patient,
