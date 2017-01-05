@@ -229,6 +229,10 @@
         returnUrl = url;
     };
 
+    htmlForm.getReturnUrl = function() {
+        return returnUrl;
+    };
+
     htmlForm.setSuccessFunction = function(fn) {
         successFunction = fn;
     };
