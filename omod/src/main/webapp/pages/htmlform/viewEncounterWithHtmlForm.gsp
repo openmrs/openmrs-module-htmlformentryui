@@ -42,7 +42,8 @@
     </a>
     <a class="button" href="${ ui.pageLink("htmlformentryui", "htmlform/editHtmlFormWith" + editStyle + "Ui", [
             encounterId: encounter.uuid,
-            patientId: patient.patient.uuid
+            patientId: patient.patient.uuid,
+            returnUrl: returnUrl
     ]) }">
         <i class="icon-pencil"></i>
         ${ ui.message("uicommons.edit") }
