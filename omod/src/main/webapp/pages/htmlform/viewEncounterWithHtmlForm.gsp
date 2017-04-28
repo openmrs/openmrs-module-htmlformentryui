@@ -36,11 +36,11 @@
 <% } %>
 
 <span id="form-actions" class="no-print">
-    <a class="button" href="javascript:window.print()">
+    <a class="button" id="print-button" href="javascript:window.print()">
         <i class="icon-print"></i>
         ${ ui.message("uicommons.print") }
     </a>
-    <a class="button" href="${ ui.pageLink("htmlformentryui", "htmlform/editHtmlFormWith" + editStyle + "Ui", [
+    <a class="button" id="edit-button" href="${ ui.pageLink("htmlformentryui", "htmlform/editHtmlFormWith" + editStyle + "Ui", [
             encounterId: encounter.uuid,
             patientId: patient.patient.uuid,
             returnUrl: returnUrl
