@@ -89,6 +89,9 @@
 		       }
 		    });
 		});
+
+		// performs any initialization required by the "htmlForm" object (which is defined in htmlForm.js in the htmlformentry module and extended by htmlForm.js in this module)
+		htmlForm.initialize();
     });
     
 </script>
