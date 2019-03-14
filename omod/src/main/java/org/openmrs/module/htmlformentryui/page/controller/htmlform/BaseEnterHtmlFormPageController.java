@@ -19,6 +19,7 @@ import org.openmrs.Form;
 import org.openmrs.Patient;
 import org.openmrs.Visit;
 import org.openmrs.api.FormService;
+import org.openmrs.module.appframework.feature.FeatureToggleProperties;
 import org.openmrs.module.appui.UiSessionContext;
 import org.openmrs.module.htmlformentry.HtmlForm;
 import org.openmrs.module.htmlformentry.HtmlFormEntryService;
@@ -49,6 +50,7 @@ public abstract class BaseEnterHtmlFormPageController extends BaseHtmlFormPageCo
                     @SpringBean("htmlFormEntryService") HtmlFormEntryService htmlFormEntryService,
                     @SpringBean("formService") FormService formService,
                     @SpringBean("coreResourceFactory") ResourceFactory resourceFactory,
+                    @SpringBean("featureToggles") FeatureToggleProperties featureToggles,
                     UiUtils ui,
                     PageModel model) throws Exception {
 
@@ -80,6 +82,7 @@ public abstract class BaseEnterHtmlFormPageController extends BaseHtmlFormPageCo
         model.addAttribute("returnUrl", returnUrl);
         model.addAttribute("returnLabel", returnLabel);
         model.addAttribute("breadcrumbOverride", breadcrumbOverride);
+        model.addAttribute("featureToggles", featureToggles);
     }
 
 }
