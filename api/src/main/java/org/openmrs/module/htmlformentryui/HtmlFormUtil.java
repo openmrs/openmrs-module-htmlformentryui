@@ -17,10 +17,14 @@ package org.openmrs.module.htmlformentryui;
 import org.apache.commons.lang3.StringUtils;
 import org.openmrs.EncounterType;
 import org.openmrs.Form;
+import org.openmrs.Patient;
+import org.openmrs.Visit;
 import org.openmrs.api.FormService;
 import org.openmrs.module.htmlformentry.HtmlForm;
 import org.openmrs.module.htmlformentry.HtmlFormEntryService;
 import org.openmrs.module.htmlformentry.HtmlFormEntryUtil;
+import org.openmrs.ui.framework.SimpleObject;
+import org.openmrs.ui.framework.UiUtils;
 import org.openmrs.ui.framework.resource.ResourceFactory;
 import org.openmrs.util.OpenmrsUtil;
 import org.w3c.dom.Document;
@@ -124,6 +128,49 @@ public class HtmlFormUtil {
         } catch (Exception e) {
             throw new IllegalArgumentException("Failed to parse XML and build Form and HtmlForm", e);
         }
+    }
+
+    public static String determineReturnUrl(String returnUrl, String returnProviderName, String returnPageName, Patient patient, Visit visit, UiUtils ui) {
+
+        SimpleObject returnParams = null;
+
+        if (patient != null) {
+            if (visit == null) {
+                returnParams = SimpleObject.create("patientId", patient.getId());
+            }
+            else {
+                returnParams = SimpleObject.create("patientId", patient.getId(), "visitId", visit.getId());
+            }
+        }
+
+        // first see if a return provider and page have been specified
+        if (org.apache.commons.lang.StringUtils.isNotBlank(returnProviderName) && org.apache.commons.lang.StringUtils.isNotBlank(returnPageName)) {
+            return ui.pageLink(returnProviderName, returnPageName, returnParams);
+        }
+
+        // if not, see if a returnUrl has been specified
+        if (org.apache.commons.lang.StringUtils.isNotBlank(returnUrl)) {
+            return returnUrl;
+        }
+
+        // otherwise return to patient dashboard if we have a patient, but index if not
+        if (returnParams != null && returnParams.containsKey("patientId")) {
+            return ui.pageLink("coreapps", "patientdashboard/patientDashboard", returnParams);
+        }
+        else {
+            return "/" + ui.contextPath() + "index.html";
+        }
+
+    }
+
+    public static String determineReturnLabel(String returnLabel, Patient patient, UiUtils ui) {
+
+        if (org.apache.commons.lang.StringUtils.isNotBlank(returnLabel)) {
+            return ui.message(returnLabel);
+        } else {
+            return ui.escapeJs(ui.format(patient));
+        }
+
     }
 
     private static String trim(String s) {

@@ -33,7 +33,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 /**
  *
  */
-public abstract class BaseEnterHtmlFormPageController extends BaseHtmlFormPageController {
+public abstract class BaseEnterHtmlFormPageController {
 
     public void get(UiSessionContext sessionContext,
                     @RequestParam("patientId") Patient currentPatient,
@@ -72,8 +72,8 @@ public abstract class BaseEnterHtmlFormPageController extends BaseHtmlFormPageCo
             throw new IllegalArgumentException("Couldn't find a form");
         }
 
-        returnUrl = determineReturnUrl(returnUrl, returnProvider, returnPage, currentPatient, visit, ui);
-        returnLabel = determineReturnLabel(returnLabel, currentPatient, ui);
+        returnUrl = HtmlFormUtil.determineReturnUrl(returnUrl, returnProvider, returnPage, currentPatient, visit, ui);
+        returnLabel = HtmlFormUtil.determineReturnLabel(returnLabel, currentPatient, ui);
 
         model.addAttribute("htmlForm", htmlForm);
         model.addAttribute("patient", currentPatient);
