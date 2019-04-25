@@ -169,7 +169,7 @@
 
     flowsheet.viewHeader = function() {
         var editMode = !requireEncounter;
-        loadHtmlFormForEncounter(headerForm, headerEncounterId, editMode, function(data) {
+        loadHtmlFormForEncounter(headerForm, headerEncounterId, null, editMode,function(data) {
             jq('#header-section').html(data);
             flowsheet.toggleViewFlowsheet();
         });
@@ -196,7 +196,7 @@
     flowsheet.enterHeader = function() {
         flowsheet.setCurrentlyEditingFormName(headerForm);
         flowsheet.setCurrentlyEditingEncounterId(headerEncounterId);
-        loadHtmlFormForEncounter(headerForm, headerEncounterId, true, function(data) {
+        loadHtmlFormForEncounter(headerForm, headerEncounterId, null,true,function(data) {
             jq('#header-section').html(data);
             setupForm(jq('#header-section'));
             jq(".flowsheet-section").hide();
@@ -252,9 +252,10 @@
         }
     };
 
-    flowsheet.enterVisit = function(formName) {
+    flowsheet.enterVisit = function(formName, encounterDate) {
+
         flowsheet.setCurrentlyEditingFormName(formName);
-        loadHtmlFormForEncounter(formName, null, true, function(data) {
+        loadHtmlFormForEncounter(formName, null, encounterDate,true, function(data) {
             var fs = flowsheet.getFlowsheet(formName);
             jq('#flowsheet-edit-section-'+fs.index).html(data).show();
             setupForm(jq('#flowsheet-edit-section-'+fs.index));
@@ -267,7 +268,7 @@
     flowsheet.editVisit = function(formName, encId) {
         flowsheet.setCurrentlyEditingFormName(formName);
         flowsheet.setCurrentlyEditingEncounterId(encId);
-        loadHtmlFormForEncounter(formName, encId, true, function(data) {
+        loadHtmlFormForEncounter(formName, encId, null,true, function(data) {
             var fs = flowsheet.getFlowsheet(formName);
             jq('#flowsheet-edit-section-'+fs.index).html(data).show();
             setupForm(jq('#flowsheet-edit-section-'+fs.index));
@@ -339,7 +340,7 @@
      *  The encounter date tag in a cell with class .visit-date
      */
     flowsheet.loadIntoFlowsheet = function(formName, encId, showVisitTable) {
-        loadHtmlFormForEncounter(formName, encId, false, function(data) {
+        loadHtmlFormForEncounter(formName, encId, null,false, function(data) {
             showVisitTable = showVisitTable || false;
             var newRow = jq(data).find(".visit-table-row");
             var newVisitMoment = flowsheet.extractVisitMoment(newRow);
@@ -410,13 +411,15 @@
 
     /**
      * Loads the htmlform for a given encounter, calling the function passed in as 'action' with the htmlform results
+     * If no existing encounter, can specify a default encounter date; should never specify both encounterId and encounterDate parameters
      */
-    var loadHtmlFormForEncounter = function(formName, encounterId, editMode, action) {
+    var loadHtmlFormForEncounter = function(formName, encounterId, encounterDate, editMode, action) {
         jq.get(emr.pageLink('htmlformentryui', 'htmlform/htmlForm', {
             "patient": patientId,
             "encounter": encounterId,
             "editMode": editMode,
-            "formName": formName
+            "formName": formName,
+            "encounterDate": encounterDate != null ? encounterDate : "",
         }), action).always( function() {
             var index = loadingEncounters.indexOf(encounterId);
             if (index > -1) {

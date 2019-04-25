@@ -7,6 +7,8 @@ import org.openmrs.module.htmlformentry.FormEntrySession;
 import org.openmrs.ui.framework.UiUtils;
 import org.springframework.util.StringUtils;
 
+import java.util.Date;
+
 public abstract class BaseHtmlFormFragmentController {
 
     protected void setupVelocityContext(FormEntrySession fes, VisitDomainWrapper visitDomainWrapper, UiUtils ui,
@@ -19,7 +21,7 @@ public abstract class BaseHtmlFormFragmentController {
 
     }
 
-    protected void setupFormEntrySession(FormEntrySession fes, VisitDomainWrapper visitDomainWrapper, UiUtils ui,
+    protected void setupFormEntrySession(FormEntrySession fes, VisitDomainWrapper visitDomainWrapper, Date defaultEncounterDate, UiUtils ui,
                                          UiSessionContext sessionContext, String returnUrl) {
 
         fes.setAttribute("uiSessionContext", sessionContext);
@@ -27,6 +29,7 @@ public abstract class BaseHtmlFormFragmentController {
 
         // note that we pass the plain visit object to the form entry context, but the velocity context and the model get the "wrapped" visit--not sure if we want to pass the wrapped visit to HFE as well
         fes.getContext().setVisit(visitDomainWrapper != null ? visitDomainWrapper.getVisit() : null);
+        fes.getContext().setDefaultEncounterDate(defaultEncounterDate);
 
         if (StringUtils.hasText(returnUrl)) {
             fes.setReturnUrl(returnUrl);

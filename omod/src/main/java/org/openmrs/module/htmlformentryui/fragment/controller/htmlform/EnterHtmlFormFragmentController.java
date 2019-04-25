@@ -97,6 +97,7 @@ public class EnterHtmlFormFragmentController extends BaseHtmlFormFragmentControl
                            @FragmentParam(value = "formUuid", required = false) String formUuid,
                            @FragmentParam(value = "definitionUiResource", required = false) String definitionUiResource,
                            @FragmentParam(value = "encounter", required = false) Encounter encounter,
+                           @FragmentParam(value = "encounterDate", required = false) Date defaultEncounterDate,  // allows specifying a default encounter date when adding a new encounter; should not be used with encounter param
                            @FragmentParam(value = "visit", required = false) Visit visit,
                            @FragmentParam(value = "createVisit", required = false) Boolean createVisit,
                            @FragmentParam(value = "returnUrl", required = false) String returnUrl,
@@ -141,7 +142,7 @@ public class EnterHtmlFormFragmentController extends BaseHtmlFormFragmentControl
 
         VisitDomainWrapper visitDomainWrapper = getVisitDomainWrapper(visit, encounter, adtService);
         setupVelocityContext(fes, visitDomainWrapper, ui, sessionContext,featureToggles);
-        setupFormEntrySession(fes, visitDomainWrapper, ui, sessionContext, returnUrl);
+        setupFormEntrySession(fes, visitDomainWrapper, defaultEncounterDate, ui, sessionContext, returnUrl);
         setupModel(model, fes, visitDomainWrapper, createVisit);
 
     }
@@ -210,7 +211,7 @@ public class EnterHtmlFormFragmentController extends BaseHtmlFormFragmentControl
 
         VisitDomainWrapper visitDomainWrapper = getVisitDomainWrapper(visit, encounter, adtService);
         setupVelocityContext(fes, visitDomainWrapper, ui, sessionContext,featureToggles);
-        setupFormEntrySession(fes, visitDomainWrapper, ui, sessionContext, returnUrl);
+        setupFormEntrySession(fes, visitDomainWrapper, null, ui, sessionContext, returnUrl);
         fes.getHtmlToDisplay();  // needs to happen before we validate or process a form
 
         // Validate and return with errors if any are found

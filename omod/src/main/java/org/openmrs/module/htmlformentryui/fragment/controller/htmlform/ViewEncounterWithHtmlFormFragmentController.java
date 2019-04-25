@@ -38,8 +38,8 @@ import org.openmrs.ui.framework.fragment.FragmentModel;
 import org.openmrs.ui.framework.resource.ResourceFactory;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import java.util.Map;
 import javax.servlet.http.HttpSession;
+import java.util.Map;
 
 /**
  *
@@ -130,7 +130,7 @@ public class ViewEncounterWithHtmlFormFragmentController extends BaseHtmlFormFra
         fes.setAttribute("uiSessionContext", sessionContext);
         fes.setAttribute("uiUtils", ui);
         setupVelocityContext(fes, visitDomainWrapper, ui, sessionContext, featureToggleProperties);
-        setupFormEntrySession(fes, visitDomainWrapper, ui, sessionContext, null);
+        setupFormEntrySession(fes, visitDomainWrapper, null, ui, sessionContext, null);
         return fes;
 
     }

@@ -146,7 +146,7 @@ public class EnterHtmlFormFragmentControllerComponentTest extends BaseModuleWebC
         config.put("patient", patient);
         config.put("definitionUiResource", resourcePath);
 
-        controller.controller(config, sessionContext, ui, htmlFormEntryService, adtService, formService, resourceFactory, featureToggles, patient, null, null, null, null, resourcePath, null, null, null, null, true, model, null);
+        controller.controller(config, sessionContext, ui, htmlFormEntryService, adtService, formService, resourceFactory, featureToggles, patient, null, null, null, null, resourcePath, null, null,null, null, null, true, model, null);
 
         FormEntrySession command = (FormEntrySession) model.getAttribute("command");
         String html = command.getHtmlToDisplay();
@@ -444,7 +444,7 @@ public class EnterHtmlFormFragmentControllerComponentTest extends BaseModuleWebC
         config.put("patient", patient);
         config.put("definitionUiResource", resourcePath);
 
-        controller.controller(config, sessionContext, ui, htmlFormEntryService, adtService, formService, resourceFactory, featureToggles, patient, null, null, null, null, resourcePath, null, null, null, null, true, model, null);
+        controller.controller(config, sessionContext, ui, htmlFormEntryService, adtService, formService, resourceFactory, featureToggles, patient, null, null, null, null, resourcePath, null, null,null, null, null, true, model, null);
 
         FormEntrySession command = (FormEntrySession) model.getAttribute("command");
         String html = command.getHtmlToDisplay();
@@ -466,7 +466,7 @@ public class EnterHtmlFormFragmentControllerComponentTest extends BaseModuleWebC
         config.put("patient", patient);
         config.put("definitionUiResource", resourcePath);
 
-        controller.controller(config, sessionContext, ui, htmlFormEntryService, adtService, formService, resourceFactory, featureToggles, patient, null, null, null, null, resourcePath, null, null, null, null, true, model, null);
+        controller.controller(config, sessionContext, ui, htmlFormEntryService, adtService, formService, resourceFactory, featureToggles, patient, null, null, null, null, resourcePath, null, null,null, null, null, true, model, null);
 
         FormEntrySession command = (FormEntrySession) model.getAttribute("command");
         String html = command.getHtmlToDisplay();

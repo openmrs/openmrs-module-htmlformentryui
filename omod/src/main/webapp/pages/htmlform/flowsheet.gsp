@@ -220,6 +220,9 @@
 
 <div id="flowsheet-app">
 
+    <!-- hack so the that datepicker isn't the first input field (which makes it open by default -->
+    <input type="text" style="width: 0; height: 0; top: -100px; position: absolute;"/>
+
     <% if (!alerts.empty) { %>
         <div id="alert-section" class="hide-when-printing">
             <table id="alert-table">
@@ -270,10 +273,18 @@
 
             <% if (!viewOnly && formName != 'blank' && addNewRow == true) { %>
                 <div class="add-another-flowsheet-section flowsheet-section">
-                    <a class="form-action-link" onclick="flowsheet.enterVisit('${formName}');">
+                    <a class="form-action-link" onclick="flowsheet.enterVisit('${formName}', jq('#new-${flowsheetForms.get(formName).id}-date-field').val());">
                         <i class="icon-pencil"></i>
-                        Enter New ${flowsheetForms.get(formName).name}
-                    </a>
+                        Enter New ${flowsheetForms.get(formName).name}</a>
+                        ${ ui.includeFragment("uicommons", "field/datetimepicker", [
+                                id: "new-" + flowsheetForms.get(formName).id + "-date",
+                                formFieldName: "new-" + flowsheetForms.get(formName).id + "-date-field",
+                                defaultDate: new Date(),
+                                endDate: new Date(),
+                                label: "",
+                                useTime: false
+                        ])}
+
                 </div>
             <% } %>
 

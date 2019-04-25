@@ -19,8 +19,11 @@ import org.openmrs.ui.framework.UiUtils;
 import org.openmrs.ui.framework.page.PageModel;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import java.util.Date;
+
 /**
  * This class simply renders an htmlform without anything additional
+ * "EncounterDate" allows you to specify a default encounter date when entering a new form... if an "encounter" is passed in, this is ignored
  */
 public class HtmlFormPageController {
 
@@ -29,6 +32,7 @@ public class HtmlFormPageController {
                            @RequestParam(value="editMode") Boolean editMode,
                            @RequestParam(value="encounter", required=false) Encounter encounter,
                            @RequestParam(value="returnUrl", required=false) String returnUrl,
+                           @RequestParam(value="encounterDate", required=false) Date defaultEncounterDate,
                            UiUtils ui, PageModel model) {
 
         model.addAttribute("fragmentProvider", "htmlformentryui");
@@ -36,6 +40,7 @@ public class HtmlFormPageController {
         model.addAttribute("formName", formName);
         model.addAttribute("patient", patient);
         model.addAttribute("encounter", encounter);
+        model.addAttribute("encounterDate", defaultEncounterDate);
         model.addAttribute("returnUrl", returnUrl);
     }
 }
