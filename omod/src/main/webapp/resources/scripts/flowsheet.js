@@ -227,9 +227,9 @@
                     flowsheet.removeEncounterId(currentlyEditingEncounterId);
                     flowsheet.toggleViewFlowsheet();
                     for (var i=0; i<flowsheets.length; i++) {
-                        var flowsheet = flowsheets[i];
-                        if (flowsheet.length == 0) {
-                            jq("#flowsheet-section-"+flowsheet.index).children().remove();
+                        var fs = flowsheets[i];
+                        if (fs.length == 0) {
+                            jq("#flowsheet-section-"+fs.index).children().remove();
                         }
                     }
                 }
