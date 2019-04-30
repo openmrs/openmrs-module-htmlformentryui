@@ -13,11 +13,13 @@
  */
 package org.openmrs.module.htmlformentryui.page.controller.htmlform;
 
+import org.apache.commons.lang.StringUtils;
 import org.openmrs.Concept;
 import org.openmrs.Encounter;
 import org.openmrs.Location;
 import org.openmrs.Obs;
 import org.openmrs.Patient;
+import org.openmrs.api.APIException;
 import org.openmrs.api.FormService;
 import org.openmrs.api.LocationService;
 import org.openmrs.api.context.Context;
@@ -25,9 +27,9 @@ import org.openmrs.module.emrapi.patient.PatientDomainWrapper;
 import org.openmrs.module.htmlformentry.HtmlForm;
 import org.openmrs.module.htmlformentry.HtmlFormEntryService;
 import org.openmrs.module.htmlformentryui.HtmlFormUtil;
-import org.openmrs.module.reporting.common.ObjectUtil;
 import org.openmrs.module.reporting.data.DataUtil;
 import org.openmrs.module.reporting.data.patient.definition.EncountersForPatientDataDefinition;
+import org.openmrs.module.reporting.data.person.definition.ObsForPersonDataDefinition;
 import org.openmrs.ui.framework.SimpleObject;
 import org.openmrs.ui.framework.UiUtils;
 import org.openmrs.ui.framework.annotation.InjectBeans;
@@ -41,7 +43,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -57,7 +58,7 @@ public class FlowsheetPageController {
                            @RequestParam(value="viewOnly", required = false) Boolean viewOnly,
                            @RequestParam(value="addRow", required = false) Boolean addRow,
                            @RequestParam(value="requireEncounter", required = false) Boolean requireEncounter,
-                           @RequestParam(value="requireObs", required = false) String requireObs,
+                           @RequestParam(value="byConcept", required = false) String byConcept,
                            @RequestParam(value="dashboardUrl", required = false) String dashboardUrl,
                            @RequestParam(value="customizationProvider", required = false) String customizationProvider,
                            @RequestParam(value="customizationFragment", required = false) String customizationFragment,
@@ -108,7 +109,7 @@ public class FlowsheetPageController {
                 HtmlForm htmlForm = getHtmlFormFromResource(flowsheet, resourceFactory, formService, htmlFormEntryService);
                 flowsheetForms.put(flowsheet, htmlForm);
                 List<Integer> encIds = new ArrayList<Integer>();
-                List<Encounter> encounters = getEncountersForForm(patient, htmlForm, requireObs);
+                List<Encounter> encounters = getEncountersForForm(patient, htmlForm, byConcept);
                 for (Encounter e : encounters) {
                     encIds.add(e.getEncounterId());
                     allEncounters.add(e);
@@ -162,33 +163,34 @@ public class FlowsheetPageController {
     /**
      * @return all encounters for the given patient that have the same encounter type as the given form
      */
-    protected List<Encounter> getEncountersForForm(Patient p, HtmlForm form, String requireObs) {
-        EncountersForPatientDataDefinition edd = new EncountersForPatientDataDefinition();
-        edd.addType(form.getForm().getEncounterType());
-        List<Encounter> ret = DataUtil.evaluateForPatient(edd, p.getPatientId(), List.class);
-        if (ret == null) {
-            ret = new ArrayList<Encounter>();
+    protected List<Encounter> getEncountersForForm(Patient p, HtmlForm form, String conceptStr) {
+
+        // standard use case, fetch encounters by underlying encounter type
+        if (StringUtils.isBlank(conceptStr)) {
+            EncountersForPatientDataDefinition edd = new EncountersForPatientDataDefinition();
+            edd.addType(form.getForm().getEncounterType());
+            return DataUtil.evaluateForPatient(edd, p.getPatientId(), List.class);
         }
-        if (ObjectUtil.notNull(requireObs)) {
-            Set<String> questionsNeeded = getNestedConcepts(requireObs);
-            for (Iterator<Encounter> i = ret.iterator(); i.hasNext(); ) {
-                Encounter e = i.next();
-                if (!hasQuestionsAnswered(e, questionsNeeded)) {
-                    i.remove();
+        // if a concept is specified, ignore encounter type and fetch all encounters that contain this obs
+        else {
+            Concept concept = Context.getConceptService().getConceptByUuid(conceptStr);
+            if (concept == null) {
+                throw new APIException("Unable to find concept with uuid " + conceptStr);
+            }
+
+            ObsForPersonDataDefinition opdd = new ObsForPersonDataDefinition();
+            opdd.setQuestion(concept);
+            List<Obs> obsList = DataUtil.evaluateForPerson(opdd, p, List.class);
+
+            Set<Encounter> encounters = new HashSet<Encounter>();
+            for (Obs obs : obsList) {
+                if (obs.getEncounter() != null) {
+                    encounters.add(obs.getEncounter());
                 }
             }
 
+            return new ArrayList<Encounter>(encounters);
         }
-        return ret;
-    }
-
-    protected boolean hasQuestionsAnswered(Encounter e, Set<String> questionsNeeded) {
-        for (Obs o : e.getAllObs()) {
-            if (questionsNeeded.contains(o.getConcept().getUuid())) {
-                return true;
-            }
-        }
-        return false;
     }
 
     protected Set<String> getNestedConcepts(String conceptUuid) {
