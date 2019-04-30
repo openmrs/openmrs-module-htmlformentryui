@@ -169,7 +169,11 @@ public class FlowsheetPageController {
         if (StringUtils.isBlank(conceptStr)) {
             EncountersForPatientDataDefinition edd = new EncountersForPatientDataDefinition();
             edd.addType(form.getForm().getEncounterType());
-            return DataUtil.evaluateForPatient(edd, p.getPatientId(), List.class);
+            List<Encounter> ret = DataUtil.evaluateForPatient(edd, p.getPatientId(), List.class);
+            if (ret == null) {
+                ret = new ArrayList<Encounter>();
+            }
+            return ret;
         }
         // if a concept is specified, ignore encounter type and fetch all encounters that contain this obs
         else {
