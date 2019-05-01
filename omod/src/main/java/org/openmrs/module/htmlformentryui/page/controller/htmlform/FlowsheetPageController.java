@@ -186,14 +186,19 @@ public class FlowsheetPageController {
             opdd.setQuestion(concept);
             List<Obs> obsList = DataUtil.evaluateForPerson(opdd, p, List.class);
 
-            Set<Encounter> encounters = new HashSet<Encounter>();
-            for (Obs obs : obsList) {
-                if (obs.getEncounter() != null) {
-                    encounters.add(obs.getEncounter());
+            if (obsList != null) {
+                Set<Encounter> encounters = new HashSet<Encounter>();
+                for (Obs obs : obsList) {
+                    if (obs.getEncounter() != null) {
+                        encounters.add(obs.getEncounter());
+                    }
                 }
+                return new ArrayList<Encounter>(encounters);
+            }
+            else {
+                return new ArrayList<Encounter>();
             }
 
-            return new ArrayList<Encounter>(encounters);
         }
     }
 
