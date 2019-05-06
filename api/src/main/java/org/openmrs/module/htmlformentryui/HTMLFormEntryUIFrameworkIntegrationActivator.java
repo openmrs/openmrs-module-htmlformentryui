@@ -21,6 +21,8 @@ import org.openmrs.module.BaseModuleActivator;
 import org.openmrs.module.Module;
 import org.openmrs.module.ModuleFactory;
 import org.openmrs.module.htmlformentry.HtmlFormEntryService;
+import org.openmrs.module.htmlformentryui.constant.TagsConstant;
+import org.openmrs.module.htmlformentryui.tag.IncludeFragmentTagHandler;
 import org.openmrs.module.htmlformentryui.tag.UiIncludeTagHandler;
 import org.openmrs.module.htmlformentryui.tag.UiMessageTagHandler;
 
@@ -37,6 +39,8 @@ public class HTMLFormEntryUIFrameworkIntegrationActivator extends BaseModuleActi
             HtmlFormEntryService htmlFormEntryService = Context.getService(HtmlFormEntryService.class);
             htmlFormEntryService.addHandler(HtmlFormEntryUiConstants.HTMLFORMENTRY_UI_MESSAGE_TAG_NAME, new UiMessageTagHandler());
             htmlFormEntryService.addHandler(HtmlFormEntryUiConstants.HTMLFORMENTRY_UI_INCLUDE_TAG_NAME, new UiIncludeTagHandler());
+            htmlFormEntryService.addHandler(TagsConstant.TagName.HTMLFORMENTRY_INCLUDE_FRAGMENT_TAGS,
+				    new IncludeFragmentTagHandler());
         }
         catch (Exception e) {
             Module mod = ModuleFactory.getModuleById(HtmlFormEntryUiConstants.MODULE_ID);
