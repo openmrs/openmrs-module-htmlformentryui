@@ -17,11 +17,13 @@
     var loadingEncounters = [];
     var patientDashboardUrl = null;
     var flowsheetExtension = null; // This can be overridden by modules to provide custom functionality
+    var encounterIdToEncounterTypeUuidMap = null;
 
-    function Flowsheet(index, formName, encounterIds) {
+    function Flowsheet(index, formName, encounterIds, encounterTypeUuid) {
         this.index = index;
         this.formName = formName;
         this.encounterIds = encounterIds;
+        this.encounterTypeUuid = encounterTypeUuid;
 
         this.addEncounterId = function(eId) {
             if (this.encounterIds.indexOf(eId) < 0) {
@@ -53,8 +55,17 @@
         requireEncounter = reqEnc;
     };
 
-    flowsheet.addFlowsheet = function(index, formName, encounterIds) {
-        flowsheets.push(new Flowsheet(index, formName, encounterIds));
+    //used because we only allow editing encounters that have the same encounter type as the form
+    flowsheet.setEncounterIdToEncounterTypeUuidMap = function(flowsheetEncounterTypes) {
+      encounterIdToEncounterTypeUuidMap = flowsheetEncounterTypes;
+    };
+
+    flowsheet.getEncounterTypeUuid = function(encId) {
+      return encounterIdToEncounterTypeUuidMap[encId];
+    };
+
+    flowsheet.addFlowsheet = function(index, formName, encounterIds, encounterTypeUuid) {
+        flowsheets.push(new Flowsheet(index, formName, encounterIds, encounterTypeUuid));
     };
 
     flowsheet.getFlowsheet = function(formName) {
@@ -303,7 +314,7 @@
             jq("#visit-table-row-"+result.encounterId).remove(); // Remove old row for this encounter
             var currentFlowsheet = flowsheet.getFlowsheet(currentlyEditingFormName);
             currentFlowsheet.addEncounterId(result.encounterId);
-            flowsheet.loadIntoFlowsheet(currentlyEditingFormName, result.encounterId, true); // Add new row for this encounter
+            flowsheet.loadIntoFlowsheet(currentlyEditingFormName, result.encounterId, currentFlowsheet.encounterTypeUuid, true); // Add new row for this encounter
         }
         return false;
     };
@@ -325,7 +336,7 @@
             var fs = flowsheets[i];
             for (var j=0; j<fs.encounterIds.length; j++) {
                 loadingEncounters.push(fs.encounterIds[j]);
-                flowsheet.loadIntoFlowsheet(fs.formName, fs.encounterIds[j]);
+                flowsheet.loadIntoFlowsheet(fs.formName, fs.encounterIds[j], fs.encounterTypeUuid);
             }
         }
     };
@@ -339,7 +350,7 @@
      *  The data entry form in a single row with class visit-table-row
      *  The encounter date tag in a cell with class .visit-date
      */
-    flowsheet.loadIntoFlowsheet = function(formName, encId, showVisitTable) {
+    flowsheet.loadIntoFlowsheet = function(formName, encId, encTypeUuid, showVisitTable) {
         loadHtmlFormForEncounter(formName, encId, null,false, function(data) {
             showVisitTable = showVisitTable || false;
             var newRow = jq(data).find(".visit-table-row");
@@ -352,7 +363,7 @@
             var table = section.find(".visit-table");
             var inserted = false;
             if (table && table.length > 0) {
-                addLinksToVisitRow(newRow, formName, encId);
+                addLinksToVisitRow(newRow, formName, encId, encTypeUuid);
                 var existingRows = table.find(".visit-table-row")
                 jq.each(existingRows, function(index, currentRow) {
                     var currentMoment = flowsheet.extractVisitMoment(currentRow);
@@ -372,7 +383,7 @@
                 }
             } else {
                 table = jq(data).find(".visit-table");
-                addLinksToVisitRow(table.find(".visit-table-row"), formName, encId);
+                addLinksToVisitRow(table.find(".visit-table-row"), formName, encId, encTypeUuid);
                 section.append(table);
             }
 
@@ -383,11 +394,13 @@
         });
     };
 
-    var addLinksToVisitRow = function(row, formName, encId) {
+    var addLinksToVisitRow = function(row, formName, encId, encTypeUuid) {
         if (!viewOnly) {
+          // add Edit link only if the form's encounter type matches the encounter displayed (HTML-694)
+          if (encTypeUuid === flowsheet.getEncounterTypeUuid(encId)) {
             var rowId = row.attr("id");
             if (!rowId || rowId.length == 0) {
-                rowId = "visit-table-row"
+              rowId = "visit-table-row"
             }
             row.attr("id", rowId + "-" + encId);
 
@@ -395,6 +408,7 @@
             var existingDateCell = visitDateCell.html();
             var editLink = jq('<a href="#" onclick="flowsheet.editVisit(\'' + formName + '\', ' + encId + ');">' + existingDateCell + '</a>');
             visitDateCell.empty().append(editLink);
+          }
         }
     };
 
