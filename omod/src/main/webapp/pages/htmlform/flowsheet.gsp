@@ -24,12 +24,12 @@
     flowsheet.setDefaultLocationId(${ defaultLocationId });
     flowsheet.setRequireEncounter(${ requireEncounter });
 
-    var fwEncounterTypes = {};
-    <% for (Integer encId: encounterTypeIds.keySet()) { %>
-        fwEncounterTypes['${encId}'] = '${encounterTypeIds.get(encId)}';
+    var flowsheetEncounterTypes = {};
+    <% for (Integer encId: encounterIdToEncounterTypeUuidMap.keySet()) { %>
+    flowsheetEncounterTypes['${encId}'] = '${encounterIdToEncounterTypeUuidMap.get(encId)}';
     <% } %>
 
-    flowsheet.setEncounterTypeIds(fwEncounterTypes);
+    flowsheet.setEncounterIdToEncounterTypeUuidMap(flowsheetEncounterTypes);
 
     <% if (dashboardUrl != null && !dashboardUrl.equals("")) { %>
         <% if (dashboardUrl.equals("legacyui")) { %>

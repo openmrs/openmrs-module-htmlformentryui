@@ -17,7 +17,7 @@
     var loadingEncounters = [];
     var patientDashboardUrl = null;
     var flowsheetExtension = null; // This can be overridden by modules to provide custom functionality
-    var encounterTypeIds = null;
+    var encounterIdToEncounterTypeUuidMap = null;
 
     function Flowsheet(index, formName, encounterIds, encounterTypeUuid) {
         this.index = index;
@@ -55,12 +55,13 @@
         requireEncounter = reqEnc;
     };
 
-    flowsheet.setEncounterTypeIds = function(encounterTypes) {
-      encounterTypeIds = encounterTypes;
+    //used because we only allow editing encounters that have the same encounter type as the form
+    flowsheet.setEncounterIdToEncounterTypeUuidMap = function(flowsheetEncounterTypes) {
+      encounterIdToEncounterTypeUuidMap = flowsheetEncounterTypes;
     };
 
     flowsheet.getEncounterTypeUuid = function(encId) {
-      return encounterTypeIds[encId];
+      return encounterIdToEncounterTypeUuidMap[encId];
     };
 
     flowsheet.addFlowsheet = function(index, formName, encounterIds, encounterTypeUuid) {
