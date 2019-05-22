@@ -24,6 +24,13 @@
     flowsheet.setDefaultLocationId(${ defaultLocationId });
     flowsheet.setRequireEncounter(${ requireEncounter });
 
+    var fwEncounterTypes = {};
+    <% for (Integer encId: encounterTypeIds.keySet()) { %>
+        fwEncounterTypes['${encId}'] = '${encounterTypeIds.get(encId)}';
+    <% } %>
+
+    flowsheet.setEncounterTypeIds(fwEncounterTypes);
+
     <% if (dashboardUrl != null && !dashboardUrl.equals("")) { %>
         <% if (dashboardUrl.equals("legacyui")) { %>
             flowsheet.setPatientDashboardUrl('/'+OPENMRS_CONTEXT_PATH+'/patientDashboard.form?patientId='+patientIdStr);
@@ -37,7 +44,7 @@
 
     var flowsheetIndex = 0;
     <% for (String formName : flowsheetEncounters.keySet()) { %>
-        flowsheet.addFlowsheet(flowsheetIndex++, '${formName}', ${flowsheetEncounters.get(formName)});
+        flowsheet.addFlowsheet(flowsheetIndex++, '${formName}', ${flowsheetEncounters.get(formName)}, '${flowsheetForms.get(formName).form.encounterType.uuid}');
     <% } %>
 
     jq(document).ready( function() {

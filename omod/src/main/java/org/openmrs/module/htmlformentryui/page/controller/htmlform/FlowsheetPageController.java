@@ -40,13 +40,7 @@ import org.openmrs.ui.framework.resource.ResourceFactory;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 public class FlowsheetPageController {
 
@@ -104,6 +98,7 @@ public class FlowsheetPageController {
 
         Map<String, HtmlForm> flowsheetForms = new LinkedHashMap<String, HtmlForm>();
         Map<String, List<Integer>> flowsheetEncounters = new LinkedHashMap<String, List<Integer>>();
+        Map<Integer, String> encounterTypeIds = new LinkedHashMap<Integer, String>();
         if (flowsheets != null) {
             for (String flowsheet : flowsheets) {
                 HtmlForm htmlForm = getHtmlFormFromResource(flowsheet, resourceFactory, formService, htmlFormEntryService);
@@ -113,6 +108,7 @@ public class FlowsheetPageController {
                 for (Encounter e : encounters) {
                     encIds.add(e.getEncounterId());
                     allEncounters.add(e);
+                    encounterTypeIds.put(e.getEncounterId(), e.getEncounterType().getUuid());
                 }
                 flowsheetEncounters.put(flowsheet, encIds);
             }
@@ -133,6 +129,7 @@ public class FlowsheetPageController {
                 }
             }
         }
+        model.addAttribute("encounterTypeIds", encounterTypeIds);
         model.addAttribute("defaultLocationId", defaultLocation == null ? null : defaultLocation.getLocationId());
         model.addAttribute("viewOnly", viewOnly == Boolean.TRUE);
         if (addRow == null ) {
