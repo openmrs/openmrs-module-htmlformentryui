@@ -60,6 +60,12 @@
       encounterIdToEncounterTypeUuidMap = flowsheetEncounterTypes;
     };
 
+  flowsheet.addEncounterIdToEncounterTypeUuidMap = function(encounterId, encounterTypeUuid) {
+      if (typeof encounterId !== 'undefined' && typeof encounterTypeUuid !== 'undefined') {
+        encounterIdToEncounterTypeUuidMap['' + encounterId] = encounterTypeUuid;
+      }
+  };
+
     flowsheet.getEncounterTypeUuid = function(encId) {
       return encounterIdToEncounterTypeUuidMap[encId];
     };
@@ -314,6 +320,7 @@
             jq("#visit-table-row-"+result.encounterId).remove(); // Remove old row for this encounter
             var currentFlowsheet = flowsheet.getFlowsheet(currentlyEditingFormName);
             currentFlowsheet.addEncounterId(result.encounterId);
+            flowsheet.addEncounterIdToEncounterTypeUuidMap(result.encounterId, result.encounterTypeUuid);
             flowsheet.loadIntoFlowsheet(currentlyEditingFormName, result.encounterId, currentFlowsheet.encounterTypeUuid, true); // Add new row for this encounter
         }
         return false;
