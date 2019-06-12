@@ -104,6 +104,7 @@ public class FlowsheetPageController {
 
         Map<String, HtmlForm> flowsheetForms = new LinkedHashMap<String, HtmlForm>();
         Map<String, List<Integer>> flowsheetEncounters = new LinkedHashMap<String, List<Integer>>();
+        Map<Integer, String> encounterIdToEncounterTypeUuidMap = new LinkedHashMap<Integer, String>();
         if (flowsheets != null) {
             for (String flowsheet : flowsheets) {
                 HtmlForm htmlForm = getHtmlFormFromResource(flowsheet, resourceFactory, formService, htmlFormEntryService);
@@ -113,6 +114,7 @@ public class FlowsheetPageController {
                 for (Encounter e : encounters) {
                     encIds.add(e.getEncounterId());
                     allEncounters.add(e);
+                    encounterIdToEncounterTypeUuidMap.put(e.getEncounterId(), e.getEncounterType().getUuid());
                 }
                 flowsheetEncounters.put(flowsheet, encIds);
             }
@@ -133,6 +135,7 @@ public class FlowsheetPageController {
                 }
             }
         }
+        model.addAttribute("encounterIdToEncounterTypeUuidMap", encounterIdToEncounterTypeUuidMap);
         model.addAttribute("defaultLocationId", defaultLocation == null ? null : defaultLocation.getLocationId());
         model.addAttribute("viewOnly", viewOnly == Boolean.TRUE);
         if (addRow == null ) {

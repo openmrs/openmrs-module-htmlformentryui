@@ -287,7 +287,7 @@ public class EnterHtmlFormFragmentController extends BaseHtmlFormFragmentControl
                 afterSaveUrl = afterSaveUrl.replaceAll("\\{\\{patient.id\\}\\}", session.getPatient().getId().toString());
                 afterSaveUrl = afterSaveUrl.replaceAll("\\{\\{encounter.id\\}\\}", session.getEncounter().getId().toString());
             }
-            return SimpleObject.create("success", true, "encounterId", encounter.getId(), "goToUrl", afterSaveUrl);
+            return SimpleObject.create("success", true, "encounterId", encounter.getId(), "encounterUuid", encounter.getUuid(), "encounterTypeUuid", encounter.getEncounterType() != null ? encounter.getEncounterType().getUuid() : null, "goToUrl", afterSaveUrl);
         } else {
             Map<String, String> errors = new HashMap<String, String>();
             for (FormSubmissionError err : validationErrors) {
