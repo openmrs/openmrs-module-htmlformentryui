@@ -52,43 +52,35 @@ public class UiIcludeTagHandlerTest {
 	}
 	
 	@Test
-	public void parseFragmentParams_shouldParseFragmentUrlParametersIntoAMap() {
-		Map<String, Object> props = handler.parseFragmentParams("path/page?age=5&gender=M", session);
+	public void paramsToMap_shouldParseFragmentUrlParametersIntoAMap() {
+		Map<String, Object> props = handler.paramsToMap("path/page?age=5&gender=M");
 		Assert.assertEquals(props.size(), 2);
 		Assert.assertEquals("{gender=M, age=5}", props.toString());
 	}
 	
 	@Test
-	public void parseFragmentParams_shouldHandleVelocityExpressionsOnContextualOpenmrsObjects() {
-		Map<String, Object> props = handler.parseFragmentParams("path/page?visitId=$visit.id&gender=$patient.gender&patientId=$patient.uuid", session);
-		Assert.assertEquals("15", props.get("visitId"));
-		Assert.assertEquals("M", props.get("gender"));
-		Assert.assertEquals(PATIENT_UUID, props.get("patientId"));
-	}
-	
-	@Test
-	public void parseFragmentParams_shouldReturnEmptyWhenUrlHasNoParameters() {
-		Map<String, Object> props = handler.parseFragmentParams("path/page", session);
+	public void paramsToMap_shouldReturnEmptyWhenUrlHasNoParameters() {
+		Map<String, Object> props = handler.paramsToMap("path/page");
 		Assert.assertTrue(props.isEmpty());
 	}
 		
 	@Test
 	public void doIncludeFragment_shouldPickUpFragmentParameters() {
-		// Something like : <uiInclude provider="provider" fragment="path/page" fragmentParams="retired=true&patientId=$patient.uuid" />
+		// Something like : <uiInclude provider="provider" fragment="path/fragment" fragmentParams="retired=true&patientId=$patient.uuid" />
 		doReturn("path/fragment").when(handler).getAttribute(node, "fragment", null);
 		doReturn("retired=true&patientId=$patient.uuid").when(handler).getAttribute(node, "fragmentParams", null);
 		
 		handler.doIncludeFragment(node, null, session, null, null);
-		verify(handler).parseFragmentParams("path/fragment?retired=true&patientId=$patient.uuid", session);
+		verify(handler).paramsToMap("path/fragment?retired=true&patientId=" + PATIENT_UUID);
 	}
 	
 	@Test
 	public void doIncludeFragment_shouldPickUpFragmentParametersFromTheFragmentUrl() {
-		// Something like : <uiInclude provider="provider" fragment="path/page?retired=true&patientId=$patient.uuid" />
-		doReturn("path/fragment?retired=true&patientId=$patient.uuid").when(handler).getAttribute(node, "fragment", null);
+		// Something like : <uiInclude provider="provider" fragment="path/fragment?retired=true&patientId=$patient.uuid" />
+		doReturn("path/fragment?retired=true&visitId=$visit.id").when(handler).getAttribute(node, "fragment", null);
 		
 		handler.doIncludeFragment(node, null, session, null, null);
-		verify(handler).parseFragmentParams("path/fragment?retired=true&patientId=$patient.uuid", session);
+		verify(handler).paramsToMap("path/fragment?retired=true&visitId=15");
 	}
 	
 	/**

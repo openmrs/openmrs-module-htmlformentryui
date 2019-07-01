@@ -99,28 +99,28 @@ public class UiIncludeTagHandler extends AbstractTagHandler {
     protected void doIncludeFragment(Node node, UiUtils uiUtils, FormEntrySession formEntrySession, PrintWriter out, String provider) {
     	String fragment = getAttribute(node, "fragment", null);
         if (StringUtils.isNotEmpty(fragment)) {
-        	Map<String, Object> props = new HashMap<String, Object>();
+        	Map<String, Object> fragmentConfig = new HashMap<String, Object>();
         	try {
         		URI fragmentUrl = new URI(fragment);
 	        	if (fragmentUrl.getQuery() != null) {
-	        		props.putAll(parseFragmentParams(fragment, formEntrySession));
+	        		fragmentConfig.putAll(paramsToMap(formEntrySession.evaluateVelocityExpression(fragment)));
 	        	}
 	        	
 	        	String fragmentParams = getAttribute(node, "fragmentParams", null);
 	        	if (StringUtils.isNotEmpty(fragmentParams)) {
 	        		StringBuilder urlBuilder = new StringBuilder();
 	        		urlBuilder.append(fragmentUrl.getPath() + "?").append(fragmentParams);
-	        		props.putAll(parseFragmentParams(urlBuilder.toString(), formEntrySession));
+	        		fragmentConfig.putAll(paramsToMap(formEntrySession.evaluateVelocityExpression(urlBuilder.toString())));
 	        	}
         	} catch(URISyntaxException e) {
         		log.error("Invalid fragment URL", e);
         	} 
         	
             try {
-				if (props.isEmpty()) {
+				if (fragmentConfig.isEmpty()) {
 					out.print(uiUtils.includeFragment(provider, fragment));
 				} else {
-					out.print(uiUtils.includeFragment(provider, fragment, props));
+					out.print(uiUtils.includeFragment(provider, fragment, fragmentConfig));
 				}
 				
             } catch (PageAction pageAction) {
@@ -134,29 +134,20 @@ public class UiIncludeTagHandler extends AbstractTagHandler {
     }
     
     /**
-     * Parses urlParameters from a given {@code urlString} into a {@link Map} of properties.
+     * Parses urlParameters to a {@link Map} of fragment configurations.
      * 
-     * @param urlString the {@code URL} to parse
-     * @param formEntrySession HtmlFormSession
-     * @return @link Map} of url parameters
-     * @should handle velocity expressions on FormEntrySession-Contextual {@linkOpenmrsObject}s ie:
-     * * <uiInclude fragment="fragment?patientId=$patient.id" />
+     * @param queryString url string.
      */
-	protected Map<String, Object> parseFragmentParams(String urlString, FormEntrySession formEntrySession) {
-		Map<String, Object> props = new HashMap<String, Object>();
+	protected Map<String, Object> paramsToMap(String queryString) {
+		Map<String, Object> map = new HashMap<String, Object>();
 		try {
-    	    List<NameValuePair> prams = URLEncodedUtils.parse(new URI(urlString), "UTF-8");
-    	    
+    	    List<NameValuePair> prams = URLEncodedUtils.parse(new URI(queryString), "UTF-8");
     		for(NameValuePair param : prams) {
-    			if (param.getValue().startsWith("$")) {
-    				props.put(param.getName(), formEntrySession.evaluateVelocityExpression(param.getValue()));
-    			} else {
-    				props.put(param.getName(), param.getValue());
-    			}
+    			map.put(param.getName(), param.getValue());
     		}
     	} catch (URISyntaxException e) {
     		log.error("Invalid fragment URL", e);
     	}
-		return props;
+		return map;
 	}
 }
