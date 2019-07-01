@@ -1,5 +1,15 @@
 package org.openmrs.module.htmlformentryui.tag;
 
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+import static org.powermock.api.mockito.PowerMockito.mockStatic;
+
+import java.net.URISyntaxException;
+import java.util.Map;
+
+import org.apache.xerces.impl.xs.opti.DefaultNode;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -14,16 +24,6 @@ import org.powermock.modules.junit4.PowerMockRunner;
 import org.w3c.dom.DOMException;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
-
-import static org.mockito.Mockito.when;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.spy;
-import static org.mockito.Mockito.doReturn;
-import static org.powermock.api.mockito.PowerMockito.mockStatic;
-
-import java.util.Map;
-
-import org.apache.xerces.impl.xs.opti.DefaultNode;
 
 @RunWith(PowerMockRunner.class)
 @PrepareForTest(Context.class)
@@ -52,20 +52,20 @@ public class UiIcludeTagHandlerTest {
 	}
 	
 	@Test
-	public void paramsToMap_shouldParseFragmentUrlParametersIntoAMap() {
+	public void paramsToMap_shouldParseFragmentUrlParametersIntoAMap() throws URISyntaxException {
 		Map<String, Object> props = handler.paramsToMap("path/page?age=5&gender=M");
 		Assert.assertEquals(props.size(), 2);
 		Assert.assertEquals("{gender=M, age=5}", props.toString());
 	}
 	
 	@Test
-	public void paramsToMap_shouldReturnEmptyWhenUrlHasNoParameters() {
+	public void paramsToMap_shouldReturnEmptyWhenUrlHasNoParameters() throws URISyntaxException {
 		Map<String, Object> props = handler.paramsToMap("path/page");
 		Assert.assertTrue(props.isEmpty());
 	}
 		
 	@Test
-	public void includeFragment_shouldPickUpFragmentParameters() {
+	public void includeFragment_shouldPickUpFragmentParameters() throws URISyntaxException {
 		// Something like : <uiInclude provider="provider" fragment="path/fragment" fragmentParams="retired=true&patientId=$patient.uuid" />
 		doReturn("path/fragment").when(handler).getAttribute(node, "fragment", null);
 		doReturn("retired=true&patientId=$patient.uuid").when(handler).getAttribute(node, "fragmentParams", null);
@@ -75,7 +75,7 @@ public class UiIcludeTagHandlerTest {
 	}
 	
 	@Test
-	public void includeFragment_shouldPickUpFragmentParametersFromTheFragmentUrl() {
+	public void includeFragment_shouldPickUpFragmentParametersFromTheFragmentUrl() throws URISyntaxException {
 		// Something like : <uiInclude provider="provider" fragment="path/fragment?retired=true&patientId=$patient.uuid" />
 		doReturn("path/fragment?retired=true&visitId=$visit.id").when(handler).getAttribute(node, "fragment", null);
 		

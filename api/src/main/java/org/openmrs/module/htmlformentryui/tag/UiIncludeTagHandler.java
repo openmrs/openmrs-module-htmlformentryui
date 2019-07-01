@@ -1,5 +1,7 @@
 package org.openmrs.module.htmlformentryui.tag;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
+
 import java.io.PrintWriter;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -16,7 +18,6 @@ import org.openmrs.module.htmlformentry.BadFormDesignException;
 import org.openmrs.module.htmlformentry.FormEntrySession;
 import org.openmrs.module.htmlformentry.handler.AbstractTagHandler;
 import org.openmrs.ui.framework.FragmentException;
-import org.openmrs.ui.framework.UiFrameworkException;
 import org.openmrs.ui.framework.UiUtils;
 import org.openmrs.ui.framework.page.PageAction;
 import org.w3c.dom.Node;
@@ -90,15 +91,18 @@ public class UiIncludeTagHandler extends AbstractTagHandler {
     }
 	
     /**
-     * Includes a fragment to an HtmlForm.
+     * Includes a parameterised GSP fragment into an HTML form.
      * 
      * @should include a given fragment to an HtmlForm
      * @should pickup fragment parameters from the {@code fragmentParams} attribute
-     * @should pickup fragment parameters from the {@code fragment} attribute as {@code URL} parameters
-     * @param node HtmlForm point at which this fragment is included
-     * @param uiUtils ui-framework API used to include the fragment
-     * @param formEntrySession this HtmlForm session
-     * @param provider fragment Provider
+     * @should pickup fragment parameters from the {@code fragment} attribute as URI parameters
+     * 
+     * @param node HTML form node where this fragment is being included.
+     * @param uiUtils UI Framework's UI utils.
+     * @param formEntrySession
+     * @param provider The fragment's provider. Eg. "coreapps", "uicommons", ...
+     * 
+     * @param out The output writer.
      */
     protected void includeFragment(Node node, UiUtils uiUtils, FormEntrySession formEntrySession, String provider, PrintWriter out) {
     	String fragment = getAttribute(node, "fragment", null);
@@ -116,14 +120,14 @@ public class UiIncludeTagHandler extends AbstractTagHandler {
 	        		fragmentConfig.putAll(paramsToMap(formEntrySession.evaluateVelocityExpression(urlBuilder.toString())));
 	        	}
         	} catch(URISyntaxException e) {
-        		throw new FragmentException("Invalid fragment URL :" + fragment , e);
+        		throw new FragmentException("Invalid fragment URI: " + fragment , e);
         	} 
         	
             try {
 				out.print(uiUtils.includeFragment(provider, fragment, fragmentConfig));
 				
             } catch (PageAction pageAction) {
-                throw new IllegalStateException("Tried to include a fragment that threw a PageAction", pageAction);
+                throw new IllegalStateException("Tried to include a fragment that threw a PageAction.", pageAction);
             }
             catch (NullPointerException e) {
                 // see note above in previous NPE catch block
@@ -133,20 +137,17 @@ public class UiIncludeTagHandler extends AbstractTagHandler {
     }
     
     /**
-     * Parses urlParameters to a {@link Map} of fragment configurations.
+     * Parses a URL query parameters string into a key-value map.
      * 
-     * @param queryString url string.
+     * @param queryString The URL parameters query string.
+     * @throws URISyntaxException 
      */
-	protected Map<String, Object> paramsToMap(String queryString) {
+	protected Map<String, Object> paramsToMap(String queryString) throws URISyntaxException {
+		List<NameValuePair> params = URLEncodedUtils.parse(new URI(queryString), UTF_8);
 		Map<String, Object> map = new HashMap<String, Object>();
-		try {
-    	    List<NameValuePair> prams = URLEncodedUtils.parse(new URI(queryString), "UTF-8");
-    		for(NameValuePair param : prams) {
-    			map.put(param.getName(), param.getValue());
-    		}
-    	} catch (URISyntaxException e) {
-    		throw new FragmentException("Invalid fragment URL (" + queryString +  "). Failed to parse fragment Parameters", e);
-    	}
+		for(NameValuePair param : params) {
+			map.put(param.getName(), param.getValue());
+		}
 		return map;
 	}
 }
