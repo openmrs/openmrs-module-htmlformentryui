@@ -93,7 +93,7 @@ public class UiIncludeTagHandler extends AbstractTagHandler {
     /**
      * Includes a parameterised GSP fragment into an HTML form.
      * 
-     * @should include a given fragment to an HtmlForm
+     * @should include a fragment into an HTML form
      * @should pickup fragment parameters from the {@code fragmentParams} attribute
      * @should pickup fragment parameters from the {@code fragment} attribute as URI parameters
      * 

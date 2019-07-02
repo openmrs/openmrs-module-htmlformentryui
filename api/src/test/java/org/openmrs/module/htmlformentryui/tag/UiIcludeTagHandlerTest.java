@@ -34,46 +34,47 @@ public class UiIcludeTagHandlerTest {
 	private Node node;
 	
 	private static final String PATIENT_UUID = "ea7ae6ac-e9de-430f-a5ce-4adcf3b1ed43";
+	private static final Integer VISIT_ID = 15;
 	
 	@Before
 	public void setup() throws Exception {
 		mockStatic(Context.class);
 		when(Context.getAuthenticatedUser()).thenReturn(new User(1));
 		handler = spy(new UiIncludeTagHandler());
-		node = new NodeTest();
+		node = new TestNode();
 		
 		// setup htmlentrysession context
-		Patient pat = new Patient();
-		pat.setGender("M");
-		pat.setUuid(PATIENT_UUID);
+		Patient patient = new Patient();
+		patient.setGender("M");
+		patient.setUuid(PATIENT_UUID);
 		Visit visit = new Visit();
-		visit.setId(15);
-		session = new FormEntrySession(pat, "xml", null);
-		session.addToVelocityContext("visit", visit);
+		visit.setId(VISIT_ID);
 		
+		session = new FormEntrySession(patient, "xml", null);
+		session.addToVelocityContext("visit", visit);
 	}
 	
 	@Test
 	public void paramsToMap_shouldParseFragmentUrlParametersIntoAMap() throws URISyntaxException {
 		// replay
-		Map<String, Object> props = handler.paramsToMap("path/page?age=5&gender=M");
+		Map<String, Object> map = handler.paramsToMap("path/page?age=5&gender=M");
 		
 		// verify
-		Assert.assertEquals(props.size(), 2);
-		Assert.assertEquals("{gender=M, age=5}", props.toString());
+		Assert.assertEquals(map.size(), 2);
+		Assert.assertEquals("{gender=M, age=5}", map.toString());
 	}
 	
 	@Test
-	public void paramsToMap_shouldReturnEmptyWhenUrlHasNoParameters() throws URISyntaxException {
+	public void paramsToMap_shouldReturnEmptyMapWhenUrlHasNoParameters() throws URISyntaxException {
 		// replay
-		Map<String, Object> props = handler.paramsToMap("path/page");
+		Map<String, Object> map = handler.paramsToMap("path/page");
 		
 		// verify
-		Assert.assertTrue(props.isEmpty());
+		Assert.assertTrue(map.isEmpty());
 	}
 	
 	@Test
-	public void includeFragment_shouldPickUpFragmentParameters() throws URISyntaxException {
+	public void includeFragment_shouldEvaluateFragmentParameters() throws URISyntaxException {
 		// setup
 		doReturn("path/fragment").when(handler).getAttribute(node, "fragment", null);
 		doReturn("retired=true&patientId=$patient.uuid").when(handler).getAttribute(node, "fragmentParams", null);
@@ -86,7 +87,7 @@ public class UiIcludeTagHandlerTest {
 	}
 	
 	@Test
-	public void includeFragment_shouldPickUpFragmentParametersFromTheFragmentUrl() throws URISyntaxException {
+	public void includeFragment_shouldEvaluateFragmentParametersWhenInFragmentUrl() throws URISyntaxException {
 		// setup
 		doReturn("path/fragment?retired=true&visitId=$visit.id").when(handler).getAttribute(node, "fragment", null);
 		
@@ -94,13 +95,14 @@ public class UiIcludeTagHandlerTest {
 		handler.includeFragment(node, null, session, null, null);
 		
 		// verify
-		verify(handler).paramsToMap("path/fragment?retired=true&visitId=15");
+		verify(handler).paramsToMap("path/fragment?retired=true&visitId=" + VISIT_ID);
 	}
+	
 	
 	/**
 	 *  {@link Node} implementation for unit testing purposes
 	 */
-	private class NodeTest extends DefaultNode {
+	private class TestNode extends DefaultNode {
 		
 		@Override
 		public NamedNodeMap getAttributes() {
