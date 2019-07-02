@@ -24,10 +24,12 @@ import org.w3c.dom.Node;
  * * <uiInclude provider="yourModuleId" javascript="fileAndPath.js" [priority="5"] />
  * * <uiInclude provider="yourModuleId" css="fileAndPath.css" [priority="10"] />
  * * <uiInclude provider="yourModuleId" fragment="pathAndFragmentName" fragmentParams="param1=value&param2=value"/>
+ * * <uiInclude provider="yourModuleId" fragment="pathAndFragmentName?param1=value&param2=value"/>
  *
  * @see org.openmrs.ui.framework.ResourceIncluder
  * @see UiUtils#includeJavascript(String, String, Integer)
  * @see UiUtils#includeCss(String, String, Integer)
+ * @see UiUtils#includeFragment(String, String, Map)
  */
 public class UiIncludeTagHandler extends AbstractTagHandler {
 	
