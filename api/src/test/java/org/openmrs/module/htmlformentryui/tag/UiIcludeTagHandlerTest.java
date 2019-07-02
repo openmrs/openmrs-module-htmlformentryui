@@ -39,6 +39,10 @@ public class UiIcludeTagHandlerTest {
 	public void setup() throws Exception {
 		mockStatic(Context.class);
 		when(Context.getAuthenticatedUser()).thenReturn(new User(1));
+		handler = spy(new UiIncludeTagHandler());
+		node = new NodeTest();
+		
+		// setup htmlentrysession context
 		Patient pat = new Patient();
 		pat.setGender("M");
 		pat.setUuid(PATIENT_UUID);
@@ -46,40 +50,50 @@ public class UiIcludeTagHandlerTest {
 		visit.setId(15);
 		session = new FormEntrySession(pat, "xml", null);
 		session.addToVelocityContext("visit", visit);
-		handler = spy(new UiIncludeTagHandler());
-		node = new NodeTest();
 		
 	}
 	
 	@Test
 	public void paramsToMap_shouldParseFragmentUrlParametersIntoAMap() {
+		// replay
 		Map<String, Object> props = handler.paramsToMap("path/page?age=5&gender=M");
+		
+		// verify
 		Assert.assertEquals(props.size(), 2);
 		Assert.assertEquals("{gender=M, age=5}", props.toString());
 	}
 	
 	@Test
 	public void paramsToMap_shouldReturnEmptyWhenUrlHasNoParameters() {
+		// replay
 		Map<String, Object> props = handler.paramsToMap("path/page");
+		
+		// verify
 		Assert.assertTrue(props.isEmpty());
 	}
 		
 	@Test
 	public void includeFragment_shouldPickUpFragmentParameters() {
-		// Something like : <uiInclude provider="provider" fragment="path/fragment" fragmentParams="retired=true&patientId=$patient.uuid" />
+		// setup
 		doReturn("path/fragment").when(handler).getAttribute(node, "fragment", null);
 		doReturn("retired=true&patientId=$patient.uuid").when(handler).getAttribute(node, "fragmentParams", null);
 		
+		// replay
 		handler.includeFragment(node, null, session, null, null);
+		
+		// verify
 		verify(handler).paramsToMap("path/fragment?retired=true&patientId=" + PATIENT_UUID);
 	}
 	
 	@Test
 	public void includeFragment_shouldPickUpFragmentParametersFromTheFragmentUrl() {
-		// Something like : <uiInclude provider="provider" fragment="path/fragment?retired=true&patientId=$patient.uuid" />
+		// setup
 		doReturn("path/fragment?retired=true&visitId=$visit.id").when(handler).getAttribute(node, "fragment", null);
 		
+		// replay
 		handler.includeFragment(node, null, session, null, null);
+		
+		// verify
 		verify(handler).paramsToMap("path/fragment?retired=true&visitId=15");
 	}
 	
