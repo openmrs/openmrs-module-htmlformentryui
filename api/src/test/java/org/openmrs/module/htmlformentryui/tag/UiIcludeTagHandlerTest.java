@@ -65,21 +65,21 @@ public class UiIcludeTagHandlerTest {
 	}
 		
 	@Test
-	public void doIncludeFragment_shouldPickUpFragmentParameters() {
+	public void includeFragment_shouldPickUpFragmentParameters() {
 		// Something like : <uiInclude provider="provider" fragment="path/fragment" fragmentParams="retired=true&patientId=$patient.uuid" />
 		doReturn("path/fragment").when(handler).getAttribute(node, "fragment", null);
 		doReturn("retired=true&patientId=$patient.uuid").when(handler).getAttribute(node, "fragmentParams", null);
 		
-		handler.doIncludeFragment(node, null, session, null, null);
+		handler.includeFragment(node, null, session, null, null);
 		verify(handler).paramsToMap("path/fragment?retired=true&patientId=" + PATIENT_UUID);
 	}
 	
 	@Test
-	public void doIncludeFragment_shouldPickUpFragmentParametersFromTheFragmentUrl() {
+	public void includeFragment_shouldPickUpFragmentParametersFromTheFragmentUrl() {
 		// Something like : <uiInclude provider="provider" fragment="path/fragment?retired=true&patientId=$patient.uuid" />
 		doReturn("path/fragment?retired=true&visitId=$visit.id").when(handler).getAttribute(node, "fragment", null);
 		
-		handler.doIncludeFragment(node, null, session, null, null);
+		handler.includeFragment(node, null, session, null, null);
 		verify(handler).paramsToMap("path/fragment?retired=true&visitId=15");
 	}
 	

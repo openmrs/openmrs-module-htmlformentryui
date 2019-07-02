@@ -15,6 +15,8 @@ import org.apache.http.client.utils.URLEncodedUtils;
 import org.openmrs.module.htmlformentry.BadFormDesignException;
 import org.openmrs.module.htmlformentry.FormEntrySession;
 import org.openmrs.module.htmlformentry.handler.AbstractTagHandler;
+import org.openmrs.ui.framework.FragmentException;
+import org.openmrs.ui.framework.UiFrameworkException;
 import org.openmrs.ui.framework.UiUtils;
 import org.openmrs.ui.framework.page.PageAction;
 import org.w3c.dom.Node;
@@ -77,7 +79,7 @@ public class UiIncludeTagHandler extends AbstractTagHandler {
             }
         }
         
-        doIncludeFragment(node, uiUtils, formEntrySession, out, provider);
+        includeFragment(node, uiUtils, formEntrySession, provider, out);
         
         return false;
     }
@@ -92,13 +94,13 @@ public class UiIncludeTagHandler extends AbstractTagHandler {
      * 
      * @should include a given fragment to an HtmlForm
      * @should pickup fragment parameters from the {@code fragmentParams} attribute
-     * @should also pickup fragment parameters from the {@code fragment} attribute as {@code URL} parameters
+     * @should pickup fragment parameters from the {@code fragment} attribute as {@code URL} parameters
      * @param node HtmlForm point at which this fragment is included
      * @param uiUtils ui-framework API used to include the fragment
      * @param formEntrySession this HtmlForm session
      * @param provider fragment Provider
      */
-    protected void doIncludeFragment(Node node, UiUtils uiUtils, FormEntrySession formEntrySession, PrintWriter out, String provider) {
+    protected void includeFragment(Node node, UiUtils uiUtils, FormEntrySession formEntrySession, String provider, PrintWriter out) {
     	String fragment = getAttribute(node, "fragment", null);
         if (StringUtils.isNotEmpty(fragment)) {
         	Map<String, Object> fragmentConfig = new HashMap<String, Object>();
@@ -107,7 +109,6 @@ public class UiIncludeTagHandler extends AbstractTagHandler {
 	        	if (fragmentUrl.getQuery() != null) {
 	        		fragmentConfig.putAll(paramsToMap(formEntrySession.evaluateVelocityExpression(fragment)));
 	        	}
-	        	
 	        	String fragmentParams = getAttribute(node, "fragmentParams", null);
 	        	if (StringUtils.isNotEmpty(fragmentParams)) {
 	        		StringBuilder urlBuilder = new StringBuilder();
@@ -115,15 +116,11 @@ public class UiIncludeTagHandler extends AbstractTagHandler {
 	        		fragmentConfig.putAll(paramsToMap(formEntrySession.evaluateVelocityExpression(urlBuilder.toString())));
 	        	}
         	} catch(URISyntaxException e) {
-        		log.error("Invalid fragment URL", e);
+        		throw new FragmentException("Invalid fragment URL :" + fragment , e);
         	} 
         	
             try {
-				if (fragmentConfig.isEmpty()) {
-					out.print(uiUtils.includeFragment(provider, fragment));
-				} else {
-					out.print(uiUtils.includeFragment(provider, fragment, fragmentConfig));
-				}
+				out.print(uiUtils.includeFragment(provider, fragment, fragmentConfig));
 				
             } catch (PageAction pageAction) {
                 throw new IllegalStateException("Tried to include a fragment that threw a PageAction", pageAction);
@@ -148,7 +145,7 @@ public class UiIncludeTagHandler extends AbstractTagHandler {
     			map.put(param.getName(), param.getValue());
     		}
     	} catch (URISyntaxException e) {
-    		log.error("Invalid fragment URL", e);
+    		throw new FragmentException("Invalid fragment URL (" + queryString +  "). Failed to parse fragment Parameters", e);
     	}
 		return map;
 	}
