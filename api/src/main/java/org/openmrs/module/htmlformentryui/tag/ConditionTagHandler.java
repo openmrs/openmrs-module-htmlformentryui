@@ -15,6 +15,7 @@ public class ConditionTagHandler extends SubstitutionTagHandler {
 			throws BadFormDesignException {
 		
 		ConditionElement element = new ConditionElement();
+		session.getSubmissionController().addAction(element);
 		return element.generateHtml(session.getContext());	
 	}
 }
