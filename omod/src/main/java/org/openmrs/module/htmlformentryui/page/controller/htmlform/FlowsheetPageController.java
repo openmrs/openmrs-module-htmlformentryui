@@ -103,7 +103,7 @@ public class FlowsheetPageController {
             allEncounters.add(headerEncounter);
         }
         model.addAttribute("headerEncounter", headerEncounter);
-        model.addAttribute("headerEncounterDate", new SimpleDateFormat("yyyy-MM-dd").format(headerEncounterDate));
+        model.addAttribute("headerEncounterDate", headerEncounterDate != null ? new SimpleDateFormat("yyyy-MM-dd").format(headerEncounterDate) : "");
 
         Map<String, HtmlForm> flowsheetForms = new LinkedHashMap<String, HtmlForm>();
         Map<String, List<Integer>> flowsheetEncounters = new LinkedHashMap<String, List<Integer>>();
