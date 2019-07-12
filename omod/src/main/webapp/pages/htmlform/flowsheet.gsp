@@ -20,6 +20,7 @@
     flowsheet.setPatientId(${ patient.patient.patientId });
     flowsheet.setHeaderForm('${ headerForm }');
     flowsheet.setHeaderEncounterId(${ headerEncounter == null ? null : headerEncounter.encounterId });
+    flowsheet.setHeaderEncounterDate('${ headerEncounterDate }');
     flowsheet.setHtmlFormJs(htmlForm); // This is the htmlform object added to the page by htmlformentryui htmlform.js
     flowsheet.setDefaultLocationId(${ defaultLocationId });
     flowsheet.setRequireEncounter(${ requireEncounter });

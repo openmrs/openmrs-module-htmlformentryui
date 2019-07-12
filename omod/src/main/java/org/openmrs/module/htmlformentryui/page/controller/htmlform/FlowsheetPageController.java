@@ -40,6 +40,7 @@ import org.openmrs.ui.framework.resource.ResourceFactory;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
@@ -57,6 +58,7 @@ public class FlowsheetPageController {
                            @RequestParam(value="flowsheets") String[] flowsheets,
                            @RequestParam(value="viewOnly", required = false) Boolean viewOnly,
                            @RequestParam(value="addRow", required = false) Boolean addRow,
+                           @RequestParam(value="encounterDate", required = false) Date headerEncounterDate,
                            @RequestParam(value="requireEncounter", required = false) Boolean requireEncounter,
                            @RequestParam(value="byConcept", required = false) String byConcept,
                            @RequestParam(value="dashboardUrl", required = false) String dashboardUrl,
@@ -101,6 +103,7 @@ public class FlowsheetPageController {
             allEncounters.add(headerEncounter);
         }
         model.addAttribute("headerEncounter", headerEncounter);
+        model.addAttribute("headerEncounterDate", headerEncounterDate != null ? new SimpleDateFormat("yyyy-MM-dd").format(headerEncounterDate) : "");
 
         Map<String, HtmlForm> flowsheetForms = new LinkedHashMap<String, HtmlForm>();
         Map<String, List<Integer>> flowsheetEncounters = new LinkedHashMap<String, List<Integer>>();

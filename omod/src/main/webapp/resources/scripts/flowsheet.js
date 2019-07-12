@@ -5,6 +5,7 @@
     var patientId = null;
     var headerForm = null;
     var headerEncounterId = null;
+    var headerEncounterDate = null;
     var requireEncounter = true;
     var flowsheets = [];
     var viewOnly = false;
@@ -49,6 +50,10 @@
 
     flowsheet.setHeaderEncounterId = function(eId) {
         headerEncounterId = eId;
+    };
+
+    flowsheet.setHeaderEncounterDate = function(encounterDate) {
+        headerEncounterDate = encounterDate;
     };
 
     flowsheet.setRequireEncounter = function(reqEnc) {
@@ -213,7 +218,7 @@
     flowsheet.enterHeader = function() {
         flowsheet.setCurrentlyEditingFormName(headerForm);
         flowsheet.setCurrentlyEditingEncounterId(headerEncounterId);
-        loadHtmlFormForEncounter(headerForm, headerEncounterId, null,true,function(data) {
+        loadHtmlFormForEncounter(headerForm, headerEncounterId, headerEncounterDate,true,function(data) {
             jq('#header-section').html(data);
             setupForm(jq('#header-section'));
             jq(".flowsheet-section").hide();
