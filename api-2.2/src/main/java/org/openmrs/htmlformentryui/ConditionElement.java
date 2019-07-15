@@ -48,24 +48,26 @@ public class ConditionElement implements HtmlGeneratorElement, FormSubmissionCon
 	@Override
 	public void handleSubmission(FormEntrySession session, HttpServletRequest submission) {
 		FormEntryContext context = session.getContext();
-		Condition condition = new Condition();
-		CodedOrFreeText conditionConcept = new CodedOrFreeText();
-		try {
-			int conceptId = Integer.parseInt((String) conditionName.getValue(session.getContext(), submission));
-			conditionConcept.setCoded(new Concept(conceptId));
-			
-		} catch(NumberFormatException e) {
-			String nonCodedConcept = submission.getParameter(context.getFieldName(conditionName));
-			conditionConcept.setNonCoded(nonCodedConcept);
+		if (context.getMode() != Mode.VIEW) {
+			Condition condition = new Condition();
+			CodedOrFreeText conditionConcept = new CodedOrFreeText();
+			try {
+				int conceptId = Integer.parseInt((String) conditionName.getValue(session.getContext(), submission));
+				conditionConcept.setCoded(new Concept(conceptId));
+				
+			} catch(NumberFormatException e) {
+				String nonCodedConcept = submission.getParameter(context.getFieldName(conditionName));
+				conditionConcept.setNonCoded(nonCodedConcept);
+			}
+			condition.setCondition(conditionConcept);
+			condition.setClinicalStatus(getStatus(context, submission));
+			condition.setOnsetDate(onSetDate.getValue(context, submission));
+			if (ConditionClinicalStatus.INACTIVE == getStatus(context, submission)) {
+				condition.setEndDate(endDate.getValue(context, submission));
+			}
+			condition.setPatient(session.getPatient());
+			Context.getConditionService().saveCondition(condition);
 		}
-		condition.setCondition(conditionConcept);
-		condition.setClinicalStatus(getStatus(context, submission));
-		condition.setOnsetDate(onSetDate.getValue(context, submission));
-		if (ConditionClinicalStatus.INACTIVE == getStatus(context, submission)) {
-			condition.setEndDate(endDate.getValue(context, submission));
-		}
-		condition.setPatient(session.getPatient());
-		Context.getConditionService().saveCondition(condition);
 	}
 
 	@Override
@@ -170,7 +172,6 @@ public class ConditionElement implements HtmlGeneratorElement, FormSubmissionCon
 		ret.append("});\n");				
 		ret.append("</script>\n");
 		return ret.toString();
-
 	}
 	
 	private String createConditionStatusWidgets(FormEntryContext context) {
@@ -202,8 +203,7 @@ public class ConditionElement implements HtmlGeneratorElement, FormSubmissionCon
 				"\n" + 
 				"});");
 		sb.append("</script>");		
-		return conditionStatusWidget.generateHtml(context) + sb.toString();
-		
+		return conditionStatusWidget.generateHtml(context) + sb.toString();	
 	}
 	
 	private String createConditionDateWidgets(FormEntryContext context) {
