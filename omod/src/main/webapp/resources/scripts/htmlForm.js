@@ -147,36 +147,46 @@
         if (state_beforeSubmit && !submitButtonIsDisabled()){
             disableSubmitButton();
             var form = jq('#htmlform');
+            var formData = false;
+            // Check whether FormData is supported
+            if (window.FormData) {
+                formData = new FormData(form[0]);
+            }
 			jq(".error", form).text(""); //clear errors
             //ui.openLoadingDialog('Submitting Form');
-            jq.post(form.attr('action'), form.serialize(), function(result) {
-                if (result.success) {
-                    tryingToSubmit = false;
-                    successFunction(result);
-                }
-                else {
-                    //ui.closeLoadingDialog();
-                    enableSubmitButton();
-                    tryingToSubmit = false;
-                    for (key in result.errors) {
-                        showError(key, result.errors[key]);
-                    }
-                    // scroll to one of the errors
-                    // TODO there must be a more efficient way to do this!
-                    for (key in result.errors) {
-                        jq(document).scrollTop(jq('#' + key).offset().top - 100);
-                        break;
-                    }
 
-                    //ui.enableConfirmBeforeNavigating();
-                }
-            }, 'json')
-                    .error(function(jqXHR, textStatus, errorThrown) {
-                        //ui.closeLoadingDialog();
-                        //ui.enableConfirmBeforeNavigating();
+            jq.ajax({
+                type: 'POST',
+                url: form.attr('action'),
+                data: formData ? formData : form.serialize(),
+                cache: false,
+                contentType: false,
+                processData: false,
+                dataType: 'json',
+                success: function (result) {
+                    if (result.success) {
+                        tryingToSubmit = false;
+                        successFunction(result);
+                    }
+                    else {
+                        enableSubmitButton();
+                        tryingToSubmit = false;
+                        for (key in result.errors) {
+                            showError(key, result.errors[key]);
+                        }
+                        // scroll to one of the errors
+                        // TODO there must be a more efficient way to do this!
+                        for (key in result.errors) {
+                            jq(document).scrollTop(jq('#' + key).offset().top - 100);
+                            break;
+                        }
 
-                        emr.errorAlert('Unexpected error, please contact your System Administrator: ' + textStatus);
-                    });
+                    }
+                },
+                error: function (jqXHR, textStatus, errorThrown) {
+                    emr.errorAlert('Unexpected error, please contact your System Administrator: ' + textStatus);
+                }
+            });
         }
         else {
             tryingToSubmit = false;
