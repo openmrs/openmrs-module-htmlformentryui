@@ -15,6 +15,7 @@ import org.openmrs.Concept;
 import org.openmrs.ConceptClass;
 import org.openmrs.Condition;
 import org.openmrs.ConditionClinicalStatus;
+import org.openmrs.api.ConditionService;
 import org.openmrs.api.context.Context;
 import org.openmrs.messagesource.MessageSourceService;
 import org.openmrs.module.htmlformentry.FormEntryContext;
@@ -33,6 +34,7 @@ import org.openmrs.module.htmlformentry.widget.Widget;
 public class ConditionElement implements HtmlGeneratorElement, FormSubmissionControllerAction  {
 	
 	private MessageSourceService mss;
+	private ConditionService conditionService;
 	private boolean required;
 	
 	// widgets
@@ -52,6 +54,7 @@ public class ConditionElement implements HtmlGeneratorElement, FormSubmissionCon
 			Condition condition = new Condition();
 			CodedOrFreeText conditionConcept = new CodedOrFreeText();
 			try {
+				
 				int conceptId = Integer.parseInt((String) conditionName.getValue(session.getContext(), submission));
 				conditionConcept.setCoded(new Concept(conceptId));
 				
@@ -66,7 +69,8 @@ public class ConditionElement implements HtmlGeneratorElement, FormSubmissionCon
 				condition.setEndDate(endDate.getValue(context, submission));
 			}
 			condition.setPatient(session.getPatient());
-			Context.getConditionService().saveCondition(condition);
+			conditionService = Context.getConditionService();
+			conditionService.saveCondition(condition);
 		}
 	}
 
@@ -134,17 +138,25 @@ public class ConditionElement implements HtmlGeneratorElement, FormSubmissionCon
 		return ret.toString();
 	}
 		
-	private String createConditionNameWidget(FormEntryContext context) {
+	public String createConditionNameWidget(FormEntryContext context) {
 		List<ConceptClass> requiredClasses = new ArrayList<ConceptClass>();
 		Set<Concept> initialConcepts = new HashSet<Concept>();
 		if (mss == null) {
 			mss = Context.getMessageSourceService();		
 		}
 		
-		requiredClasses.add(Context.getConceptService().getConceptClassByUuid("8d4918b0-c2cc-11de-8d13-0010c6dffd0f"));
-		requiredClasses.add(Context.getConceptService().getConceptClassByUuid("8d492954-c2cc-11de-8d13-0010c6dffd0f"));
-		requiredClasses.add(Context.getConceptService().getConceptClassByUuid("8d492b2a-c2cc-11de-8d13-0010c6dffd0f"));
-		requiredClasses.add(Context.getConceptService().getConceptClassByUuid("8d491a9a-c2cc-11de-8d13-0010c6dffd0f"));
+		ConceptClass classCache = Context.getConceptService().getConceptClassByUuid("8d4918b0-c2cc-11de-8d13-0010c6dffd0f");
+		if (classCache != null) {
+			requiredClasses.add(classCache);
+		}
+		classCache = Context.getConceptService().getConceptClassByUuid("8d492b2a-c2cc-11de-8d13-0010c6dffd0f");
+		if (classCache != null) {
+			requiredClasses.add(classCache);
+		}
+		classCache = Context.getConceptService().getConceptClassByUuid("8d491a9a-c2cc-11de-8d13-0010c6dffd0f");
+		if (classCache != null) {
+			requiredClasses.add(classCache);
+		}
 		
 		for (ConceptClass cc : requiredClasses) {
 			initialConcepts.addAll(Context.getConceptService().getConceptsByClass(cc));
@@ -257,5 +269,41 @@ public class ConditionElement implements HtmlGeneratorElement, FormSubmissionCon
 			}
 		}
 		return null;
+	}
+
+	public void setRequired(boolean required) {
+		this.required = required;
+	}
+
+	public void setConditionName(Widget conditionName) {
+		this.conditionName = conditionName;
+	}
+
+	public void setOnSetDate(DateWidget onSetDate) {
+		this.onSetDate = onSetDate;
+	}
+
+	public void setEndDate(DateWidget endDate) {
+		this.endDate = endDate;
+	}
+
+	public void setConditionStatusWidget(RadioButtonsWidget conditionStatusWidget) {
+		this.conditionStatusWidget = conditionStatusWidget;
+	}
+
+	public void setOnsetDateErrorWidget(ErrorWidget onsetDateErrorWidget) {
+		this.onsetDateErrorWidget = onsetDateErrorWidget;
+	}
+
+	public void setEndDateErrorWidget(ErrorWidget endDateErrorWidget) {
+		this.endDateErrorWidget = endDateErrorWidget;
+	}
+
+	public void setConditionNameErrorWidget(ErrorWidget conditionNameErrorWidget) {
+		this.conditionNameErrorWidget = conditionNameErrorWidget;
+	}
+
+	public void setConditionStatusErrorWidget(ErrorWidget conditionStatusErrorWidget) {
+		this.conditionStatusErrorWidget = conditionStatusErrorWidget;
 	}
 }
