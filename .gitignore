@@ -1,10 +1,21 @@
-*.iml
 *.idea
 *.sass-cache
 *.css
+*.class
+
+# Package Files #
+*.jar
+*.war
+*.ear
+*.iml
+
 target
 api/target
 omod/target
+api-2.2/target
+api-2.2/.classpath
+api-2.2/.project
+api-2.2/.settings/*
 
 /.settings
 /.project

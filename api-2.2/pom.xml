@@ -1,0 +1,53 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+		<groupId>org.openmrs.module</groupId>
+		<artifactId>htmlformentryui</artifactId>
+		<version>1.9.0-SNAPSHOT</version>
+	</parent>
+
+    <artifactId>htmlformentryui-api-2.2</artifactId>
+    <packaging>jar</packaging>
+    <name>htmlformentryui Module api 2.2</name>
+    <description>2.2 api project for htmlformentryui</description>
+
+    <properties>
+        <openMRSVersion>2.2.0</openMRSVersion>
+    </properties>
+
+    <dependencies>
+    	
+        <dependency>
+            <groupId>org.openmrs.api</groupId>
+            <artifactId>openmrs-api</artifactId>
+            <version>${openMRSVersion}</version>
+            <scope>provided</scope>
+        </dependency>
+		
+		<dependency>
+		    <groupId>javax.servlet</groupId>
+		    <artifactId>javax.servlet-api</artifactId>
+		    <version>3.0.1</version>
+		    <scope>test</scope>
+		</dependency>
+
+    </dependencies>
+
+    <build>
+		<resources>
+			<resource>
+				<directory>src/main/resources</directory>
+				<filtering>true</filtering>
+			</resource>
+		</resources>
+
+		<testResources>
+			<testResource>
+				<directory>src/test/resources</directory>
+				<filtering>true</filtering>
+			</testResource>
+		</testResources>
+	</build>
+
+</project>
