@@ -5,10 +5,11 @@ import static org.powermock.api.mockito.PowerMockito.mockStatic;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.never;
 
 import java.util.Calendar;
-import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.List;
 
 import org.junit.Assert;
 import org.junit.Before;
@@ -28,6 +29,7 @@ import org.openmrs.htmlformentryui.ConditionElement;
 import org.openmrs.messagesource.MessageSourceService;
 import org.openmrs.module.htmlformentry.FormEntryContext;
 import org.openmrs.module.htmlformentry.FormEntrySession;
+import org.openmrs.module.htmlformentry.FormSubmissionError;
 import org.openmrs.module.htmlformentry.FormEntryContext.Mode;
 import org.openmrs.module.htmlformentry.widget.ConceptSearchAutocompleteWidget;
 import org.openmrs.module.htmlformentry.widget.DateWidget;
@@ -57,7 +59,7 @@ public class ConditionElementTest {
 	@Mock
 	private FormEntryContext context;
 	@Mock
-	private ConceptSearchAutocompleteWidget conceptAutocomplete;
+	private ConceptSearchAutocompleteWidget conditionSearchWidget;
 	@Mock
 	private RadioButtonsWidget conditionStatusWidget;
 	@Mock
@@ -74,26 +76,22 @@ public class ConditionElementTest {
 			    return (Condition) invocation.getArguments()[0];
 			  }
 			});
+		
 		mockStatic(Context.class);
 		when(Context.getConditionService()).thenReturn(conditionService);
 
 		// Setup html form session context
 		when(context.getMode()).thenReturn(Mode.ENTER);
 		request = new MockHttpServletRequest();
-		request.addParameter(CONDITION_NAME_WIDGET_ID, NONE_CODED_CONCEPT);
-		
 		when(session.getContext()).thenReturn(context);
 		when(session.getPatient()).thenReturn(new Patient(1));
 		
-		// Stub widgets
-		when(conceptAutocomplete.getValue(context, request)).thenReturn("1519");
-		when(conditionStatusWidget.getValue(context, request)).thenReturn("active");
 		when(onsetDate.getValue(context, request)).thenReturn(new GregorianCalendar(2014, Calendar.FEBRUARY, 11).getTime());
-		when(endDate.getValue(context, request)).thenReturn(new Date());
+		when(endDate.getValue(context, request)).thenReturn(new GregorianCalendar(2018, Calendar.DECEMBER, 1).getTime());
+		
+		// setup condition element
 		element = spy(ConditionElement.class);
-				
-		// inject mocks
-		element.setConditionName(conceptAutocomplete);
+		element.setConditionSearch(conditionSearchWidget);
 		element.setConditionStatusWidget(conditionStatusWidget);
 		element.setOnSetDate(onsetDate);
 		element.setEndDate(endDate);
@@ -102,6 +100,10 @@ public class ConditionElementTest {
 	
 	@Test
 	public void handleSubmission_shouldCreateNewCondition() {
+		// setup
+		when(conditionSearchWidget.getValue(context, request)).thenReturn("1519");
+		when(conditionStatusWidget.getValue(context, request)).thenReturn("active");
+		
 		// replay
 		element.handleSubmission(session, request);
 		
@@ -134,9 +136,9 @@ public class ConditionElementTest {
 	@Test
 	public void handleSubmission_shouldSupportNoneCodedConceptValues() {
 		// setup
-		when(context.getFieldName(conceptAutocomplete)).thenReturn(CONDITION_NAME_WIDGET_ID);
-		when(conceptAutocomplete.getValue(context, request)).thenReturn("");
-		
+		request.addParameter(CONDITION_NAME_WIDGET_ID, NONE_CODED_CONCEPT);
+		when(context.getFieldName(conditionSearchWidget)).thenReturn(CONDITION_NAME_WIDGET_ID);
+		when(conditionSearchWidget.getValue(context, request)).thenReturn("");
 		
 		// replay
 		element.handleSubmission(session, request);
@@ -148,5 +150,44 @@ public class ConditionElementTest {
 		Assert.assertEquals(NONE_CODED_CONCEPT, condition.getCondition().getNonCoded());
 
 	}
+	
+	@Test
+	public void handleSubmission_shouldNotCreateConditionInViewMode() {
+		// setup
+		when(context.getMode()).thenReturn(Mode.VIEW);
+		
+		// replay
+		element.handleSubmission(session, request);
 
+		// verify
+		verify(conditionService, never()).saveCondition(any(Condition.class));
+
+	}
+
+	@Test
+	public void validateSubmission_shouldFailValidationIfConditionIsNotGivenButRequired() {
+		// setup
+		element.setRequired(true);
+		when(conditionSearchWidget.getValue(context, request)).thenReturn(null);
+
+		// replay
+		List<FormSubmissionError> errors = (List<FormSubmissionError>) element.validateSubmission(context, request);
+		
+		// verify
+		Assert.assertEquals("htmlformentryui.conditionui.condition.required", errors.get(0).getError());
+		
+	}
+	
+	@Test
+	public void validateSubmission_shouldFailValidationIfOnsetDateIsGreaterThanEnddate() {
+		// setup
+		when(endDate.getValue(context, request)).thenReturn(new GregorianCalendar(2012, Calendar.DECEMBER, 8).getTime());
+		
+		// replay
+		List<FormSubmissionError> errors = (List<FormSubmissionError>) element.validateSubmission(context, request);
+		
+		// verify
+		Assert.assertEquals("htmlformentryui.conditionui.endDate.before.onsetDate.error", errors.get(0).getError());
+		
+	}
 }

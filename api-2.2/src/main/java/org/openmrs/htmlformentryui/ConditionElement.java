@@ -37,7 +37,7 @@ public class ConditionElement implements HtmlGeneratorElement, FormSubmissionCon
 	private ConditionService conditionService;
 	private boolean required;
 	// widgets
-	private Widget conditionName;
+	private Widget conditionSearch;
 	private DateWidget onSetDate;
 	private DateWidget endDate;
 	private RadioButtonsWidget conditionStatusWidget;
@@ -52,11 +52,11 @@ public class ConditionElement implements HtmlGeneratorElement, FormSubmissionCon
 			Condition condition = new Condition();
 			CodedOrFreeText conditionConcept = new CodedOrFreeText();
 			try {
-				int conceptId = Integer.parseInt((String) conditionName.getValue(session.getContext(), submission));
+				int conceptId = Integer.parseInt((String) conditionSearch.getValue(session.getContext(), submission));
 				conditionConcept.setCoded(new Concept(conceptId));
 				
 			} catch(NumberFormatException e) {
-				String nonCodedConcept = submission.getParameter(context.getFieldName(conditionName));
+				String nonCodedConcept = submission.getParameter(context.getFieldName(conditionSearch));
 				conditionConcept.setNonCoded(nonCodedConcept);
 			}
 			condition.setCondition(conditionConcept);
@@ -76,13 +76,15 @@ public class ConditionElement implements HtmlGeneratorElement, FormSubmissionCon
 		List<FormSubmissionError> ret = new ArrayList<FormSubmissionError>();
 		Date givenOnsetDate = onSetDate.getValue(context, submission);
 		Date givenEndDate = endDate.getValue(context, submission);
-		String condition = submission.getParameter(context.getFieldName(conditionName));
+		String condition = StringUtils.isNotBlank((String) conditionSearch.getValue(context, submission)) ? 
+				(String) conditionSearch.getValue(context, submission) : submission.getParameter(context.getFieldName(conditionSearch));
 		ConditionClinicalStatus status = getStatus(context, submission);
 		
 		if (context.getMode() != Mode.VIEW) {
 			if (StringUtils.isBlank(condition) && required) {
 				ret.add(new FormSubmissionError(context
-	                    .getFieldName(conditionName), "htmlformentryui.conditionui.condition.required"));
+		                    .getFieldName(conditionSearch), "htmlformentryui.conditionui.condition.required"));
+				
 			}	
 			if (givenOnsetDate != null && givenEndDate != null) {
 				if (givenOnsetDate.after(givenEndDate)) {
@@ -90,7 +92,7 @@ public class ConditionElement implements HtmlGeneratorElement, FormSubmissionCon
 	                        .getFieldName(endDate), "htmlformentryui.conditionui.endDate.before.onsetDate.error"));
 				}
 			} 
-			if (status == null && (required || StringUtils.isNotBlank(condition))) {
+			if (status == null && required) {
 				ret.add(new FormSubmissionError(context
 	                    .getFieldName(conditionStatusWidget), "htmlformentryui.conditionui.status.required"));
 			}
@@ -131,19 +133,19 @@ public class ConditionElement implements HtmlGeneratorElement, FormSubmissionCon
 			initialConcepts.addAll(Context.getConceptService().getConceptsByClass(cc));
 		}
 		
-		conditionName = new ConceptSearchAutocompleteWidget(new ArrayList<Concept>(initialConcepts), requiredClasses);
-		String conditionNameTextInputId = context.registerWidget(conditionName);
+		conditionSearch = new ConceptSearchAutocompleteWidget(new ArrayList<Concept>(initialConcepts), requiredClasses);
+		String conditionNameTextInputId = context.registerWidget(conditionSearch);
 		conditionNameErrorWidget = new ErrorWidget();
-		context.registerErrorWidget(conditionName, conditionNameErrorWidget);
+		context.registerErrorWidget(conditionSearch, conditionNameErrorWidget);
 		
 		StringBuilder ret = new StringBuilder();
-		ret.append(conditionName.generateHtml(context));
+		ret.append(conditionSearch.generateHtml(context));
 		if (context.getMode() != Mode.VIEW) {
 			ret.append(conditionNameErrorWidget.generateHtml(context));
 		}
 		ret.append("\n<script>jq('#" + conditionNameTextInputId + "').attr('placeholder',");
 		ret.append(" '" + mss.getMessage("coreapps.conditionui.condition") + "');\n");
-		ret.append(" jq('#" + conditionNameTextInputId + "').css('min-width', '50%');\n");
+		ret.append(" jq('#" + conditionNameTextInputId + "').css('min-width', '46.4%');\n");
 
 		// Add support for non-coded concept values.
 		// This a hack to let the autocomplete widget accept values that aren't part of the concept list.
@@ -238,6 +240,7 @@ public class ConditionElement implements HtmlGeneratorElement, FormSubmissionCon
 				"}");
 		ret.append("#htmlformentryui-condition ul {\n" + 
 				"	display:flow-root;\n" + 
+				"   width:85%" +
 				"}");
 		ret.append("</style>");
 		return ret.toString();
@@ -262,8 +265,8 @@ public class ConditionElement implements HtmlGeneratorElement, FormSubmissionCon
 		return null;
 	}
 
-	public void setConditionName(Widget conditionName) {
-		this.conditionName = conditionName;
+	public void setConditionSearch(Widget conditionSearch) {
+		this.conditionSearch = conditionSearch;
 	}
 
 	public void setOnSetDate(DateWidget onSetDate) {
