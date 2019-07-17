@@ -22,7 +22,6 @@ import org.mockito.stubbing.Answer;
 import org.openmrs.Condition;
 import org.openmrs.ConditionClinicalStatus;
 import org.openmrs.Patient;
-import org.openmrs.api.ConceptService;
 import org.openmrs.api.ConditionService;
 import org.openmrs.api.context.Context;
 import org.openmrs.htmlformentryui.ConditionElement;
@@ -47,11 +46,10 @@ public class ConditionElementTest {
 	private MockHttpServletRequest request;
 	private final String CONDITION_NAME_WIDGET_ID = "condition-name";
 	private final String NONE_CODED_CONCEPT = "Test None Coded Concept";
-	
+	private final String CONDITION_REQUIRED_ERROR = "Condition required";
+	private final String END_DATE_BEFORE_ONSET_DATE_ERROR = "End date can't be before onset date";
 	@Mock
     private MessageSourceService messageSourceService;
-	@Mock
-	private ConceptService conceptService;
 	@Mock
 	private ConditionService conditionService;
 	@Mock
@@ -79,7 +77,8 @@ public class ConditionElementTest {
 		
 		mockStatic(Context.class);
 		when(Context.getConditionService()).thenReturn(conditionService);
-
+		when(Context.getMessageSourceService()).thenReturn(messageSourceService);
+		
 		// Setup html form session context
 		when(context.getMode()).thenReturn(Mode.ENTER);
 		request = new MockHttpServletRequest();
@@ -169,12 +168,13 @@ public class ConditionElementTest {
 		// setup
 		element.setRequired(true);
 		when(conditionSearchWidget.getValue(context, request)).thenReturn(null);
+		when(messageSourceService.getMessage("htmlformentryui.conditionui.condition.required")).thenReturn(CONDITION_REQUIRED_ERROR);
 
 		// replay
 		List<FormSubmissionError> errors = (List<FormSubmissionError>) element.validateSubmission(context, request);
 		
 		// verify
-		Assert.assertEquals("htmlformentryui.conditionui.condition.required", errors.get(0).getError());
+		Assert.assertEquals(CONDITION_REQUIRED_ERROR, errors.get(0).getError());
 		
 	}
 	
@@ -182,12 +182,13 @@ public class ConditionElementTest {
 	public void validateSubmission_shouldFailValidationIfOnsetDateIsGreaterThanEnddate() {
 		// setup
 		when(endDate.getValue(context, request)).thenReturn(new GregorianCalendar(2012, Calendar.DECEMBER, 8).getTime());
+		when(messageSourceService.getMessage("htmlformentryui.conditionui.endDate.before.onsetDate.error")).thenReturn(END_DATE_BEFORE_ONSET_DATE_ERROR);
 		
 		// replay
 		List<FormSubmissionError> errors = (List<FormSubmissionError>) element.validateSubmission(context, request);
 		
 		// verify
-		Assert.assertEquals("htmlformentryui.conditionui.endDate.before.onsetDate.error", errors.get(0).getError());
+		Assert.assertEquals(END_DATE_BEFORE_ONSET_DATE_ERROR, errors.get(0).getError());
 		
 	}
 }

@@ -82,19 +82,19 @@ public class ConditionElement implements HtmlGeneratorElement, FormSubmissionCon
 		
 		if (context.getMode() != Mode.VIEW) {
 			if (StringUtils.isBlank(condition) && required) {
-				ret.add(new FormSubmissionError(context
-		                    .getFieldName(conditionSearch), "htmlformentryui.conditionui.condition.required"));
+				ret.add(new FormSubmissionError(context.getFieldName(conditionSearch), 
+		                    Context.getMessageSourceService().getMessage("htmlformentryui.conditionui.condition.required")));
 				
 			}	
 			if (givenOnsetDate != null && givenEndDate != null) {
 				if (givenOnsetDate.after(givenEndDate)) {
-					ret.add(new FormSubmissionError(context
-	                        .getFieldName(endDate), "htmlformentryui.conditionui.endDate.before.onsetDate.error"));
+					ret.add(new FormSubmissionError(context.getFieldName(endDate), 
+							Context.getMessageSourceService().getMessage("htmlformentryui.conditionui.endDate.before.onsetDate.error")));
 				}
 			} 
 			if (status == null && required) {
-				ret.add(new FormSubmissionError(context
-	                    .getFieldName(conditionStatusWidget), "htmlformentryui.conditionui.status.required"));
+				ret.add(new FormSubmissionError(context.getFieldName(conditionStatusWidget), 
+						Context.getMessageSourceService().getMessage("htmlformentryui.conditionui.status.required")));
 			}
 		}
 		return ret;
