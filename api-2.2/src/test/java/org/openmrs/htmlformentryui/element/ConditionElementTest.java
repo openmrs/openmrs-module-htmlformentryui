@@ -6,6 +6,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.never;
+import static org.hamcrest.CoreMatchers.is;
 
 import java.util.Calendar;
 import java.util.GregorianCalendar;
@@ -59,7 +60,7 @@ public class ConditionElementTest {
 	@Mock
 	private ConceptSearchAutocompleteWidget conditionSearchWidget;
 	@Mock
-	private RadioButtonsWidget conditionStatusWidget;
+	private RadioButtonsWidget conditionStatusesWidget;
 	@Mock
 	private DateWidget endDate;
 	@Mock
@@ -86,12 +87,11 @@ public class ConditionElementTest {
 		when(session.getPatient()).thenReturn(new Patient(1));
 		
 		when(onsetDate.getValue(context, request)).thenReturn(new GregorianCalendar(2014, Calendar.FEBRUARY, 11).getTime());
-		when(endDate.getValue(context, request)).thenReturn(new GregorianCalendar(2018, Calendar.DECEMBER, 1).getTime());
 		
 		// setup condition element
 		element = spy(ConditionElement.class);
 		element.setConditionSearch(conditionSearchWidget);
-		element.setConditionStatusWidget(conditionStatusWidget);
+		element.setConditionStatusesWidget(conditionStatusesWidget);
 		element.setOnSetDate(onsetDate);
 		element.setEndDate(endDate);
 		
@@ -101,7 +101,7 @@ public class ConditionElementTest {
 	public void handleSubmission_shouldCreateNewCondition() {
 		// setup
 		when(conditionSearchWidget.getValue(context, request)).thenReturn("1519");
-		when(conditionStatusWidget.getValue(context, request)).thenReturn("active");
+		when(conditionStatusesWidget.getValue(context, request)).thenReturn("active");
 		
 		// replay
 		element.handleSubmission(session, request);
@@ -111,15 +111,15 @@ public class ConditionElementTest {
 		verify(conditionService).saveCondition(captor.capture());
 		Condition condition = captor.getValue();
 		Assert.assertEquals(ConditionClinicalStatus.ACTIVE, condition.getClinicalStatus());
-		Assert.assertNotNull(condition.getPatient());
-		Assert.assertNotNull(condition.getCondition());		
+		Assert.assertThat(condition.getCondition().getCoded().getId(), is(1519));
 		
 	}
 	
 	@Test
 	public void handleSubmission_shouldCreateInactiveCondition() {
 		// setup
-		when(conditionStatusWidget.getValue(context, request)).thenReturn("inactive");
+		when(endDate.getValue(context, request)).thenReturn(new GregorianCalendar(2018, Calendar.DECEMBER, 1).getTime());
+		when(conditionStatusesWidget.getValue(context, request)).thenReturn("inactive");
 		
 		// replay
 		element.handleSubmission(session, request);
