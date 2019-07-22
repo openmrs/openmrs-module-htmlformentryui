@@ -37,6 +37,8 @@ public class ConditionElement implements HtmlGeneratorElement, FormSubmissionCon
 	private MessageSourceService mss;
 	private ConditionService conditionService;
 	private boolean required;
+    private final String CONDITION_LIST_CONCEPT_CLASS_NAME = "Diagnosis";
+    
 	// widgets
 	private Widget conditionSearchWidget;
 	private DateWidget onSetDateWidget;
@@ -85,7 +87,6 @@ public class ConditionElement implements HtmlGeneratorElement, FormSubmissionCon
 			if (StringUtils.isBlank(condition) && required) {
 				ret.add(new FormSubmissionError(context.getFieldName(conditionSearchWidget), 
 		                    Context.getMessageSourceService().getMessage("htmlformentryui.conditionui.condition.required")));
-				
 			}	
 			if (givenOnsetDate != null && givenEndDate != null) {
 				if (givenOnsetDate.after(givenEndDate)) {
@@ -117,7 +118,7 @@ public class ConditionElement implements HtmlGeneratorElement, FormSubmissionCon
 		if (mss == null) {
 			mss = Context.getMessageSourceService();		
 		}
-		ConceptClass conceptClass = Context.getConceptService().getConceptClassByUuid("8d4918b0-c2cc-11de-8d13-0010c6dffd0f");
+		ConceptClass conceptClass = Context.getConceptService().getConceptClassByName(CONDITION_LIST_CONCEPT_CLASS_NAME);
 		initialConcepts.addAll(Context.getConceptService().getConceptsByClass(conceptClass));
 		conditionSearchWidget = new ConceptSearchAutocompleteWidget(new ArrayList<Concept>(initialConcepts), Arrays.asList(conceptClass));
 		String conditionNameTextInputId = context.registerWidget(conditionSearchWidget);

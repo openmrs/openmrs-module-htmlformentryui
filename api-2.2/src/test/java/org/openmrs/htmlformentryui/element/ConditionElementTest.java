@@ -87,10 +87,10 @@ public class ConditionElementTest {
 		
 		// setup condition element
 		element = spy(ConditionElement.class);
-		element.setConditionSearch(conditionSearchWidget);
+		element.setConditionSearchWidget(conditionSearchWidget);
 		element.setConditionStatusesWidget(conditionStatusesWidget);
-		element.setOnSetDate(onsetDate);
-		element.setEndDate(endDate);
+		element.setOnSetDateWidget(onsetDate);
+		element.setEndDateWidget(endDate);
 	}
 	
 	@Test
