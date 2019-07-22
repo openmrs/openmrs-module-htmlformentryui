@@ -1,12 +1,13 @@
 package org.openmrs.htmlformentryui.element;
 
+import static org.hamcrest.CoreMatchers.is;
+import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.powermock.api.mockito.PowerMockito.mockStatic;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.spy;
-import static org.mockito.Mockito.never;
-import static org.hamcrest.CoreMatchers.is;
 
 import java.util.Calendar;
 import java.util.GregorianCalendar;
@@ -18,8 +19,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
-import org.mockito.invocation.InvocationOnMock;
-import org.mockito.stubbing.Answer;
 import org.openmrs.Condition;
 import org.openmrs.ConditionClinicalStatus;
 import org.openmrs.Patient;
@@ -28,9 +27,9 @@ import org.openmrs.api.context.Context;
 import org.openmrs.htmlformentryui.ConditionElement;
 import org.openmrs.messagesource.MessageSourceService;
 import org.openmrs.module.htmlformentry.FormEntryContext;
+import org.openmrs.module.htmlformentry.FormEntryContext.Mode;
 import org.openmrs.module.htmlformentry.FormEntrySession;
 import org.openmrs.module.htmlformentry.FormSubmissionError;
-import org.openmrs.module.htmlformentry.FormEntryContext.Mode;
 import org.openmrs.module.htmlformentry.widget.ConceptSearchAutocompleteWidget;
 import org.openmrs.module.htmlformentry.widget.DateWidget;
 import org.openmrs.module.htmlformentry.widget.RadioButtonsWidget;
@@ -44,38 +43,36 @@ import org.springframework.mock.web.MockHttpServletRequest;
 public class ConditionElementTest {
 	
 	private ConditionElement element;
+	
 	private MockHttpServletRequest request;
-	private final String CONDITION_NAME_WIDGET_ID = "condition-name";
-	private final String NONE_CODED_CONCEPT = "Test None Coded Concept";
-	private final String CONDITION_REQUIRED_ERROR = "Condition required";
-	private final String END_DATE_BEFORE_ONSET_DATE_ERROR = "End date can't be before onset date";
+	
 	@Mock
     private MessageSourceService messageSourceService;
+	
 	@Mock
 	private ConditionService conditionService;
+	
 	@Mock
 	private FormEntrySession session;
+	
 	@Mock
 	private FormEntryContext context;
+	
 	@Mock
 	private ConceptSearchAutocompleteWidget conditionSearchWidget;
+	
 	@Mock
 	private RadioButtonsWidget conditionStatusesWidget;
+	
 	@Mock
 	private DateWidget endDate;
+	
 	@Mock
 	private DateWidget onsetDate;
 
 	@Before
 	public void setup() {
 		// Stub services
-		when(conditionService.saveCondition(any(Condition.class))).thenAnswer(new Answer<Condition>() {
-			  @Override
-			  public Condition answer(InvocationOnMock invocation) throws Throwable {
-			    return (Condition) invocation.getArguments()[0];
-			  }
-			});
-		
 		mockStatic(Context.class);
 		when(Context.getConditionService()).thenReturn(conditionService);
 		when(Context.getMessageSourceService()).thenReturn(messageSourceService);
@@ -94,7 +91,6 @@ public class ConditionElementTest {
 		element.setConditionStatusesWidget(conditionStatusesWidget);
 		element.setOnSetDate(onsetDate);
 		element.setEndDate(endDate);
-		
 	}
 	
 	@Test
@@ -108,11 +104,10 @@ public class ConditionElementTest {
 		
 		// verify
 		ArgumentCaptor<Condition> captor = ArgumentCaptor.forClass(Condition.class);
-		verify(conditionService).saveCondition(captor.capture());
+		verify(conditionService, times(1)).saveCondition(captor.capture());
 		Condition condition = captor.getValue();
 		Assert.assertEquals(ConditionClinicalStatus.ACTIVE, condition.getClinicalStatus());
 		Assert.assertThat(condition.getCondition().getCoded().getId(), is(1519));
-		
 	}
 	
 	@Test
@@ -126,17 +121,16 @@ public class ConditionElementTest {
 		
 		// verify
 		ArgumentCaptor<Condition> captor = ArgumentCaptor.forClass(Condition.class);
-		verify(conditionService).saveCondition(captor.capture());
+		verify(conditionService, times(1)).saveCondition(captor.capture());
 		Condition condition = captor.getValue();
 		Assert.assertEquals(ConditionClinicalStatus.INACTIVE, condition.getClinicalStatus());
-
 	}
 	
 	@Test
 	public void handleSubmission_shouldSupportNoneCodedConceptValues() {
 		// setup
-		request.addParameter(CONDITION_NAME_WIDGET_ID, NONE_CODED_CONCEPT);
-		when(context.getFieldName(conditionSearchWidget)).thenReturn(CONDITION_NAME_WIDGET_ID);
+		request.addParameter("condition-field-name", "Typed in non-coded value");
+		when(context.getFieldName(conditionSearchWidget)).thenReturn("condition-field-name");
 		when(conditionSearchWidget.getValue(context, request)).thenReturn("");
 		
 		// replay
@@ -144,10 +138,9 @@ public class ConditionElementTest {
 		
 		// verify
 		ArgumentCaptor<Condition> captor = ArgumentCaptor.forClass(Condition.class);
-		verify(conditionService).saveCondition(captor.capture());
+		verify(conditionService, times(1)).saveCondition(captor.capture());
 		Condition condition = captor.getValue();
-		Assert.assertEquals(NONE_CODED_CONCEPT, condition.getCondition().getNonCoded());
-
+		Assert.assertEquals("Typed in non-coded value", condition.getCondition().getNonCoded());
 	}
 	
 	@Test
@@ -160,7 +153,6 @@ public class ConditionElementTest {
 
 		// verify
 		verify(conditionService, never()).saveCondition(any(Condition.class));
-
 	}
 
 	@Test
@@ -168,27 +160,25 @@ public class ConditionElementTest {
 		// setup
 		element.setRequired(true);
 		when(conditionSearchWidget.getValue(context, request)).thenReturn(null);
-		when(messageSourceService.getMessage("htmlformentryui.conditionui.condition.required")).thenReturn(CONDITION_REQUIRED_ERROR);
+		when(messageSourceService.getMessage("htmlformentryui.conditionui.condition.required")).thenReturn("A condition is required");
 
 		// replay
 		List<FormSubmissionError> errors = (List<FormSubmissionError>) element.validateSubmission(context, request);
 		
 		// verify
-		Assert.assertEquals(CONDITION_REQUIRED_ERROR, errors.get(0).getError());
-		
+		Assert.assertEquals("A condition is required", errors.get(0).getError());
 	}
 	
 	@Test
 	public void validateSubmission_shouldFailValidationIfOnsetDateIsGreaterThanEnddate() {
 		// setup
 		when(endDate.getValue(context, request)).thenReturn(new GregorianCalendar(2012, Calendar.DECEMBER, 8).getTime());
-		when(messageSourceService.getMessage("htmlformentryui.conditionui.endDate.before.onsetDate.error")).thenReturn(END_DATE_BEFORE_ONSET_DATE_ERROR);
+		when(messageSourceService.getMessage("htmlformentryui.conditionui.endDate.before.onsetDate.error")).thenReturn("The end date cannot be ealier than the onset date.");
 		
 		// replay
 		List<FormSubmissionError> errors = (List<FormSubmissionError>) element.validateSubmission(context, request);
 		
 		// verify
-		Assert.assertEquals(END_DATE_BEFORE_ONSET_DATE_ERROR, errors.get(0).getError());
-		
+		Assert.assertEquals("The end date cannot be ealier than the onset date.", errors.get(0).getError());
 	}
 }
