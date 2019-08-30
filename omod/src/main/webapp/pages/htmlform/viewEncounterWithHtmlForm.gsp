@@ -15,7 +15,7 @@
     var breadcrumbs = [
         { icon: "icon-home", link: '/' + OPENMRS_CONTEXT_PATH + '/index.htm' },
         { label: "${ ui.escapeJs(returnLabel) }", link: "${ ui.escapeJs(returnUrl) }" },
-        { label: "${ ui.escapeJs(ui.message("htmlformentryui.viewHtmlForm.breadcrumb", ui.format(htmlForm.form))) }" }
+        { label: "${ ui.escapeJs(ui.message("htmlformentryui.viewHtmlForm.breadcrumb", ui.message(ui.format(htmlForm.form)))) }" }
     ];
 </script>
 
