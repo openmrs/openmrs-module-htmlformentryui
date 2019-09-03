@@ -29,7 +29,7 @@ ${ ui.includeFragment("coreapps", "patientHeader", [ patient: patient ]) }
     var breadcrumbs = _.flatten([
         { icon: "icon-home", link: '/' + OPENMRS_CONTEXT_PATH + '/index.htm' },
         ${ breadcrumbMiddle },
-        { label: "${ ui.escapeJs(ui.message("coreapps.editHtmlForm.breadcrumb", ui.format(htmlForm.form))) }" }
+        { label: "${ ui.escapeJs(ui.message("coreapps.editHtmlForm.breadcrumb", ui.message(ui.format(htmlForm.form)))) }" }
     ]);
 
     jQuery(function() {
@@ -51,33 +51,12 @@ ${ ui.includeFragment("coreapps", "patientHeader", [ patient: patient ]) }
         // clicking the save form link should have the same functionality as clicking on the confirmation section title (ie, jumps to confirmation)
         jq('#save-form').click(function() {
             NavigatorController.getSectionById("confirmation").title.click();
-        });
-
-      <% if (featureToggles.isFeatureEnabled("htmlformentryui.simpleform.navbuttons")) { %>
-          jq('#step-backward').click(function() {
-            NavigatorController.stepBackward();
-          });
-
-          jq('#step-forward').click(function() {
-            NavigatorController.stepForward();
-          });
-      <% } %>
+        })
 
     });
 </script>
 
 <div id="form-actions-container">
-
-    <% if (featureToggles.isFeatureEnabled("htmlformentryui.simpleform.navbuttons")) { %>
-        <a id="step-backward" style="float: left">
-            << Back
-        </a>
-        <a id="step-forward">
-            Forward >>
-        </a>
-        &nbsp;&nbsp;&nbsp;
-    <% } %>
-
     <a id="save-form">
         <i class="icon-save small"></i>
         ${ ui.message("htmlformentryui.saveForm") }
