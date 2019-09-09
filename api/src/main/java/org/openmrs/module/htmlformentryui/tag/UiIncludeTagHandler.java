@@ -142,7 +142,7 @@ public class UiIncludeTagHandler extends AbstractTagHandler {
      * @param queryString The URL parameters query string.
      * @throws URISyntaxException 
      */
-	protected Map<String, Object> paramsToMap(String queryString) throws URISyntaxException {
+	public static Map<String, Object> paramsToMap(String queryString) throws URISyntaxException {
 		List<NameValuePair> params = URLEncodedUtils.parse(new URI(queryString), UTF_8);
 		Map<String, Object> map = new HashMap<String, Object>();
 		for(NameValuePair param : params) {
