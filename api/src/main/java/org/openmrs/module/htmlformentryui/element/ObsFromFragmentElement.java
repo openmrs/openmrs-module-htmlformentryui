@@ -10,10 +10,12 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.http.client.utils.DateUtils;
 import org.openmrs.Concept;
 import org.openmrs.ConceptAnswer;
 import org.openmrs.ConceptDatatype;
@@ -41,12 +43,16 @@ public class ObsFromFragmentElement implements HtmlGeneratorElement, FormSubmiss
 	private String fragment;
 	private String initFragmentParamName;
 	
+	// datetimepicker fragment params
+	public static String END_DATE = "endDate";
+	public static String START_DATE = "startDate";
+	
 	// For tests only
 	public ObsFromFragmentElement() {
 		
 	}
 	
-	public ObsFromFragmentElement(Map<String, String> parameters, UiUtils uiUtils) {
+	public ObsFromFragmentElement(Map<String, String> parameters, UiUtils uiUtils, FormEntrySession session) {
 		this.uiUtils = uiUtils;
 		concept = HtmlFormEntryUtil.getConcept(parameters.get("conceptId"));
 		if (concept == null) {
@@ -67,10 +73,21 @@ public class ObsFromFragmentElement implements HtmlGeneratorElement, FormSubmiss
 		StringBuilder fragmentUrlBuilder = new StringBuilder();
 		fragmentUrlBuilder.append(fragment);
 		fragmentUrlBuilder.append("?");
-		fragmentUrlBuilder.append(parameters.get("fragmentParams"));
+		fragmentUrlBuilder.append(parameters.get("fragmentParams")); 
 		try {
-			fragmentParams = UiIncludeTagHandler.paramsToMap(fragmentUrlBuilder.toString());
-							
+			Map<String, Object> params = UiIncludeTagHandler.paramsToMap(fragmentUrlBuilder.toString());
+			// evaluate any velocity expressions
+			for (Entry<String, Object> entry : params.entrySet()) {
+			    Object valObj = entry.getValue();
+			    if (valObj instanceof String) {
+			      String valStr = (String) valObj;
+			      if (valStr.contains("$")) {
+			        entry.setValue(session.evaluateVelocityExpression(valStr));
+			      }
+			    }
+			}
+			fragmentParams = parseFragmentParams(params);
+										
 		} catch (URISyntaxException e) {
 			throw new FragmentException("Invalid fragment URI: " + fragmentUrlBuilder.toString() , e);
 		}
@@ -247,6 +264,35 @@ public class ObsFromFragmentElement implements HtmlGeneratorElement, FormSubmiss
 		throw new RuntimeException("Unsupported concept datatype: " + datatype.getName());
 	}
 	
+	/**
+	 * Parses fragment parameters from {@link String} to their native datatypes 
+	 * 
+	 * @param fragmentParams
+	 * @should parse all parameters with string values: "true", "True", "false" and "False" to {@code boolean}
+	 *         values: {@code true}, {@code true}, {@code false} and {@code false} respectively
+	 * @should parse params named: {@code endDate} and {@code startDate} to {@link Date} objects if present
+	 * @return fragmentParams map with parsed parameter values
+	 */
+	protected Map<String, Object> parseFragmentParams(Map<String, Object> fragmentParams) {
+	  for (Entry<String, Object> entry : fragmentParams.entrySet()) {
+	      String key = entry.getKey();
+	      Object val = entry.getValue();
+	      if (key.equals(END_DATE) || key.equals(START_DATE)) {
+            // parse date string to a date object
+            entry.setValue(DateUtils.parseDate((String) val, new String[] { "E MMM dd hh:mm:ss Z yyyy" }));
+            continue;
+          }
+	      if (val instanceof String) {
+            String stringVal = (String) val;
+            if (stringVal.equalsIgnoreCase("true") || stringVal.equalsIgnoreCase("false")) {
+               entry.setValue(Boolean.parseBoolean(stringVal)); 
+            }
+          }
+	      
+	  }
+	  return fragmentParams;
+	}
+	
 	private String getFormFieldName() {
 		return (String) fragmentParams.get("formFieldName");
 	}
@@ -358,4 +404,5 @@ public class ObsFromFragmentElement implements HtmlGeneratorElement, FormSubmiss
 			this.label = label;
 		}
 	}
+	
 }

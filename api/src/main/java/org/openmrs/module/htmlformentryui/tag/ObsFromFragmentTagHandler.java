@@ -19,7 +19,7 @@ public class ObsFromFragmentTagHandler extends SubstitutionTagHandler {
 	protected String getSubstitution(FormEntrySession session, FormSubmissionController controller, Map<String, String> parameters)
 			throws BadFormDesignException {
 		uiUtils = (UiUtils) (session.getAttribute("uiUtils") != null ? session.getAttribute("uiUtils") : Context.getRegisteredComponent("uiUtils", BasicUiUtils.class));
-		ObsFromFragmentElement element = new ObsFromFragmentElement(parameters, uiUtils);
+		ObsFromFragmentElement element = new ObsFromFragmentElement(parameters, uiUtils, session);
 		session.getSubmissionController().addAction(element);
 		return element.generateHtml(session.getContext());	
 	}

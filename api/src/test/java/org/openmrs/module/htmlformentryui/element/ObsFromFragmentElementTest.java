@@ -19,7 +19,6 @@ import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -33,7 +32,9 @@ import org.openmrs.ConceptDatatype;
 import org.openmrs.ConceptName;
 import org.openmrs.Encounter;
 import org.openmrs.Obs;
+import org.openmrs.Patient;
 import org.openmrs.api.ConceptNameType;
+import org.openmrs.api.ConceptService;
 import org.openmrs.api.EncounterService;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.htmlformentry.FormEntryContext;
@@ -68,10 +69,13 @@ public class ObsFromFragmentElementTest {
 	
 	@Mock
 	private EncounterService encounterService;
+	
+	@Mock
+	private ConceptService conceptService;
 
 	@Mock
 	private FormEntrySession session;
-	
+		
 	private Map<String, Object> fragmentParams;
 	
 	private ObsFromFragmentElement element;
@@ -82,6 +86,7 @@ public class ObsFromFragmentElementTest {
 	public void setup() {
 		mockStatic(Context.class);
 		when(Context.getEncounterService()).thenReturn(encounterService);
+		when(Context.getConceptService()).thenReturn(conceptService);
 		when(encounterService.getEncounter(any(Integer.class))).thenReturn(encounter);
 		when(session.getContext()).thenReturn(context);
 		when(session.getSubmissionActions()).thenReturn(submissionActions);
@@ -337,6 +342,70 @@ public class ObsFromFragmentElementTest {
 
 	}
 	
+    @Test
+	public void shouldEvaluateVelocityExpressions() throws Exception {
+      // Setup
+      Date date = new GregorianCalendar(2019, Calendar.SEPTEMBER, 16).getTime();
+      when(conceptService.getConcept(5)).thenReturn(concept);
+      session = new FormEntrySession(new Patient(), "xml", null);
+      session.addToVelocityContext("date", date);
+      HashMap<String, String> parameters = new HashMap<String, String>();
+      parameters.put("provider", "uicommons");
+      parameters.put("fragment", "field/datetimepicker");
+      parameters.put("initFragmentParamName", "defaultDate");
+      parameters.put("conceptId", "5");
+      parameters.put("fragmentParams", "label=Field+Label;testDate=$date");
+      
+	  // Replay
+	  ObsFromFragmentElement element = new ObsFromFragmentElement(parameters, null, session);
+	  
+	  // Verify
+	  Object testDate = element.getFragmentParams().get("testDate");
+	  Assert.assertEquals(date.toString(), testDate);
+	  
+	}
+	
+    @Test
+    public void parseFragmentParams_shouldParseEndDateOrStartDateParamToDate() {
+      // Setup
+      final String CURRENT_DATE_STRING = "Mon Sep 16 12:52:16 EAT 2019";
+      final String START_DATE_STRING = "Mon Nov 16 13:34:12 EAT 2015";
+      final String END_DATE_STRING = "Wed Sep 16 15:01:16 EAT 2020";
+
+      fragmentParams.put(ObsFromFragmentElement.END_DATE, END_DATE_STRING);
+      fragmentParams.put(ObsFromFragmentElement.START_DATE, START_DATE_STRING);
+      fragmentParams.put("currentDate", CURRENT_DATE_STRING);
+      
+      // Replay
+      fragmentParams = element.parseFragmentParams(fragmentParams);
+      
+      // Verify
+      Object endDate = fragmentParams.get(ObsFromFragmentElement.END_DATE);
+      Object startDate = fragmentParams.get(ObsFromFragmentElement.START_DATE);
+      Object currentDate = fragmentParams.get("currentDate");
+      
+      Assert.assertTrue(endDate instanceof Date);
+      Assert.assertThat(endDate.toString(), is(END_DATE_STRING));
+      Assert.assertTrue(startDate instanceof Date);
+      Assert.assertThat(startDate.toString(), is(START_DATE_STRING));
+      Assert.assertFalse("Only parameters named as: endDate or startDate should be parsed to a Date object",
+      currentDate instanceof Date);
+    }
+    
+    @Test
+    public void parseFragmentParams_shouldParseBooleanParameterValues() {
+      // Setup
+      fragmentParams.put("useTime", "False");
+      fragmentParams.put("fromUicommons", "true");
+      
+      // Replay
+      fragmentParams = element.parseFragmentParams(fragmentParams);
+      
+      // Verify
+      Assert.assertTrue((Boolean) fragmentParams.get("fromUicommons"));
+      Assert.assertFalse((Boolean) fragmentParams.get("useTime"));
+    }
+    
 	private Concept createMockedCodedConcept() {
 		Concept question = mock(Concept.class);
 		Concept answer1 = mock(Concept.class);
