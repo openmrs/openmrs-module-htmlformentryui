@@ -9,7 +9,6 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.powermock.api.mockito.PowerMockito.mockStatic;
-
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -364,48 +363,7 @@ public class ObsFromFragmentElementTest {
 	  Assert.assertEquals(date.toString(), testDate);
 	  
 	}
-	
-    @Test
-    public void parseFragmentParams_shouldParseEndDateOrStartDateParamToDate() {
-      // Setup
-      final String CURRENT_DATE_STRING = "Mon Sep 16 12:52:16 EAT 2019";
-      final String START_DATE_STRING = "Mon Nov 16 13:34:12 EAT 2015";
-      final String END_DATE_STRING = "Wed Sep 16 15:01:16 EAT 2020";
-
-      fragmentParams.put(ObsFromFragmentElement.END_DATE, END_DATE_STRING);
-      fragmentParams.put(ObsFromFragmentElement.START_DATE, START_DATE_STRING);
-      fragmentParams.put("currentDate", CURRENT_DATE_STRING);
-      
-      // Replay
-      fragmentParams = element.parseFragmentParams(fragmentParams);
-      
-      // Verify
-      Object endDate = fragmentParams.get(ObsFromFragmentElement.END_DATE);
-      Object startDate = fragmentParams.get(ObsFromFragmentElement.START_DATE);
-      Object currentDate = fragmentParams.get("currentDate");
-      
-      Assert.assertTrue(endDate instanceof Date);
-      Assert.assertThat(endDate.toString(), is(END_DATE_STRING));
-      Assert.assertTrue(startDate instanceof Date);
-      Assert.assertThat(startDate.toString(), is(START_DATE_STRING));
-      Assert.assertFalse("Only parameters named as: endDate or startDate should be parsed to a Date object",
-      currentDate instanceof Date);
-    }
-    
-    @Test
-    public void parseFragmentParams_shouldParseBooleanParameterValues() {
-      // Setup
-      fragmentParams.put("useTime", "False");
-      fragmentParams.put("fromUicommons", "true");
-      
-      // Replay
-      fragmentParams = element.parseFragmentParams(fragmentParams);
-      
-      // Verify
-      Assert.assertTrue((Boolean) fragmentParams.get("fromUicommons"));
-      Assert.assertFalse((Boolean) fragmentParams.get("useTime"));
-    }
-    
+	    
 	private Concept createMockedCodedConcept() {
 		Concept question = mock(Concept.class);
 		Concept answer1 = mock(Concept.class);
