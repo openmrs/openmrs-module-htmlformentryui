@@ -9,7 +9,6 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.powermock.api.mockito.PowerMockito.mockStatic;
-
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -19,7 +18,6 @@ import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -33,7 +31,9 @@ import org.openmrs.ConceptDatatype;
 import org.openmrs.ConceptName;
 import org.openmrs.Encounter;
 import org.openmrs.Obs;
+import org.openmrs.Patient;
 import org.openmrs.api.ConceptNameType;
+import org.openmrs.api.ConceptService;
 import org.openmrs.api.EncounterService;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.htmlformentry.FormEntryContext;
@@ -68,10 +68,13 @@ public class ObsFromFragmentElementTest {
 	
 	@Mock
 	private EncounterService encounterService;
+	
+	@Mock
+	private ConceptService conceptService;
 
 	@Mock
 	private FormEntrySession session;
-	
+		
 	private Map<String, Object> fragmentParams;
 	
 	private ObsFromFragmentElement element;
@@ -82,6 +85,7 @@ public class ObsFromFragmentElementTest {
 	public void setup() {
 		mockStatic(Context.class);
 		when(Context.getEncounterService()).thenReturn(encounterService);
+		when(Context.getConceptService()).thenReturn(conceptService);
 		when(encounterService.getEncounter(any(Integer.class))).thenReturn(encounter);
 		when(session.getContext()).thenReturn(context);
 		when(session.getSubmissionActions()).thenReturn(submissionActions);
@@ -337,6 +341,29 @@ public class ObsFromFragmentElementTest {
 
 	}
 	
+    @Test
+	public void shouldEvaluateVelocityExpressions() throws Exception {
+      // Setup
+      Date date = new GregorianCalendar(2019, Calendar.SEPTEMBER, 16).getTime();
+      when(conceptService.getConcept(5)).thenReturn(concept);
+      session = new FormEntrySession(new Patient(), "xml", null);
+      session.addToVelocityContext("date", date);
+      HashMap<String, String> parameters = new HashMap<String, String>();
+      parameters.put("provider", "uicommons");
+      parameters.put("fragment", "field/datetimepicker");
+      parameters.put("initFragmentParamName", "defaultDate");
+      parameters.put("conceptId", "5");
+      parameters.put("fragmentParams", "label=Field+Label;testDate=$date");
+      
+	  // Replay
+	  ObsFromFragmentElement element = new ObsFromFragmentElement(parameters, null, session);
+	  
+	  // Verify
+	  Object testDate = element.getFragmentParams().get("testDate");
+	  Assert.assertEquals(date.toString(), testDate);
+	  
+	}
+	    
 	private Concept createMockedCodedConcept() {
 		Concept question = mock(Concept.class);
 		Concept answer1 = mock(Concept.class);

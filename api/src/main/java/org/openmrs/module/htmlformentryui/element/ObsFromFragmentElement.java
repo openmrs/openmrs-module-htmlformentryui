@@ -40,13 +40,13 @@ public class ObsFromFragmentElement implements HtmlGeneratorElement, FormSubmiss
 	private String viewProvider;
 	private String fragment;
 	private String initFragmentParamName;
-	
+		
 	// For tests only
 	public ObsFromFragmentElement() {
 		
 	}
 	
-	public ObsFromFragmentElement(Map<String, String> parameters, UiUtils uiUtils) {
+	public ObsFromFragmentElement(Map<String, String> parameters, UiUtils uiUtils, FormEntrySession session) {
 		this.uiUtils = uiUtils;
 		concept = HtmlFormEntryUtil.getConcept(parameters.get("conceptId"));
 		if (concept == null) {
@@ -67,10 +67,14 @@ public class ObsFromFragmentElement implements HtmlGeneratorElement, FormSubmiss
 		StringBuilder fragmentUrlBuilder = new StringBuilder();
 		fragmentUrlBuilder.append(fragment);
 		fragmentUrlBuilder.append("?");
-		fragmentUrlBuilder.append(parameters.get("fragmentParams"));
+        // evaluate any velocity expressions
+		String fragmentParamsString = session.evaluateVelocityExpression(parameters.get("fragmentParams"));
+		// replace any whitespace with a '+'
+		String paramsWithoutWhiteSpace = fragmentParamsString.replaceAll("\\s+", "+");
+		fragmentUrlBuilder.append(paramsWithoutWhiteSpace);
 		try {
-			fragmentParams = UiIncludeTagHandler.paramsToMap(fragmentUrlBuilder.toString());
-							
+		  fragmentParams = UiIncludeTagHandler.paramsToMap(fragmentUrlBuilder.toString());
+													
 		} catch (URISyntaxException e) {
 			throw new FragmentException("Invalid fragment URI: " + fragmentUrlBuilder.toString() , e);
 		}
@@ -358,4 +362,5 @@ public class ObsFromFragmentElement implements HtmlGeneratorElement, FormSubmiss
 			this.label = label;
 		}
 	}
+	
 }
