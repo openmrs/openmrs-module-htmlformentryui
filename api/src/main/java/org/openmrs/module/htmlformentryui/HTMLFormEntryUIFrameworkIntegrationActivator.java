@@ -21,6 +21,7 @@ import org.openmrs.module.BaseModuleActivator;
 import org.openmrs.module.Module;
 import org.openmrs.module.ModuleFactory;
 import org.openmrs.module.htmlformentry.HtmlFormEntryService;
+import org.openmrs.module.htmlformentryui.tag.ObsFromFragmentTagHandler;
 import org.openmrs.module.htmlformentryui.tag.UiIncludeTagHandler;
 import org.openmrs.module.htmlformentryui.tag.UiMessageTagHandler;
 
@@ -37,6 +38,8 @@ public class HTMLFormEntryUIFrameworkIntegrationActivator extends BaseModuleActi
             HtmlFormEntryService htmlFormEntryService = Context.getService(HtmlFormEntryService.class);
             htmlFormEntryService.addHandler(HtmlFormEntryUiConstants.HTMLFORMENTRY_UI_MESSAGE_TAG_NAME, new UiMessageTagHandler());
             htmlFormEntryService.addHandler(HtmlFormEntryUiConstants.HTMLFORMENTRY_UI_INCLUDE_TAG_NAME, new UiIncludeTagHandler());
+            htmlFormEntryService.addHandler(HtmlFormEntryUiConstants.HTMLFORMENTRY_UI_OBS_FROM_FRAGMENT_TAG_NAME, new ObsFromFragmentTagHandler());
+            
         }
         catch (Exception e) {
             Module mod = ModuleFactory.getModuleById(HtmlFormEntryUiConstants.MODULE_ID);
@@ -52,7 +55,8 @@ public class HTMLFormEntryUIFrameworkIntegrationActivator extends BaseModuleActi
         try {
             HtmlFormEntryService htmlFormEntryService = Context.getService(HtmlFormEntryService.class);
             htmlFormEntryService.getHandlers().remove(HtmlFormEntryUiConstants.HTMLFORMENTRY_UI_MESSAGE_TAG_NAME);
-            htmlFormEntryService.getHandlers().remove(HtmlFormEntryUiConstants.HTMLFORMENTRY_UI_INCLUDE_TAG_NAME) ;
+            htmlFormEntryService.getHandlers().remove(HtmlFormEntryUiConstants.HTMLFORMENTRY_UI_INCLUDE_TAG_NAME);
+            htmlFormEntryService.getHandlers().remove(HtmlFormEntryUiConstants.HTMLFORMENTRY_UI_OBS_FROM_FRAGMENT_TAG_NAME);
         }
         catch (Exception ex) {
             // pass
