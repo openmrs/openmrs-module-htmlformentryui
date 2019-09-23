@@ -40,7 +40,7 @@ public class HTMLFormEntryUIFrameworkIntegrationActivator extends BaseModuleActi
         }
         catch (Exception e) {
             Module mod = ModuleFactory.getModuleById(HtmlFormEntryUiConstants.MODULE_ID);
-            ModuleFactory.stopModule(mod);
+            ModuleFactory.stopModule(mod, true, true);
             throw new RuntimeException("failed to setup the " + HtmlFormEntryUiConstants.MODULE_ID + " module", e);
         }
 
