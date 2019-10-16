@@ -90,7 +90,7 @@ public class ObsFromFragmentElementTest {
 		when(session.getContext()).thenReturn(context);
 		when(session.getSubmissionActions()).thenReturn(submissionActions);
 		when(context.getExistingEncounter()).thenReturn(encounter);
-		when(encounter.getObsAtTopLevel(false)).thenReturn(Collections.singleton(obs));
+		when(encounter.getAllObs()).thenReturn(Collections.singleton(obs));
 		when(obs.getConcept()).thenReturn(concept);
 		when(obs.getComment()).thenReturn(formFieldName);
 		fragmentParams = new HashMap<String, Object>();

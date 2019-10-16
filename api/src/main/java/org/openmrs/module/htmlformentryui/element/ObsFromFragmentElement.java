@@ -210,7 +210,7 @@ public class ObsFromFragmentElement implements HtmlGeneratorElement, FormSubmiss
 			if (existingEncounter != null) {
 				// The existingEncounter usually has stale references; pull a clean copy from the database
 				Encounter encounter = Context.getEncounterService().getEncounter(existingEncounter.getEncounterId());
-				for (Obs candidate : encounter.getObsAtTopLevel(false)) {
+				for (Obs candidate : encounter.getAllObs()) {
 					if (candidate.getConcept().equals(concept) && candidate.getComment().equals(getFormFieldName())) {
 						Object initialValue = getObsValue(candidate);
 						if (initialValue != null) {
