@@ -9,6 +9,8 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.powermock.api.mockito.PowerMockito.mockStatic;
+import static org.hamcrest.Matchers.containsInAnyOrder;
+
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -205,6 +207,22 @@ public class ObsFromFragmentElementTest {
 		// Verify
 		String selectedOption = (String) element.getFragmentParams().get("initialValue");	
 		Assert.assertEquals("Concept Answer 1", selectedOption);
+	}
+	
+	@Test
+	public void initializeFragment_shouldConvertClassesParamToList() {
+		// Setup
+		element.setConcept(createMockedCodedConcept());
+		fragmentParams.put("classes", "required,form-control");
+		
+		// Replay 
+		element.initializeFragment(context);
+		
+		// Verify
+		List<String> classes = (List<String>) fragmentParams.get("classes");
+		Assert.assertThat(classes.size(), is(2));
+		Assert.assertThat(classes, containsInAnyOrder("required", "form-control"));
+
 	}
 	
 	@Test
