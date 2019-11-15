@@ -222,7 +222,6 @@ public class ObsFromFragmentElementTest {
 		List<String> classes = (List<String>) fragmentParams.get("classes");
 		Assert.assertThat(classes.size(), is(2));
 		Assert.assertThat(classes, containsInAnyOrder("required", "form-control"));
-
 	}
 	
 	@Test
