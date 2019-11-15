@@ -223,7 +223,6 @@ public class ObsFromFragmentElement implements HtmlGeneratorElement, FormSubmiss
 		}
 		if (fragmentParams.containsKey("classes")) {
 			String classes = (String) fragmentParams.get("classes");
-			// If the classes param was provided, convert it's value to a list in order to be consumable by UICM fragments
 			fragmentParams.replace("classes", Arrays.asList(classes.split(",")));
 		}
 	}
