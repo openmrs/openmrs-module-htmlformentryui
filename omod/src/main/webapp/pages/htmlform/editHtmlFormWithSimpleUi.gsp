@@ -57,7 +57,7 @@ ${ ui.includeFragment("coreapps", "patientHeader", [ patient: patient ]) }
 </script>
 
 <div id="form-actions-container">
-    <a id="save-form">
+    <a href="#" id="save-form">
         <i class="icon-save small"></i>
         ${ ui.message("htmlformentryui.saveForm") }
     </a>
