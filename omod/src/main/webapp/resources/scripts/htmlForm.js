@@ -113,8 +113,14 @@
     // if an encounter id is passed in, that is appended to the return string
     var goToReturnUrl = function(encounterId) {
         if (returnUrl) {
-            location.href = returnUrl
-                + (encounterId ? (returnUrl.indexOf('?') != -1 ? '&' : '?') +"encounterId=" + encounterId : '');
+
+            if (encounterId) {
+                var encounterIdStr = (returnUrl.indexOf('?') !== -1 ? '&' : '?') +"encounterId=" + encounterId;
+                var hash = returnUrl.indexOf('#/'); // if there is a "#/" then make sure we insert the encounterId before that
+                returnUrl = (hash === -1 ? returnUrl + encounterIdStr : returnUrl.slice(0, hash) + encounterIdStr + returnUrl.slice(hash));
+            }
+
+            location.href = returnUrl;
         }
         else {
             if (typeof(parent) !== 'undefined') {
