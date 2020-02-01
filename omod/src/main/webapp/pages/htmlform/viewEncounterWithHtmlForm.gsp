@@ -36,7 +36,13 @@
 <% } %>
 
 <span id="form-actions" class="no-print">
-    <a class="button" id="print-button" href="javascript:window.print()">
+
+<% if (customPrintUrl == null || customPrintUrl.isEmpty()) { %>
+        <a class="button" id="print-button" href="javascript:window.print()">
+<% } else { %>
+        <a class="button" id="print-button" href="${ui.pageLink(customPrintModule, customPrintUrl, [patientId: patient.patient.id, encounterUuid: encounter.uuid, target: customPrintTarget])}" target="${customPrintTarget}">
+<% } %>
+
         <i class="icon-print"></i>
         ${ ui.message("uicommons.print") }
     </a>

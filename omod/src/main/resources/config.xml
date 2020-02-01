@@ -46,6 +46,19 @@
 	<activator>${project.parent.groupId}.${project.parent.artifactId}.HTMLFormEntryUIFrameworkIntegrationActivator</activator>
 
 
+	<globalProperty>
+		<property>${project.parent.artifactId}.customPrintModule</property>
+		<description>If overriding ${project.parent.artifactId} print button behavior, artifactId of module that provides the override functionality</description>
+	</globalProperty>
+	<globalProperty>
+		<property>${project.parent.artifactId}.customPrintUrl</property>
+		<description>If overriding ${project.parent.artifactId} print button behavior, customPrintModule URL route to use as href value</description>
+	</globalProperty>
+	<globalProperty>
+		<property>${project.parent.artifactId}.customPrintTarget</property>
+		<description>If overriding ${project.parent.artifactId} print button behavior, URL target value (e.g. _self, _blank)</description>
+	</globalProperty>
+
 	<!-- Maps hibernate file's, if present -->
 	<mappingFiles>
 	</mappingFiles>

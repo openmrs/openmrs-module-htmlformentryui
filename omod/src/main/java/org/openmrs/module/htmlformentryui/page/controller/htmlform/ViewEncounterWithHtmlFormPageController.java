@@ -2,6 +2,8 @@ package org.openmrs.module.htmlformentryui.page.controller.htmlform;
 
 import org.apache.commons.lang.StringUtils;
 import org.openmrs.Encounter;
+import org.openmrs.api.AdministrationService;
+import org.openmrs.api.context.Context;
 import org.openmrs.module.emrapi.patient.PatientDomainWrapper;
 import org.openmrs.module.htmlformentry.HtmlForm;
 import org.openmrs.module.htmlformentry.HtmlFormEntryService;
@@ -25,6 +27,19 @@ public class ViewEncounterWithHtmlFormPageController {
                     PageModel model) {
 
         patient.setPatient(encounter.getPatient());
+
+        AdministrationService administrationService = Context.getAdministrationService();
+        
+        String customPrintModule = administrationService.getGlobalProperty("htmlformentryui.customPrintModule");
+        String customPrintUrl = administrationService.getGlobalProperty("htmlformentryui.customPrintUrl");
+        String customPrintTarget = administrationService.getGlobalProperty("htmlformentryui.customPrintTarget");
+        if (StringUtils.isBlank(customPrintTarget)) {
+            customPrintTarget = "_self";
+        }
+
+        model.addAttribute("customPrintModule", customPrintModule);
+        model.addAttribute("customPrintUrl", customPrintUrl);
+        model.addAttribute("customPrintTarget", customPrintTarget);
 
         if (StringUtils.isEmpty(returnUrl)) {
             returnUrl = ui.pageLink("coreapps", "patientdashboard/patientDashboard", SimpleObject.create("patientId", patient.getId()));
