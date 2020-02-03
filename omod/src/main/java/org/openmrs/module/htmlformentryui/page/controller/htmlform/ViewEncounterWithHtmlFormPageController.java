@@ -30,15 +30,15 @@ public class ViewEncounterWithHtmlFormPageController {
 
         AdministrationService administrationService = Context.getAdministrationService();
         
-		String customPrintProvider = administrationService.getGlobalProperty("htmlformentryui.customPrintProvider");
-		String customPrintPageName = administrationService.getGlobalProperty("htmlformentryui.customPrintPageName");
+        String customPrintProvider = administrationService.getGlobalProperty("htmlformentryui.customPrintProvider");
+        String customPrintPageName = administrationService.getGlobalProperty("htmlformentryui.customPrintPageName");
         String customPrintTarget = administrationService.getGlobalProperty("htmlformentryui.customPrintTarget");
         if (StringUtils.isBlank(customPrintTarget)) {
             customPrintTarget = "_self";
         }
 
-		model.addAttribute("customPrintProvider", customPrintProvider);
-		model.addAttribute("customPrintPageName", customPrintPageName);
+        model.addAttribute("customPrintProvider", customPrintProvider);
+        model.addAttribute("customPrintPageName", customPrintPageName);
         model.addAttribute("customPrintTarget", customPrintTarget);
 
         if (StringUtils.isEmpty(returnUrl)) {
