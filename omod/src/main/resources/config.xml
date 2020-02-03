@@ -47,12 +47,12 @@
 
 
 	<globalProperty>
-		<property>${project.parent.artifactId}.customPrintModule</property>
-		<description>If overriding ${project.parent.artifactId} print button behavior, artifactId of module that provides the override functionality</description>
+		<property>${project.parent.artifactId}.customPrintProvider</property>
+		<description>If overriding ${project.parent.artifactId} print button behavior, artifactId or base route of provider overriding functionality</description>
 	</globalProperty>
 	<globalProperty>
-		<property>${project.parent.artifactId}.customPrintUrl</property>
-		<description>If overriding ${project.parent.artifactId} print button behavior, customPrintModule URL route to use as href value</description>
+		<property>${project.parent.artifactId}.customPrintPageName</property>
+		<description>If overriding ${project.parent.artifactId} print button behavior, PageName to use in ui.pageLink() built href value</description>
 	</globalProperty>
 	<globalProperty>
 		<property>${project.parent.artifactId}.customPrintTarget</property>

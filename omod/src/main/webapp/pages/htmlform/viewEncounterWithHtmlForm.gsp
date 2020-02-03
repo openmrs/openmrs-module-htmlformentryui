@@ -37,10 +37,10 @@
 
 <span id="form-actions" class="no-print">
 
-<% if (customPrintUrl == null || customPrintUrl.isEmpty()) { %>
+<% if (customPrintPageName == null || customPrintPageName.isEmpty()) { %>
         <a class="button" id="print-button" href="javascript:window.print()">
 <% } else { %>
-        <a class="button" id="print-button" href="${ui.pageLink(customPrintModule, customPrintUrl, [patientId: patient.patient.id, encounterUuid: encounter.uuid, target: customPrintTarget])}" target="${customPrintTarget}">
+        <a class="button" id="print-button" href="${ui.pageLink(customPrintProvider, customPrintPageName, [patientId: patient.patient.id, encounterUuid: encounter.uuid, target: customPrintTarget])}" target="${customPrintTarget}">
 <% } %>
 
         <i class="icon-print"></i>
