@@ -7,7 +7,8 @@ $(function() {
                 function() {
                     location.href = window.viewHtmlForm.returnUrl;
                 });
-                console.log("yes");
+                emr.successMessage("Form data has been succesfully deleted");
+                console.log("yes");              
             },
             cancel: function() {
                 console.log("no");
