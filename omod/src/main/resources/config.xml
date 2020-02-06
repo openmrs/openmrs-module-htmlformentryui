@@ -56,6 +56,7 @@
 	</globalProperty>
 	<globalProperty>
 		<property>${project.parent.artifactId}.customPrintTarget</property>
+		<defaultValue>_self</defaultValue>
 		<description>If overriding ${project.parent.artifactId} print button behavior, URL target value (e.g. _self, _blank)</description>
 	</globalProperty>
 
