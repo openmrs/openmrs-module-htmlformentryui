@@ -2,6 +2,7 @@ package org.openmrs.module.htmlformentryui.page.controller.htmlform;
 
 import org.apache.commons.lang.StringUtils;
 import org.openmrs.Encounter;
+import org.openmrs.api.AdministrationService;
 import org.openmrs.module.emrapi.patient.PatientDomainWrapper;
 import org.openmrs.module.htmlformentry.HtmlForm;
 import org.openmrs.module.htmlformentry.HtmlFormEntryService;
@@ -21,10 +22,19 @@ public class ViewEncounterWithHtmlFormPageController {
                     @RequestParam(value = "editStyle", defaultValue = "standard") String editStyle,
                     @InjectBeans PatientDomainWrapper patient,
                     @SpringBean("htmlFormEntryService") HtmlFormEntryService htmlFormEntryService,
+                    @SpringBean("adminService") AdministrationService administrationService,
                     UiUtils ui,
                     PageModel model) {
 
         patient.setPatient(encounter.getPatient());
+        
+        String customPrintProvider = administrationService.getGlobalProperty("htmlformentryui.customPrintProvider");
+        String customPrintPageName = administrationService.getGlobalProperty("htmlformentryui.customPrintPageName");
+        String customPrintTarget = administrationService.getGlobalProperty("htmlformentryui.customPrintTarget");
+
+        model.addAttribute("customPrintProvider", customPrintProvider);
+        model.addAttribute("customPrintPageName", customPrintPageName);
+        model.addAttribute("customPrintTarget", customPrintTarget);
 
         if (StringUtils.isEmpty(returnUrl)) {
             returnUrl = ui.pageLink("coreapps", "patientdashboard/patientDashboard", SimpleObject.create("patientId", patient.getId()));
