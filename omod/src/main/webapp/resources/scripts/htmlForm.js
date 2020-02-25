@@ -110,11 +110,19 @@
         tryingToSubmit = false;
     }
 
-    // if an encounter id is passed in, that is appended to the return string
+    // if an encounter id is passed in, then insert it at the beginning of the query string
     var goToReturnUrl = function(encounterId) {
         if (returnUrl) {
-            location.href = returnUrl
-                + (encounterId ? (returnUrl.indexOf('?') != -1 ? '&' : '?') +"encounterId=" + encounterId : '');
+            if (encounterId) {
+              var encounterParameter =  "encounterId=" + encounterId;
+              var index = returnUrl.indexOf('?');
+              if (index == -1) {
+                  returnUrl = returnUrl + '?' + encounterParameter;
+              } else {
+                  returnUrl = returnUrl.substring(0,index+1) + encounterParameter + '&' + returnUrl.substring(index+1);
+              }
+            }
+            location.href = returnUrl;
         }
         else {
             if (typeof(parent) !== 'undefined') {
