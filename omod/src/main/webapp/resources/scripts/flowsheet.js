@@ -128,6 +128,10 @@
         defaultLocationId = locationId;
     };
 
+  flowsheet.getDefaultLocationId = function() {
+    return defaultLocationId;
+  };
+
     flowsheet.isDirty = function() {
         return dirty;
     };
