@@ -41,6 +41,7 @@ public class ObsFromFragmentElement implements HtmlGeneratorElement, FormSubmiss
 	private String viewProvider;
 	private String fragment;
 	private String initFragmentParamName;
+	private Obs existingObs;
 		
 	// For tests only
 	public ObsFromFragmentElement() {
@@ -92,17 +93,9 @@ public class ObsFromFragmentElement implements HtmlGeneratorElement, FormSubmiss
 			if (StringUtils.isBlank(valueText)) {
 				return;
 			}
-			if (session.getContext().getMode().equals(FormEntryContext.Mode.EDIT)) {
-				List<Obs> existingObservations = session.getContext().removeExistingObs(concept);
-				if (CollectionUtils.isNotEmpty(existingObservations)) {
-					for (Obs obs : existingObservations) {
-						if (obs.getComment().equals(formFieldName)) {
-							session.getSubmissionActions().modifyObs(existingObservations.get(0), concept, convertToType(valueText), 
-									new Date(), null, formFieldName);
-							return;
-						}
-					}
-				}
+			if (session.getContext().getMode().equals(FormEntryContext.Mode.EDIT) && existingObs != null) {				
+				session.getSubmissionActions().modifyObs(existingObs, concept, convertToType(valueText), 
+						new Date(), null, formFieldName);
 			}
 			session.getSubmissionActions().createObs(concept, convertToType(valueText), new Date(), null,
 					// Set the formFieldName of the widget as the Obs comment 
@@ -206,20 +199,26 @@ public class ObsFromFragmentElement implements HtmlGeneratorElement, FormSubmiss
 				fragmentParams.put("options", options);
 			}
 		}
-		if (FormEntryContext.Mode.EDIT == context.getMode() || FormEntryContext.Mode.VIEW == context.getMode()) {	
-			Encounter existingEncounter = context.getExistingEncounter();
-			if (existingEncounter != null) {
-				// The existingEncounter usually has stale references; pull a clean copy from the database
-				Encounter encounter = Context.getEncounterService().getEncounter(existingEncounter.getEncounterId());
-				for (Obs candidate : encounter.getAllObs()) {
-					if (candidate.getConcept().equals(concept) && candidate.getComment().equals(getFormFieldName())) {
-						Object initialValue = getObsValue(candidate);
-						if (initialValue != null) {
-							fragmentParams.put(initFragmentParamName, initialValue);
+		if (FormEntryContext.Mode.EDIT == context.getMode() || FormEntryContext.Mode.VIEW == context.getMode()) {
+			if (existingObs == null) {
+				Encounter existingEncounter = context.getExistingEncounter();
+				if (existingEncounter != null) {
+					// The existingEncounter usually has stale references; pull a clean copy from the database
+					Encounter encounter = Context.getEncounterService().getEncounter(existingEncounter.getEncounterId());
+					for (Obs candidate : encounter.getAllObs()) {
+						if (candidate.getConcept().equals(concept) && candidate.getComment().equals(getFormFieldName())) {
+							// Initialise existingObs
+							existingObs = candidate;		
+							Object initialValue = getObsValue(existingObs);
+							if (initialValue != null) {
+								fragmentParams.put(initFragmentParamName, initialValue);
+							}
+							return;
 						}
 					}
-				}
-			} 
+				}			
+			}
+			
 		}
 		if (fragmentParams.containsKey("classes")) {
 			String classes = (String) fragmentParams.get("classes");
@@ -255,7 +254,7 @@ public class ObsFromFragmentElement implements HtmlGeneratorElement, FormSubmiss
 		}
 		throw new RuntimeException("Unsupported concept datatype: " + datatype.getName());
 	}
-	
+		
 	private String getFormFieldName() {
 		return (String) fragmentParams.get("formFieldName");
 	}
@@ -308,6 +307,14 @@ public class ObsFromFragmentElement implements HtmlGeneratorElement, FormSubmiss
 		this.initFragmentParamName = initFragmentParamName;
 	}
 	
+	public Obs getExistingObs() {
+		return existingObs;
+	}
+
+	public void setExistingObs(Obs existingObs) {
+		this.existingObs = existingObs;
+	}
+
 	public static class Option {
 		
 		private String value;

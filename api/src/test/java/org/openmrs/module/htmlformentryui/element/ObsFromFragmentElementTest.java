@@ -323,7 +323,6 @@ public class ObsFromFragmentElementTest {
 	public void handleSubmission_shouldUpdateAnObsIfInEditMode() {
 		// Setup
 		when(context.getMode()).thenReturn(FormEntryContext.Mode.EDIT);
-		when(context.removeExistingObs(concept)).thenReturn(Arrays.asList(obs));
 		when(obs.getValueBoolean()).thenReturn(true);
 		when(obs.getComment()).thenReturn(formFieldName);
 		when(request.getParameter(formFieldName)).thenReturn("false");
@@ -332,6 +331,7 @@ public class ObsFromFragmentElementTest {
 		dateDatatype.setUuid(ConceptDatatype.BOOLEAN_UUID);
 		when(concept.getDatatype()).thenReturn(dateDatatype);
 		element.setConcept(concept);
+		element.setExistingObs(obs);
 		
 		doAnswer(new Answer() {
 
