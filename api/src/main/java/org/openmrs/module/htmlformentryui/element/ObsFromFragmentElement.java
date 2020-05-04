@@ -13,7 +13,6 @@ import java.util.List;
 import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 
-import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.openmrs.Concept;
 import org.openmrs.ConceptAnswer;
@@ -88,6 +87,7 @@ public class ObsFromFragmentElement implements HtmlGeneratorElement, FormSubmiss
 			return;
 		}
 		String formFieldName = getFormFieldName();
+
 		if (formFieldName != null) {
 			String valueText = request.getParameter(formFieldName);
 			if (StringUtils.isBlank(valueText)) {
@@ -96,6 +96,7 @@ public class ObsFromFragmentElement implements HtmlGeneratorElement, FormSubmiss
 			if (session.getContext().getMode().equals(FormEntryContext.Mode.EDIT) && existingObs != null) {				
 				session.getSubmissionActions().modifyObs(existingObs, concept, convertToType(valueText), 
 						new Date(), null, formFieldName);
+				return;
 			}
 			session.getSubmissionActions().createObs(concept, convertToType(valueText), new Date(), null,
 					// Set the formFieldName of the widget as the Obs comment 
@@ -206,14 +207,15 @@ public class ObsFromFragmentElement implements HtmlGeneratorElement, FormSubmiss
 					// The existingEncounter usually has stale references; pull a clean copy from the database
 					Encounter encounter = Context.getEncounterService().getEncounter(existingEncounter.getEncounterId());
 					for (Obs candidate : encounter.getAllObs()) {
-						if (candidate.getConcept().equals(concept) && candidate.getComment().equals(getFormFieldName())) {
+						String formFieldName = candidate.getComment() != null ? candidate.getComment() : "";
+						if (candidate.getConcept().equals(concept) && formFieldName.equals(getFormFieldName())) {
 							// Initialise existingObs
 							existingObs = candidate;		
 							Object initialValue = getObsValue(existingObs);
 							if (initialValue != null) {
 								fragmentParams.put(initFragmentParamName, initialValue);
 							}
-							return;
+							break;
 						}
 					}
 				}			
