@@ -1,0 +1,16 @@
+<htmlform>
+	Date: <encounterDate/>
+	Location: <encounterLocation/>
+	Provider: <encounterProvider role="Provider"/>
+	
+	<section>
+			<obsgroup groupingConceptId="3040">
+		        Allergy Date: <obsFromFragment
+									  fragment="field/datetimepicker"
+									  provider="uicommons"
+									  conceptId="1119"
+									  initFragmentParamName="defaultDate"
+									  fragmentParams="id=end_date&amp;formFieldName=Allergy Date&amp;label=&amp;useTime=true&amp;endDate=$formGeneratedDatetime"/>
+			</obsgroup>
+	</section>
+</htmlform>
