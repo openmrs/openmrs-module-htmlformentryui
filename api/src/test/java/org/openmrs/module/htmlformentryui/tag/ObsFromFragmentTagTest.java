@@ -180,6 +180,64 @@ public class ObsFromFragmentTagTest extends BaseModuleContextSensitiveTest {
 		}.run();
 	}
 	
+	@Test
+	public void shouldVoidExistingObsWhenNewValueIsBlank() throws Exception {
+		new RegressionTestHelper() {
+
+			@Override
+			public String getFormName() {
+				return "ObsFromFragment-withObsGroup";
+			}
+			
+			@Override
+			protected String getXmlDatasetPath() {
+				return "org/openmrs/module/htmlformentryui/include/";
+			}
+			
+			@Override
+			public String[] widgetLabels() {
+				return new String[] { "Date:", "Location:", "Provider:", "Allergy Date:" };
+			}
+			
+			@Override
+			public boolean doEditEncounter() {
+				return true;
+			}
+			
+			@Override
+			public void setupRequest(MockHttpServletRequest request, Map<String, String> widgets) {
+				request.addParameter(widgets.get("Date:"), dateAsString(new Date()));
+				request.addParameter(widgets.get("Location:"), "2");
+				request.addParameter(widgets.get("Provider:"), "502");
+				request.addParameter("Allergy Date", "2020-06-10");
+			}
+			
+			@Override
+			public String[] widgetLabelsForEdit() {
+				return new String[] { "Allergy Date:" };
+			}
+			
+			@Override
+			public void setupEditRequest(MockHttpServletRequest request, Map<String, String> widgets) {
+				request.addParameter("Allergy Date", " ");
+			}
+			
+			@Override
+			public void testEditedResults(SubmissionResults results) {				
+				Set<Obs> existingObs = results.getEncounterCreated().getObs();
+				List<Obs> voidedObs = retainVoidedObs(results.getEncounterCreated().getAllObs(true));
+
+				// Verify old value was voided
+				Assert.assertEquals(0, existingObs.size());
+				Assert.assertEquals("Both Obs group and Allergy Date should be voided", 2, voidedObs.size());
+								
+				// Verify old value
+				Assert.assertEquals("2020-06-10", dateAsString(voidedObs.get(1).getValueDatetime()));
+			}
+			
+		}.run();
+	}
+	
 	private List<Obs> retainVoidedObs(Set<Obs> mixedObs) {
 		List<Obs> voidedObs = new ArrayList<Obs>();
 		for (Obs candidate : mixedObs) {
