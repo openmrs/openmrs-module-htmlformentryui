@@ -90,12 +90,13 @@ public class ObsFromFragmentElement implements HtmlGeneratorElement, FormSubmiss
 
 		if (formFieldName != null) {
 			String valueText = request.getParameter(formFieldName);
-			if (StringUtils.isBlank(valueText)) {
-				return;
-			}
-			if (session.getContext().getMode().equals(FormEntryContext.Mode.EDIT) && existingObs != null) {				
+			
+			if (session.getContext().getMode().equals(FormEntryContext.Mode.EDIT) && existingObs != null) {
 				session.getSubmissionActions().modifyObs(existingObs, concept, convertToType(valueText), 
 						new Date(), null, formFieldName);
+				return;
+			}
+			if (StringUtils.isBlank(valueText)) {
 				return;
 			}
 			session.getSubmissionActions().createObs(concept, convertToType(valueText), new Date(), null,
@@ -143,6 +144,9 @@ public class ObsFromFragmentElement implements HtmlGeneratorElement, FormSubmiss
 	}
 	
 	protected Object convertToType(String val) {
+		if (StringUtils.isBlank(val)) {
+			return null;
+		}
 		ConceptDatatype dataType = concept.getDatatype();
 		if (dataType.isDate()) {
 			return HtmlFormEntryUtil.convertToType(val, Date.class);
