@@ -81,10 +81,10 @@ ${ ui.includeFragment("htmlformentryui", "htmlform/enterHtmlForm", [
 ]) }
 
 <script type="text/template" id="confirmation-template">
-    <div id="confirmation">
+    <div id="confirmation" class="container">
         <span class="title">${ ui.message("coreapps.simpleFormUi.confirm.title") }</span>
 
-        <div id="confirmationQuestion" class="container">
+        <div id="confirmationQuestion">
             <h3>${ ui.message("coreapps.simpleFormUi.confirm.question") }</h3>
 
             <div id="confirmation-messages"></div>
