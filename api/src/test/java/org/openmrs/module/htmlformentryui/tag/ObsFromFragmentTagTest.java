@@ -232,7 +232,11 @@ public class ObsFromFragmentTagTest extends BaseModuleContextSensitiveTest {
 				Assert.assertEquals("Both Obs group and Allergy Date should be voided", 2, voidedObs.size());
 								
 				// Verify old value
-				Assert.assertEquals("2020-06-10", dateAsString(voidedObs.get(1).getValueDatetime()));
+				for (Obs o : voidedObs) {
+					if (o.getValueDatetime() != null) {
+						Assert.assertEquals("2020-06-10", dateAsString(o.getValueDatetime()));
+					}
+				}
 			}
 			
 		}.run();
