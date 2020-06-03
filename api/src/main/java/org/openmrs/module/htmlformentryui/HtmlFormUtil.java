@@ -14,6 +14,9 @@
 
 package org.openmrs.module.htmlformentryui;
 
+import java.io.IOException;
+
+import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.openmrs.EncounterType;
 import org.openmrs.Form;
@@ -30,8 +33,6 @@ import org.openmrs.util.OpenmrsUtil;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 
-import java.io.IOException;
-
 /**
  *
  */
@@ -45,6 +46,7 @@ public class HtmlFormUtil {
     }
 
     public static HtmlForm getHtmlFormFromUiResource(ResourceFactory resourceFactory, FormService formService, HtmlFormEntryService htmlFormEntryService, String providerName, String resourcePath) throws IOException {
+        resourcePath = FilenameUtils.normalize(resourcePath);
         String xml = resourceFactory.getResourceAsString(providerName, resourcePath);
         // should be of the format <htmlform formUuid="..." formVersion="..." formEncounterType="...">...</htmlform>
 
