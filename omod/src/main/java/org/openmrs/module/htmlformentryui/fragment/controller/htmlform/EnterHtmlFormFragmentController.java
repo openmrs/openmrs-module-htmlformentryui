@@ -252,8 +252,8 @@ public class EnterHtmlFormFragmentController extends BaseHtmlFormFragmentControl
             fes.getContext().setVisit(visit);
         }
 
-        // attach to the visit if it exists
-        if (visit != null) {
+        // attach to the visit if it exists and not already attached
+        if (visit != null && (encounter == null || encounter.getVisit() == null)) {
             try {
                 new EncounterDomainWrapper(formEncounter).attachToVisit(visit);
             }
