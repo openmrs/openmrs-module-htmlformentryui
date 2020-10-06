@@ -7,9 +7,9 @@
     <packaging>pom</packaging>
     <name>HTML Form Entry UI Framework Integration Module</name>
     <description>Pages and Fragments for using the HTML Form Entry module along with the UI Framework</description>
-    
+
     <url>https://wiki.openmrs.org/display/docs/HTML+Form+Entry+UI+Framework+Integration+Module+Module</url>
-    
+
     <developers>
         <developer>
             <name>OpenMRS</name>
@@ -19,23 +19,23 @@
         <name>OpenMRS</name>
         <url>http://openmrs.org</url>
     </organization>
-    
+
     <scm>
         <connection>scm:git:git@github.com:openmrs/openmrs-module-htmlformentryui.git</connection>
         <developerConnection>scm:git:git@github.com:openmrs/openmrs-module-htmlformentryui.git</developerConnection>
         <url>scm:git:git@github.com:openmrs/openmrs-module-htmlformentryui.git</url>
         <tag>HEAD</tag>
     </scm>
-    
+
     <modules>
         <module>api</module>
         <module>omod</module>
     </modules>
-    
+
     <properties>
         <openMRSVersion>1.10.4</openMRSVersion>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <htmlformentryVersion>3.9.2</htmlformentryVersion>
+        <htmlformentryVersion>4.0.0-SNAPSHOT</htmlformentryVersion>
         <uiframeworkVersion>3.9</uiframeworkVersion>
         <appframeworkVersion>2.9</appframeworkVersion>
         <appuiVersion>1.7</appuiVersion>
@@ -46,7 +46,7 @@
         <calculationVersion>1.2</calculationVersion>
         <serializationXstreamVersion>0.2.12</serializationXstreamVersion>
     </properties>
-    
+
     <dependencyManagement>
         <dependencies>
             <!-- we explicitly use version 3.2.10 since 3.2.11 has a bug which was giving us issues,
@@ -60,18 +60,12 @@
             </dependency>
         </dependencies>
     </dependencyManagement>
-    
+
     <dependencies>
         <!-- Begin OpenMRS modules -->
         <dependency>
             <groupId>org.openmrs.module</groupId>
             <artifactId>htmlformentry-api</artifactId>
-            <version>${htmlformentryVersion}</version>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.openmrs.module</groupId>
-            <artifactId>htmlformentry-api-1.10</artifactId>
             <version>${htmlformentryVersion}</version>
             <scope>provided</scope>
         </dependency>
@@ -210,7 +204,7 @@
             <scope>test</scope>
         </dependency>
     </dependencies>
-    
+
     <build>
         <pluginManagement>
             <plugins>
@@ -281,7 +275,7 @@
             <url>http://mavenrepo.openmrs.org/nexus/content/repositories/public</url>
         </repository>
     </repositories>
-    
+
     <pluginRepositories>
         <pluginRepository>
             <id>openmrs-repo</id>
@@ -292,7 +286,7 @@
             </snapshots>
         </pluginRepository>
     </pluginRepositories>
-    
+
     <distributionManagement>
         <repository>
             <id>openmrs-repo-modules</id>
@@ -305,5 +299,5 @@
             <url>https://openmrs.jfrog.io/artifactory/snapshots</url>
         </snapshotRepository>
     </distributionManagement>
-    
+
 </project>
