@@ -3,7 +3,7 @@
 
     <groupId>org.openmrs.module</groupId>
     <artifactId>htmlformentryui</artifactId>
-    <version>1.12.0-SNAPSHOT</version>
+    <version>2.0.0-SNAPSHOT</version>
     <packaging>pom</packaging>
     <name>HTML Form Entry UI Framework Integration Module</name>
     <description>Pages and Fragments for using the HTML Form Entry module along with the UI Framework</description>
@@ -33,18 +33,18 @@
     </modules>
 
     <properties>
-        <openMRSVersion>1.10.4</openMRSVersion>
+        <openMRSVersion>2.1.0</openMRSVersion>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <htmlformentryVersion>3.9.2</htmlformentryVersion>
-        <uiframeworkVersion>3.9</uiframeworkVersion>
-        <appframeworkVersion>2.9</appframeworkVersion>
-        <appuiVersion>1.7</appuiVersion>
-        <emrapiVersion>1.18</emrapiVersion>
-        <uicommonsVersion>2.1</uicommonsVersion>
-        <providermanagementVersion>2.5.0</providermanagementVersion>
-        <reportingVersion>0.10.4</reportingVersion>
-        <calculationVersion>1.2</calculationVersion>
-        <serializationXstreamVersion>0.2.12</serializationXstreamVersion>
+        <htmlformentryVersion>4.0.0-SNAPSHOT</htmlformentryVersion>
+        <uiframeworkVersion>3.19.0</uiframeworkVersion>
+        <appframeworkVersion>2.16.0</appframeworkVersion>
+        <appuiVersion>1.13.0</appuiVersion>
+        <emrapiVersion>1.30.0</emrapiVersion>
+        <uicommonsVersion>2.15.0</uicommonsVersion>
+        <providermanagementVersion>2.12.0</providermanagementVersion>
+        <reportingVersion>1.21.0</reportingVersion>
+        <calculationVersion>1.2.1</calculationVersion>
+        <serializationXstreamVersion>0.2.14</serializationXstreamVersion>
     </properties>
 
     <dependencies>
@@ -57,16 +57,15 @@
         </dependency>
         <dependency>
             <groupId>org.openmrs.module</groupId>
-            <artifactId>htmlformentry-api-1.10</artifactId>
+            <artifactId>htmlformentry-api-tests</artifactId>
             <version>${htmlformentryVersion}</version>
-            <scope>provided</scope>
+            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.openmrs.module</groupId>
-            <artifactId>htmlformentry-api</artifactId>
+            <artifactId>htmlformentry-api-2.3</artifactId>
             <version>${htmlformentryVersion}</version>
-            <type>test-jar</type>
-            <scope>test</scope>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.openmrs.module</groupId>
@@ -99,18 +98,21 @@
             <version>${uicommonsVersion}</version>
             <scope>provided</scope>
         </dependency>
+
         <dependency>
             <groupId>org.openmrs.module</groupId>
             <artifactId>emrapi-api</artifactId>
             <version>${emrapiVersion}</version>
             <scope>provided</scope>
         </dependency>
+
         <dependency>
             <groupId>org.openmrs.module</groupId>
-            <artifactId>emrapi-api-1.10</artifactId>
+            <artifactId>emrapi-api-1.12</artifactId>
             <version>${emrapiVersion}</version>
             <scope>provided</scope>
         </dependency>
+
         <dependency>
             <groupId>org.openmrs.module</groupId>
             <artifactId>providermanagement-api</artifactId>
@@ -125,17 +127,6 @@
             <version>${openMRSVersion}</version>
             <type>jar</type>
             <scope>provided</scope>
-            <!-- The javassist version that comes with the platform doesn't support java 8
-                     powermock-module-junit4 which is another dependency that comes with the platform and
-                     also ships with a later version of javassist that is actually compatible anyways,
-                     therefore we need to exclude the javassist version that comes with the platform
-                     otherwise some tests that use mocks will fail -->
-            <exclusions>
-                <exclusion>
-                    <groupId>javassist</groupId>
-                    <artifactId>javassist</artifactId>
-                </exclusion>
-            </exclusions>
         </dependency>
         <dependency>
             <groupId>org.openmrs.api</groupId>
@@ -143,12 +134,6 @@
             <version>${openMRSVersion}</version>
             <type>test-jar</type>
             <scope>test</scope>
-            <exclusions>
-                <exclusion>
-                    <groupId>javassist</groupId>
-                    <artifactId>javassist</artifactId>
-                </exclusion>
-            </exclusions>
         </dependency>
         <dependency>
             <groupId>org.openmrs.test</groupId>
@@ -156,12 +141,6 @@
             <version>${openMRSVersion}</version>
             <type>pom</type>
             <scope>test</scope>
-            <exclusions>
-                <exclusion>
-                    <artifactId>mockito-all</artifactId>
-                    <groupId>org.mockito</groupId>
-                </exclusion>
-            </exclusions>
         </dependency>
         <!-- End OpenMRS core -->
         <dependency>
@@ -179,6 +158,12 @@
         </dependency>
         <dependency>
             <groupId>org.openmrs.module</groupId>
+            <artifactId>reporting-api-2.0</artifactId>
+            <version>${reportingVersion}</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.openmrs.module</groupId>
             <artifactId>calculation-api</artifactId>
             <version>${calculationVersion}</version>
             <scope>test</scope>
@@ -187,13 +172,13 @@
             <groupId>org.openmrs.module</groupId>
             <artifactId>serialization.xstream-api</artifactId>
             <version>${serializationXstreamVersion}</version>
-            <scope>test</scope>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.openmrs.module</groupId>
-            <artifactId>serialization.xstream-api-1.10</artifactId>
+            <artifactId>serialization.xstream-api-2.0</artifactId>
             <version>${serializationXstreamVersion}</version>
-            <scope>test</scope>
+            <scope>provided</scope>
         </dependency>
     </dependencies>
 
@@ -204,8 +189,8 @@
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-compiler-plugin</artifactId>
                     <configuration>
-                        <target>1.6</target>
-                        <source>1.6</source>
+                        <target>1.8</target>
+                        <source>1.8</source>
                     </configuration>
                 </plugin>
                 <plugin>
