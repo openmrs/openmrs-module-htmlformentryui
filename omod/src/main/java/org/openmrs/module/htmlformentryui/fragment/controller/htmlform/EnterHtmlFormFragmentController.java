@@ -258,10 +258,10 @@ public class EnterHtmlFormFragmentController extends BaseHtmlFormFragmentControl
                 new EncounterDomainWrapper(formEncounter).attachToVisit(visit);
             }
             catch (EncounterDateBeforeVisitStartDateException e) {
-                validationErrors.add(new FormSubmissionError("general-form-error", "Encounter datetime should be after the visit start date"));
+                validationErrors.add(new FormSubmissionError("general-form-error",   ui.message("htmlformentryui.datetimeAfterVisitDate")));
             }
             catch (EncounterDateAfterVisitStopDateException e) {
-                validationErrors.add(new FormSubmissionError("general-form-error", "Encounter datetime should be before the visit stop date"));
+                validationErrors.add(new FormSubmissionError("general-form-error",  ui.message("htmlformentryui.datetimeBeforeVisitDate")));
             }
 
             if (validationErrors.size() > 0) {
