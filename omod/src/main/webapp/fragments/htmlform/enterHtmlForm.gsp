@@ -62,16 +62,25 @@
             <% if (command.context.mode.toString().equals('ENTER') && !visit.isOpen()) { %>
                 // set default date to the visit start date for retrospective visits
                 htmlForm.setEncounterDate(moment('${ ui.dateToISOString(visit.startDate).split('T')[0] }').toDate());
+                htmlForm.adjustTimeZoneEncounterDate('${ui.dateToISOString(visit.startDatetime)}');
+            <% } else if (encounterDateTime != null) { %>
+                // Editing an encounter
+                htmlForm.adjustTimeZoneEncounterDate('${ui.dateToISOString(encounterDateTime)}');
+            <% } else{ %>
+                //New encounter for recent visit
+                htmlForm.adjustTimeZoneEncounterDate(new Date());
             <% } %>
-
-            // set valid date range based on visit
-            htmlForm.setEncounterStartDateRange(moment('${  ui.dateToISOString(visit.startDate).split('T')[0] }').toDate());
-            htmlForm.setEncounterStopDateRange(moment('${ visit.stopDate ? ui.dateToISOString(visit.stopDate).split('T')[0] : ui.dateToISOString(currentDate).split('T')[0] }').toDate());
+            //set client Timezone
+            // set valid date range based on visit startDatetime
+            htmlForm.setEncounterStartDateRange('${  ui.dateToISOString(visit.startDatetime) }');
+            htmlForm.setEncounterStopDateRange('${ visit.stopDate ? ui.dateToISOString(visit.stopDatetime) : ui.dateToISOString(currentDate) }');
 
         <% } else { %>
             // note that we need to get the current datetime from the *server*, in case the server and client are in different time zones
-            htmlForm.setEncounterStopDateRange(moment('${  ui.dateToISOString(currentDate).split('T')[0] }').toDate());
             htmlForm.setEncounterDate(moment('${  ui.dateToISOString(currentDate).split('T')[0] }').toDate());
+            //set client Timezone
+            htmlForm.adjustTimeZoneEncounterDate('${ ui.dateToISOString(currentDate) }');
+            htmlForm.setEncounterStopDateRange(moment('${  ui.dateToISOString(currentDate).split('T')[0] }').toDate());
         <% } %>
 
         // for now, just disable manual entry until we figure out proper validation

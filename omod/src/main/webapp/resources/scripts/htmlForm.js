@@ -40,6 +40,13 @@
         return jq(".submitButton.confirm").is(":disabled");
     }
 
+    var changeTimeWidgetClientTimeZone = function (clientDateTime) {
+        jq("#encounterDate input").datepicker('setDate', clientDateTime)
+        jq(".hfe-hours").val(clientDateTime.getHours()).change();
+        jq(".hfe-minutes").val(clientDateTime.getMinutes()).change();
+        jq(".hfe-seconds").val(clientDateTime.getSeconds()).change();
+    }
+
     var findAndHighlightErrors = function() {
         /* see if there are error fields */
         var containError = false
@@ -260,13 +267,23 @@
 
     htmlForm.setEncounterStartDateRange = function(date) {
         if (getField('encounterDate.value')) {
-            getField('encounterDate.value').datepicker('option', 'minDate', date);
+            if (jq(".hfe-timeZone").length) {
+                var startDateClientTimezone = new Date(date)
+                getField('encounterDate.value').datepicker('option', 'minDate', startDateClientTimezone)
+            }else{
+                getField('encounterDate.value').datepicker('option', 'minDate', new Date(date.split('T')[0]));
+            }
         }
     };
 
     htmlForm.setEncounterStopDateRange = function(date) {
         if (getField('encounterDate.value')) {
-            getField('encounterDate.value').datepicker('option', 'maxDate', date);
+            if (jq(".hfe-timeZone").length) {
+                var stopDateClientTimezone = new Date(date)
+                getField('encounterDate.value').datepicker('option', 'maxDate', stopDateClientTimezone > new Date ? new Date : stopDateClientTimezone)
+            }else{
+                getField('encounterDate.value').datepicker('option', 'maxDate', new Date(date.split('T')[0]));
+            }
         }
     };
 
@@ -274,6 +291,16 @@
         if (getField('encounterDate.value')) {
             getField('encounterDate.value').datepicker('setDate', date);
         }
+    };
+
+    htmlForm.adjustTimeZoneEncounterDate = function(setDateTime ) {
+        if (jq(".hfe-timeZone").length) {
+            //Set browser timezone
+            jq(".hfe-timeZone").val(Intl.DateTimeFormat().resolvedOptions().timeZone)
+            //Translate to client timezone
+            var dateWithClientTimeZone =  new Date(setDateTime)
+            changeTimeWidgetClientTimeZone(dateWithClientTimeZone);
+        };
     };
 
     htmlForm.disableEncounterDateManualEntry = function() {

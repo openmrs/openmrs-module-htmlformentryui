@@ -140,10 +140,11 @@ public class EnterHtmlFormFragmentController extends BaseHtmlFormFragmentControl
             fes = new FormEntrySession(patient, hf, FormEntryContext.Mode.ENTER, null, httpSession, automaticValidation, !automaticValidation);
         }
 
+        Date encounterDatetime = encounter !=  null ?  new Date(encounter.getEncounterDatetime().getTime()) : null;
         VisitDomainWrapper visitDomainWrapper = getVisitDomainWrapper(visit, encounter, adtService);
         setupVelocityContext(fes, visitDomainWrapper, ui, sessionContext,featureToggles);
         setupFormEntrySession(fes, visitDomainWrapper, defaultEncounterDate, ui, sessionContext, returnUrl);
-        setupModel(model, fes, visitDomainWrapper, createVisit);
+        setupModel(model, fes, visitDomainWrapper, createVisit, encounterDatetime );
 
     }
 
@@ -313,11 +314,12 @@ public class EnterHtmlFormFragmentController extends BaseHtmlFormFragmentControl
 
     }
 
-    private void setupModel(FragmentModel model, FormEntrySession fes, VisitDomainWrapper visitDomainWrapper, Boolean createVisit) {
+    private void setupModel(FragmentModel model, FormEntrySession fes, VisitDomainWrapper visitDomainWrapper, Boolean createVisit, Date encounterDatetime) {
 
         model.addAttribute("currentDate", (new DateMidnight()).toDate());
         model.addAttribute("command", fes);
         model.addAttribute("visit", visitDomainWrapper);
+        model.addAttribute("encounterDateTime" , encounterDatetime);
         if (createVisit!=null) {
             model.addAttribute("createVisit", createVisit.toString());
         } else {

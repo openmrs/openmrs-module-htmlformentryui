@@ -1,4 +1,13 @@
 $(function() {
+
+    if (jq(".hfe-dateTime").length) {
+        jq("#encounterDate ").find(".value").each(function() {
+            jq(this).hide();
+        })
+        let  clientDateWithTimezone = new Date(jq(".hfe-dateTime").attr("value"));
+        jq(".hfe-dateTime").text(moment(clientDateWithTimezone).format("DD/MM/YYYY HH:mm:ss"))
+    }
+
     var dialog = emr.setupConfirmationDialog({
         selector: '#confirm-delete-dialog',
         actions: {
