@@ -1,11 +1,13 @@
 $(function() {
-
-    if (jq(".hfe-dateTime").length) {
-        jq("#encounterDate ").find(".value").each(function() {
-            jq(this).hide();
-        })
-        let  clientDateWithTimezone = new Date(jq(".hfe-dateTime").attr("value"));
-        jq(".hfe-dateTime").text(moment(clientDateWithTimezone).format("DD/MM/YYYY HH:mm:ss"))
+    if (jq("#encounterDate span").length && jq("#encounterDate span").next().length) {
+        var date= jq("#encounterDate span").first().text()
+        var time = jq("#encounterDate span").next().text()
+        var tz = jq("#encounterDate span").next().attr('tz');
+        var dateTime = date + "T" + time+":00" +tz;
+        var convertedDate = new Date(moment(dateTime,"DD/MM/YYYYTHH:mm:ssZ"));
+        convertedDate = moment(convertedDate).format('DD/MM/YYYY HH:mm');
+        jq("#encounterDate span").first().hide();
+        jq("#encounterDate span").next().text(convertedDate);
     }
 
     var dialog = emr.setupConfirmationDialog({

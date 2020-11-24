@@ -61,7 +61,7 @@
         <% if (visit) { %>
             <% if (command.context.mode.toString().equals('ENTER') && !visit.isOpen()) { %>
                 // set default date to the visit start date for retrospective visits
-                htmlForm.setEncounterDate(moment('${ ui.dateToISOString(visit.startDate).split('T')[0] }').toDate());
+                htmlForm.setEncounterDate('${ ui.dateToISOString(visit.startDate)}');
                 htmlForm.adjustTimeZoneEncounterDate('${ui.dateToISOString(visit.startDatetime)}');
             <% } else if (encounterDateTime != null) { %>
                 // Editing an encounter
@@ -77,10 +77,10 @@
 
         <% } else { %>
             // note that we need to get the current datetime from the *server*, in case the server and client are in different time zones
-            htmlForm.setEncounterDate(moment('${  ui.dateToISOString(currentDate).split('T')[0] }').toDate());
+            htmlForm.setEncounterDate('${  ui.dateToISOString(currentDate).split('T')[0] }');
             //set client Timezone
             htmlForm.adjustTimeZoneEncounterDate('${ ui.dateToISOString(currentDate) }');
-            htmlForm.setEncounterStopDateRange(moment('${  ui.dateToISOString(currentDate).split('T')[0] }').toDate());
+            htmlForm.setEncounterStopDateRange('${  ui.dateToISOString(startDatetime)}');
         <% } %>
 
         // for now, just disable manual entry until we figure out proper validation
