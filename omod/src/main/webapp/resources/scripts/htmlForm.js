@@ -40,6 +40,19 @@
         return jq(".submitButton.confirm").is(":disabled");
     }
 
+    var changeTimeWidgetClientTimeZone = function (clientDateTime) {
+        getField('encounterDate.value').datepicker('setDate', clientDateTime)
+        jq("#encounterDate").find(".hfe-hours").val(clientDateTime.getHours()).change();
+        jq("#encounterDate").find(".hfe-minutes").val(clientDateTime.getMinutes()).change();
+        jq("#encounterDate").find(".hfe-seconds").val(clientDateTime.getSeconds()).change();
+    }
+
+    var splitDate= function (date) {
+        date = date.substring(0,10).split('-')
+        date = date[1] + '-' + date[2] + '-' + date[0]
+        return new Date(date)
+    }
+
     var findAndHighlightErrors = function() {
         /* see if there are error fields */
         var containError = false
@@ -260,20 +273,40 @@
 
     htmlForm.setEncounterStartDateRange = function(date) {
         if (getField('encounterDate.value')) {
-            getField('encounterDate.value').datepicker('option', 'minDate', date);
+            if (jq("#encounterDate").find(".hfe-timeZone").length) {
+                var startDateClientTimezone = new Date(date)
+                getField('encounterDate.value').datepicker('option', 'minDate', startDateClientTimezone)
+            }else{
+                getField('encounterDate.value').datepicker('option', 'minDate',  splitDate(date));
+            }
         }
     };
 
     htmlForm.setEncounterStopDateRange = function(date) {
         if (getField('encounterDate.value')) {
-            getField('encounterDate.value').datepicker('option', 'maxDate', date);
+            if ( jq("#encounterDate").find(".hfe-timeZone").length) {
+                var stopDateClientTimezone = new Date(date)
+                getField('encounterDate.value').datepicker('option', 'maxDate', stopDateClientTimezone > new Date ? new Date : stopDateClientTimezone)
+            }else{
+                getField('encounterDate.value').datepicker('option', 'maxDate', splitDate(date));
+            }
         }
     };
 
     htmlForm.setEncounterDate = function(date) {
         if (getField('encounterDate.value')) {
-            getField('encounterDate.value').datepicker('setDate', date);
+            getField('encounterDate.value').datepicker('setDate',  splitDate(date));
         }
+    };
+
+    htmlForm.adjustTimeZoneEncounterDate = function(setDateTime ) {
+        if (jq("#encounterDate").find(".hfe-timeZone").length) {
+            //Set browser timezone
+            jq("#encounterDate").find(".hfe-timeZone").val(Intl.DateTimeFormat().resolvedOptions().timeZone)
+            //Translate from UTC to client timezone
+            var dateWithClientTimeZone =  new Date(setDateTime)
+            changeTimeWidgetClientTimeZone(dateWithClientTimeZone);
+        };
     };
 
     htmlForm.disableEncounterDateManualEntry = function() {

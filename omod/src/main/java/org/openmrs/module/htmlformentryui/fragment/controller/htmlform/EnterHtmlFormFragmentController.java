@@ -53,10 +53,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import java.io.PrintWriter;
 import java.io.StringWriter;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 /**
  *
@@ -139,11 +137,28 @@ public class EnterHtmlFormFragmentController extends BaseHtmlFormFragmentControl
         else {
             fes = new FormEntrySession(patient, hf, FormEntryContext.Mode.ENTER, null, httpSession, automaticValidation, !automaticValidation);
         }
+        boolean handleAllTimezones = true;
 
-        VisitDomainWrapper visitDomainWrapper = getVisitDomainWrapper(visit, encounter, adtService);
+        String visitStartDatetime = null;
+        String visitStopDatetime = null;
+        String encounterDatetimeUTC= null;
+        SimpleDateFormat formater= new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ");
+
+        if(handleAllTimezones){
+            encounterDatetimeUTC = encounter != null ? formater.format(encounter.getEncounterDatetime()) : null;
+        }
+        if(visit !=null){
+            if(handleAllTimezones){
+                formater.setTimeZone(TimeZone.getTimeZone("UTC"));
+            }
+            visitStartDatetime = visit.getStartDatetime() != null ? formater.format(visit.getStartDatetime()) : null;
+            visitStopDatetime = visit.getStopDatetime() != null ? formater.format(visit.getStopDatetime()) : formater.format(new Date()) ;
+        }
+
+        VisitDomainWrapper visitDomainWrapper = getVisitDomainWrapper(visit, encounter, adtService, handleAllTimezones);
         setupVelocityContext(fes, visitDomainWrapper, ui, sessionContext,featureToggles);
         setupFormEntrySession(fes, visitDomainWrapper, defaultEncounterDate, ui, sessionContext, returnUrl);
-        setupModel(model, fes, visitDomainWrapper, createVisit);
+        setupModel(model, fes, visitDomainWrapper, createVisit , encounterDatetimeUTC  , visitStartDatetime, visitStopDatetime);
 
     }
 
@@ -208,8 +223,9 @@ public class EnterHtmlFormFragmentController extends BaseHtmlFormFragmentControl
         } else {
             fes = new FormEntrySession(patient, hf, FormEntryContext.Mode.ENTER, request.getSession());
         }
+        boolean handleAllTimezones = true;
 
-        VisitDomainWrapper visitDomainWrapper = getVisitDomainWrapper(visit, encounter, adtService);
+        VisitDomainWrapper visitDomainWrapper = getVisitDomainWrapper(visit, encounter, adtService,handleAllTimezones);
         setupVelocityContext(fes, visitDomainWrapper, ui, sessionContext,featureToggles);
         setupFormEntrySession(fes, visitDomainWrapper, null, ui, sessionContext, returnUrl);
         fes.getHtmlToDisplay();  // needs to happen before we validate or process a form
@@ -313,11 +329,18 @@ public class EnterHtmlFormFragmentController extends BaseHtmlFormFragmentControl
 
     }
 
-    private void setupModel(FragmentModel model, FormEntrySession fes, VisitDomainWrapper visitDomainWrapper, Boolean createVisit) {
+    private void setupModel(FragmentModel model, FormEntrySession fes, VisitDomainWrapper visitDomainWrapper, Boolean createVisit , String encounterDatetimeUTC , String visitStartDatetime ,String visitStopDatetime) {
 
-        model.addAttribute("currentDate", (new DateMidnight()).toDate());
+        SimpleDateFormat formatToUTC= new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ");
+        formatToUTC.setTimeZone(TimeZone.getTimeZone("UTC"));
+
+        model.addAttribute("visitStartDatetime", visitStartDatetime);
+        model.addAttribute("visitStopDatetime", visitStopDatetime);
+        model.addAttribute("currentDate", formatToUTC.format(new Date()));
         model.addAttribute("command", fes);
         model.addAttribute("visit", visitDomainWrapper);
+        model.addAttribute("encounterDatetimeUTC" , encounterDatetimeUTC);
+
         if (createVisit!=null) {
             model.addAttribute("createVisit", createVisit.toString());
         } else {
@@ -326,7 +349,7 @@ public class EnterHtmlFormFragmentController extends BaseHtmlFormFragmentControl
 
     }
 
-    private VisitDomainWrapper getVisitDomainWrapper(Visit visit, Encounter encounter, AdtService adtService) {
+    private VisitDomainWrapper getVisitDomainWrapper(Visit visit, Encounter encounter, AdtService adtService, boolean handleTimezone) {
         // if we don't have a visit, but the encounter has a visit, use that
         if (visit == null && encounter != null) {
             visit = encounter.getVisit();
