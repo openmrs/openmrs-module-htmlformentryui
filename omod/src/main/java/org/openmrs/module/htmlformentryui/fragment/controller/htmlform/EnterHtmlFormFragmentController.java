@@ -14,7 +14,18 @@
 
 package org.openmrs.module.htmlformentryui.fragment.controller.htmlform;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
+import java.io.PrintWriter;
+import java.io.StringWriter;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.joda.time.DateMidnight;
 import org.openmrs.Encounter;
 import org.openmrs.Form;
@@ -23,6 +34,7 @@ import org.openmrs.Visit;
 import org.openmrs.api.FormService;
 import org.openmrs.api.context.Context;
 import org.openmrs.api.context.ContextAuthenticationException;
+import org.openmrs.module.ModuleFactory;
 import org.openmrs.module.appframework.feature.FeatureToggleProperties;
 import org.openmrs.module.appui.UiSessionContext;
 import org.openmrs.module.emrapi.EmrApiProperties;
@@ -49,19 +61,12 @@ import org.openmrs.ui.framework.resource.ResourceFactory;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
-import java.io.PrintWriter;
-import java.io.StringWriter;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 /**
  *
  */
 public class EnterHtmlFormFragmentController extends BaseHtmlFormFragmentController {
+
+    private static final Log log = LogFactory.getLog(EnterHtmlFormFragmentController.class);
 
     /**
      * @param config
@@ -323,6 +328,20 @@ public class EnterHtmlFormFragmentController extends BaseHtmlFormFragmentControl
         } else {
             model.addAttribute("createVisit", "false");
         }
+
+        Integer hfeMajorVersion = 1;
+        Integer hfeMinorVersion = 0;
+        try {
+            String hfeVersion = ModuleFactory.getStartedModuleById("htmlformentry").getVersion();
+            String[] versionSplit = hfeVersion.split("\\.");
+            hfeMajorVersion = Integer.valueOf(versionSplit[0]);
+            hfeMinorVersion = Integer.valueOf(versionSplit[1]);
+        }
+        catch (Exception e) {
+            log.warn("Unable to retrieve htmlformentry major and minor versions", e);
+        }
+        model.addAttribute("hfeMajorVersion", hfeMajorVersion);
+        model.addAttribute("hfeMinorVersion", hfeMinorVersion);
 
     }
 

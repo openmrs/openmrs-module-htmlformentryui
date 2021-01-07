@@ -15,6 +15,11 @@
 <script type="text/javascript" src="/${ contextPath }/moduleResources/htmlformentry/htmlForm.js"></script>
 <link href="/${ contextPath }/moduleResources/htmlformentry/htmlFormEntry.css" type="text/css" rel="stylesheet" />
 
+<% if (hfeMajorVersion >= 4) { %>
+    <link href="/${ contextPath }/moduleResources/htmlformentry/drugOrderWidget.css"></script>
+    <script type="text/javascript" src="/${ contextPath }/moduleResources/htmlformentry/drugOrderWidget.js"></script>
+<% } %>
+
 <script type="text/javascript">
 
     // for now we just expose these in the global scope for compatibility with htmlFormEntry.js and legacy forms
