@@ -2,15 +2,7 @@ $(function() {
 
     if (jq("#dateTimeWithTimezone").length) {
         var dateTime= jq("#dateTimeWithTimezone").text()
-        var serverUTCDate = new Date(moment(dateTime,"DD/MM/YYYY HH:mm:ss"));
-        var convertUtcToClientTZ = new Date(Date.UTC(
-            serverUTCDate.getFullYear(),
-            serverUTCDate.getMonth(),
-            serverUTCDate.getDate(),
-            serverUTCDate.getHours(),
-            serverUTCDate.getMinutes(),
-            serverUTCDate.getSeconds(),
-            serverUTCDate.getMilliseconds()))
+        var convertUtcToClientTZ = new Date(dateTime)
         jq("#dateTimeWithTimezone").text(moment(convertUtcToClientTZ).format('DD/MM/YYYY HH:mm:ss'));
     }
 

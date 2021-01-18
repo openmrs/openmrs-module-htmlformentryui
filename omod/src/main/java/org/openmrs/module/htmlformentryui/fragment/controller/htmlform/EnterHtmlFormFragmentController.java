@@ -143,15 +143,16 @@ public class EnterHtmlFormFragmentController extends BaseHtmlFormFragmentControl
         String visitStartDatetime = null;
         String visitStopDatetime = null;
         String encounterDatetimeUTC= null;
-        SimpleDateFormat formater= new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ");
+        SimpleDateFormat formater= new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
 
         if(handleAllTimezones){
+            formater.setTimeZone(TimeZone.getTimeZone("UTC"));
             encounterDatetimeUTC = encounter != null ? formater.format(encounter.getEncounterDatetime()) : null;
         }
         if(visit !=null){
-            if(handleAllTimezones){
+           /* if(handleAllTimezones){
                 formater.setTimeZone(TimeZone.getTimeZone("UTC"));
-            }
+            }*/
 
             visitStartDatetime = visit.getStartDatetime() != null ? formater.format(visit.getStartDatetime()) : null;
             visitStopDatetime = visit.getStopDatetime() != null ? formater.format(visit.getStopDatetime()) : formater.format(new Date()) ;
@@ -331,7 +332,7 @@ public class EnterHtmlFormFragmentController extends BaseHtmlFormFragmentControl
     }
 
     private void setupModel(FragmentModel model, FormEntrySession fes, VisitDomainWrapper visitDomainWrapper, Boolean createVisit , String encounterDatetimeUTC , String visitStartDatetime ,String visitStopDatetime, boolean handleTimezone) {
-        SimpleDateFormat formatToUTC= new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ");
+        SimpleDateFormat formatToUTC= new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
         formatToUTC.setTimeZone(TimeZone.getTimeZone("UTC"));
         String currentDate = handleTimezone  ? formatToUTC.format(new Date()) : new Date().toString();
         //boolean usingTimezone =  encounterDatetimeUTC != null;

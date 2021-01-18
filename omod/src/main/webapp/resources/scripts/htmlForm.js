@@ -300,7 +300,6 @@
     };
 
     htmlForm.adjustTimeZoneEncounterDate = function(setDateTime ) {
-
         if (jq("#encounterDate").find(".hfe-timezone").length) {
             //Set browser timezone
             jq("#encounterDate").find(".hfe-timezone").val(Intl.DateTimeFormat().resolvedOptions().timeZone)
