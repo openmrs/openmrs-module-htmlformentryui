@@ -31,12 +31,7 @@ import org.openmrs.module.emrapi.adt.exception.EncounterDateAfterVisitStopDateEx
 import org.openmrs.module.emrapi.adt.exception.EncounterDateBeforeVisitStartDateException;
 import org.openmrs.module.emrapi.encounter.EncounterDomainWrapper;
 import org.openmrs.module.emrapi.visit.VisitDomainWrapper;
-import org.openmrs.module.htmlformentry.FormEntryContext;
-import org.openmrs.module.htmlformentry.FormEntrySession;
-import org.openmrs.module.htmlformentry.FormSubmissionError;
-import org.openmrs.module.htmlformentry.HtmlForm;
-import org.openmrs.module.htmlformentry.HtmlFormEntryService;
-import org.openmrs.module.htmlformentry.HtmlFormEntryUtil;
+import org.openmrs.module.htmlformentry.*;
 import org.openmrs.module.htmlformentryui.HtmlFormUtil;
 import org.openmrs.module.uicommons.UiCommonsConstants;
 import org.openmrs.ui.framework.SimpleObject;
@@ -142,10 +137,9 @@ public class EnterHtmlFormFragmentController extends BaseHtmlFormFragmentControl
         else {
             fes = new FormEntrySession(patient, hf, FormEntryContext.Mode.ENTER, null, httpSession, automaticValidation, !automaticValidation);
         }
-        boolean handleAllTimezones = true;
-        /*boolean handleAllTimezones = Boolean.parseBoolean(
+        boolean handleAllTimezones = Boolean.parseBoolean(
                 Context.getAdministrationService().getGlobalProperty(HtmlFormEntryConstants.GP_HANDLE_TIMEZONES));
-*/
+
         String visitStartDatetime = null;
         String visitStopDatetime = null;
         String encounterDatetimeUTC= null;
@@ -158,6 +152,7 @@ public class EnterHtmlFormFragmentController extends BaseHtmlFormFragmentControl
             if(handleAllTimezones){
                 formater.setTimeZone(TimeZone.getTimeZone("UTC"));
             }
+
             visitStartDatetime = visit.getStartDatetime() != null ? formater.format(visit.getStartDatetime()) : null;
             visitStopDatetime = visit.getStopDatetime() != null ? formater.format(visit.getStopDatetime()) : formater.format(new Date()) ;
         }
