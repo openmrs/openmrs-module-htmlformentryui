@@ -335,7 +335,6 @@ public class EnterHtmlFormFragmentController extends BaseHtmlFormFragmentControl
         SimpleDateFormat formatToUTC= new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
         formatToUTC.setTimeZone(TimeZone.getTimeZone("UTC"));
         String currentDate = handleTimezone  ? formatToUTC.format(new Date()) : new Date().toString();
-        //boolean usingTimezone =  encounterDatetimeUTC != null;
 
         model.addAttribute("visitStartDatetime", visitStartDatetime);
         model.addAttribute("visitStopDatetime", visitStopDatetime);

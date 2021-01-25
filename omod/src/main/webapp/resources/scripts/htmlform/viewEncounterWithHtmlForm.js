@@ -1,9 +1,9 @@
 $(function() {
 
-    if (jq("#dateTimeWithTimezone").length) {
-        var dateTime= jq("#dateTimeWithTimezone").text()
+    if (jq(".dateTimeWithTimezone").length) {
+        var dateTime= jq(".dateTimeWithTimezone").text()
         var convertUtcToClientTZ = new Date(dateTime)
-        jq("#dateTimeWithTimezone").text(moment(convertUtcToClientTZ).format('DD/MM/YYYY HH:mm:ss'));
+        jq(".dateTimeWithTimezone").text(moment(convertUtcToClientTZ).format('DD/MM/YYYY HH:mm:ss'));
     }
 
     var dialog = emr.setupConfirmationDialog({
