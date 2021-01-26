@@ -15,6 +15,7 @@
 package org.openmrs.module.htmlformentryui;
 
 import org.apache.commons.lang3.StringUtils;
+import org.openmrs.Encounter;
 import org.openmrs.EncounterType;
 import org.openmrs.Form;
 import org.openmrs.Patient;
@@ -37,22 +38,48 @@ import java.io.IOException;
  */
 public class HtmlFormUtil {
 
-    public static HtmlForm getHtmlFormFromUiResource(ResourceFactory resourceFactory, FormService formService, HtmlFormEntryService htmlFormEntryService, String providerAndPath) throws IOException {
+    public static HtmlForm getHtmlFormFromUiResource(ResourceFactory resourceFactory, FormService formService, HtmlFormEntryService htmlFormEntryService,  String providerAndPath, Encounter encounter) throws IOException {
         int ind = providerAndPath.indexOf(':');
         String provider = providerAndPath.substring(0, ind);
         String path = providerAndPath.substring(ind + 1);
-        return getHtmlFormFromUiResource(resourceFactory, formService, htmlFormEntryService, provider, path);
+        return getHtmlFormFromUiResource(resourceFactory, formService, htmlFormEntryService, provider, path, encounter);
     }
 
-    public static HtmlForm getHtmlFormFromUiResource(ResourceFactory resourceFactory, FormService formService, HtmlFormEntryService htmlFormEntryService, String providerName, String resourcePath) throws IOException {
-        String xml = resourceFactory.getResourceAsString(providerName, resourcePath);
-        // should be of the format <htmlform formUuid="..." formVersion="..." formEncounterType="...">...</htmlform>
+    public static HtmlForm getHtmlFormFromUiResource(ResourceFactory resourceFactory, FormService formService, HtmlFormEntryService htmlFormEntryService, String providerName, String resourcePath, Encounter encounter) throws IOException {
+
+        String xml = null;
+
+        // first, see if there is a specific version of the form referenced by version number
+        if (encounter != null && encounter.getForm() != null && encounter.getForm().getVersion() != null) {
+            String resourcePathWithVersion = resourcePath.replaceAll("\\.xml$", "") + "_v" + encounter.getForm().getVersion() + ".xml";
+            xml = resourceFactory.getResourceAsString(providerName, resourcePathWithVersion);
+            // should be of the format <htmlform formUuid="..." formVersion="..." formEncounterType="...">...</htmlform>
+        }
+
+        // if not, use the bare resource path (without version number appended) to fetch the form
+        if (xml == null) {
+            xml = resourceFactory.getResourceAsString(providerName, resourcePath);
+
+        }
 
         if (xml == null) {
             throw new IllegalArgumentException("No resource found at " + providerName + ":" + resourcePath);
         }
 
         return getHtmlFormFromResourceXml(formService, htmlFormEntryService, xml);
+    }
+
+
+    // the new method above with "encounter" is preferred if an encounter is available, see: https://issues.openmrs.org/browse/HTML-768
+    public static HtmlForm getHtmlFormFromUiResource(ResourceFactory resourceFactory, FormService formService, HtmlFormEntryService htmlFormEntryService, String providerAndPath) throws IOException {
+        // using new Encounter() is a bit of a hack, used for a proper method signature hack; safe because the called method
+        // perform a null check on encounter.getForm()
+        return getHtmlFormFromUiResource(resourceFactory, formService, htmlFormEntryService, providerAndPath, new Encounter());
+    }
+
+    // the new method above with "encounter" is preferred if an encounter is available, see: https://issues.openmrs.org/browse/HTML-768
+    public static HtmlForm getHtmlFormFromUiResource(ResourceFactory resourceFactory, FormService formService, HtmlFormEntryService htmlFormEntryService, String providerName, String resourcePath) throws IOException {
+        return getHtmlFormFromUiResource(resourceFactory, formService, htmlFormEntryService, providerName, resourcePath, null);
     }
 
     public static HtmlForm getHtmlFormFromResourceXml(FormService formService, HtmlFormEntryService htmlFormEntryService, String xml) {

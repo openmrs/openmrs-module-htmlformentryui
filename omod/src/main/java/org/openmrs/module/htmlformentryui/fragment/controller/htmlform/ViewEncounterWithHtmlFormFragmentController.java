@@ -109,7 +109,7 @@ public class ViewEncounterWithHtmlFormFragmentController extends BaseHtmlFormFra
                                VisitDomainWrapper visitDomainWrapper, FeatureToggleProperties featureToggleProperties) throws Exception {
         if (hf == null) {
             if (StringUtils.isNotBlank(definitionUiResource)) {
-                hf = HtmlFormUtil.getHtmlFormFromUiResource(resourceFactory, formService, htmlFormEntryService, definitionUiResource);
+                hf = HtmlFormUtil.getHtmlFormFromUiResource(resourceFactory, formService, htmlFormEntryService, definitionUiResource, encounter);
                 if (hf == null) {
                     throw new IllegalArgumentException("No form found for resource " + definitionUiResource);
                 }
