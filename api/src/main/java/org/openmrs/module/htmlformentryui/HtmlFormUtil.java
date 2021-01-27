@@ -72,9 +72,7 @@ public class HtmlFormUtil {
 
     // the new method above with "encounter" is preferred if an encounter is available, see: https://issues.openmrs.org/browse/HTML-768
     public static HtmlForm getHtmlFormFromUiResource(ResourceFactory resourceFactory, FormService formService, HtmlFormEntryService htmlFormEntryService, String providerAndPath) throws IOException {
-        // using new Encounter() is a bit of a hack, used for a proper method signature hack; safe because the called method
-        // perform a null check on encounter.getForm()
-        return getHtmlFormFromUiResource(resourceFactory, formService, htmlFormEntryService, providerAndPath, new Encounter());
+        return getHtmlFormFromUiResource(resourceFactory, formService, htmlFormEntryService, providerAndPath, (Encounter) null);
     }
 
     // the new method above with "encounter" is preferred if an encounter is available, see: https://issues.openmrs.org/browse/HTML-768
