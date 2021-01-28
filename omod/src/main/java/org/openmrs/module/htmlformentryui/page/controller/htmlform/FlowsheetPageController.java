@@ -155,6 +155,7 @@ public class FlowsheetPageController {
      */
     protected HtmlForm getHtmlFormFromResource(String resource, ResourceFactory rf, FormService fs, HtmlFormEntryService hfs) {
         try {
+            // TODO figure out how flowsheets might work with: https://issues.openmrs.org/browse/HTML-768
             HtmlForm form = HtmlFormUtil.getHtmlFormFromUiResource(rf, fs, hfs, resource);
             if (form == null) {
                 throw new IllegalArgumentException("No form found for resource " + resource);

@@ -7,13 +7,10 @@ import org.openmrs.module.htmlformentry.HtmlForm;
 import org.openmrs.module.htmlformentry.HtmlFormEntryService;
 import org.openmrs.module.htmlformentryui.HtmlFormUtil;
 import org.openmrs.ui.framework.UiUtils;
-import org.openmrs.ui.framework.annotation.FragmentParam;
 import org.openmrs.ui.framework.annotation.SpringBean;
 import org.openmrs.ui.framework.page.PageModel;
 import org.openmrs.ui.framework.resource.ResourceFactory;
 import org.springframework.web.bind.annotation.RequestParam;
-
-import java.io.IOException;
 
 public class BaseEditHtmlFormPageController {
 
@@ -41,7 +38,7 @@ public class BaseEditHtmlFormPageController {
         HtmlForm htmlForm = null;
 
         if (org.apache.commons.lang.StringUtils.isNotBlank(definitionUiResource)) {
-            htmlForm = HtmlFormUtil.getHtmlFormFromUiResource(resourceFactory, formService, htmlFormEntryService, definitionUiResource);
+            htmlForm = HtmlFormUtil.getHtmlFormFromUiResource(resourceFactory, formService, htmlFormEntryService, definitionUiResource, encounter);
             if (htmlForm == null) {
                 throw new IllegalArgumentException("No form found for resource " + definitionUiResource);
             }
