@@ -18,17 +18,18 @@ import org.openmrs.test.BaseModuleContextSensitiveTest;
 import org.springframework.mock.web.MockHttpServletRequest;
 
 public class ObsFromFragmentTagTest extends BaseModuleContextSensitiveTest {
-		
+	
 	@Before
 	public void setup() throws Exception {
 		executeDataSet("org/openmrs/module/htmlformentry/include/RegressionTest-data-openmrs-1.10.xml");
-		HtmlFormEntryUtil.getService().addHandler("obsFromFragment", Context.getRegisteredComponent("obsFromFragmentTagHandler", SubstitutionTagHandler.class));
+		HtmlFormEntryUtil.getService().addHandler("obsFromFragment",
+		    Context.getRegisteredComponent("obsFromFragmentTagHandler", SubstitutionTagHandler.class));
 	}
 	
-	@Test 
+	@Test
 	public void shouldHandleEditingOfSingleObsCorrectly() throws Exception {
 		new RegressionTestHelper() {
-
+			
 			@Override
 			public String getFormName() {
 				return "ObsFromFragment-withSingleObs";
@@ -61,7 +62,7 @@ public class ObsFromFragmentTagTest extends BaseModuleContextSensitiveTest {
 			}
 			
 			@Override
-            public void testResults(SubmissionResults results) {
+			public void testResults(SubmissionResults results) {
 				results.assertNoErrors();
 				results.assertEncounterCreated();
 				results.assertProvider(502);
@@ -87,13 +88,13 @@ public class ObsFromFragmentTagTest extends BaseModuleContextSensitiveTest {
 			}
 			
 			@Override
-			public void testEditedResults(SubmissionResults results) {				
+			public void testEditedResults(SubmissionResults results) {
 				Set<Obs> existingObs = results.getEncounterCreated().getObs();
 				List<Obs> voidedObs = retainVoidedObs(results.getEncounterCreated().getAllObs(true));
-
+				
 				Assert.assertEquals(1, existingObs.size());
 				Assert.assertEquals(1, voidedObs.size());
-
+				
 				// Verify new value
 				Assert.assertEquals("2015-02-11", dateAsString(existingObs.iterator().next().getValueDatetime()));
 				// Verify old value
@@ -104,10 +105,10 @@ public class ObsFromFragmentTagTest extends BaseModuleContextSensitiveTest {
 		
 	}
 	
-	@Test 
+	@Test
 	public void shouldHandleEditingOfObsGroupMemberCorrectly() throws Exception {
 		new RegressionTestHelper() {
-
+			
 			@Override
 			public String getFormName() {
 				return "ObsFromFragment-withObsGroup";
@@ -140,10 +141,10 @@ public class ObsFromFragmentTagTest extends BaseModuleContextSensitiveTest {
 			}
 			
 			@Override
-            public void testResults(SubmissionResults results) {
+			public void testResults(SubmissionResults results) {
 				results.assertNoErrors();
 				results.assertEncounterCreated();
-						
+				
 				Set<Obs> existingObs = results.getEncounterCreated().getObs();
 				Assert.assertEquals(1, existingObs.size());
 				Assert.assertEquals("2019-04-11", dateAsString(existingObs.iterator().next().getValueDatetime()));
@@ -164,13 +165,13 @@ public class ObsFromFragmentTagTest extends BaseModuleContextSensitiveTest {
 			}
 			
 			@Override
-			public void testEditedResults(SubmissionResults results) {				
+			public void testEditedResults(SubmissionResults results) {
 				Set<Obs> existingObs = results.getEncounterCreated().getObs();
 				List<Obs> voidedObs = retainVoidedObs(results.getEncounterCreated().getAllObs(true));
-
+				
 				Assert.assertEquals(1, existingObs.size());
 				Assert.assertEquals(1, voidedObs.size());
-
+				
 				// Verify new value
 				Assert.assertEquals("2020-05-04", dateAsString(existingObs.iterator().next().getValueDatetime()));
 				// Verify old value
@@ -183,7 +184,7 @@ public class ObsFromFragmentTagTest extends BaseModuleContextSensitiveTest {
 	@Test
 	public void shouldVoidExistingObsWhenNewValueIsBlank() throws Exception {
 		new RegressionTestHelper() {
-
+			
 			@Override
 			public String getFormName() {
 				return "ObsFromFragment-withObsGroup";
@@ -223,14 +224,14 @@ public class ObsFromFragmentTagTest extends BaseModuleContextSensitiveTest {
 			}
 			
 			@Override
-			public void testEditedResults(SubmissionResults results) {				
+			public void testEditedResults(SubmissionResults results) {
 				Set<Obs> existingObs = results.getEncounterCreated().getObs();
 				List<Obs> voidedObs = retainVoidedObs(results.getEncounterCreated().getAllObs(true));
-
+				
 				// Verify old value was voided
 				Assert.assertEquals(0, existingObs.size());
 				Assert.assertEquals("Both Obs group and Allergy Date should be voided", 2, voidedObs.size());
-								
+				
 				// Verify old value
 				for (Obs o : voidedObs) {
 					if (o.getValueDatetime() != null) {
@@ -251,5 +252,5 @@ public class ObsFromFragmentTagTest extends BaseModuleContextSensitiveTest {
 		}
 		return voidedObs;
 	}
-		
+	
 }

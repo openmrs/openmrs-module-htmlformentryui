@@ -10,30 +10,30 @@ import org.springframework.util.StringUtils;
 import java.util.Date;
 
 public abstract class BaseHtmlFormFragmentController {
-
-    protected void setupVelocityContext(FormEntrySession fes, VisitDomainWrapper visitDomainWrapper, UiUtils ui,
-                                        UiSessionContext sessionContext, FeatureToggleProperties featureToggles) {
-
-        fes.addToVelocityContext("visit", visitDomainWrapper);
-        fes.addToVelocityContext("sessionContext", sessionContext);
-        fes.addToVelocityContext("ui", ui);
-        fes.addToVelocityContext("featureToggles", featureToggles);
-
-    }
-
-    protected void setupFormEntrySession(FormEntrySession fes, VisitDomainWrapper visitDomainWrapper, Date defaultEncounterDate, UiUtils ui,
-                                         UiSessionContext sessionContext, String returnUrl) {
-
-        fes.setAttribute("uiSessionContext", sessionContext);
-        fes.setAttribute("uiUtils", ui);
-
-        // note that we pass the plain visit object to the form entry context, but the velocity context and the model get the "wrapped" visit--not sure if we want to pass the wrapped visit to HFE as well
-        fes.getContext().setVisit(visitDomainWrapper != null ? visitDomainWrapper.getVisit() : null);
-        fes.getContext().setDefaultEncounterDate(defaultEncounterDate);
-
-        if (StringUtils.hasText(returnUrl)) {
-            fes.setReturnUrl(returnUrl);
-
-        }
-    }
+	
+	protected void setupVelocityContext(FormEntrySession fes, VisitDomainWrapper visitDomainWrapper, UiUtils ui,
+	        UiSessionContext sessionContext, FeatureToggleProperties featureToggles) {
+		
+		fes.addToVelocityContext("visit", visitDomainWrapper);
+		fes.addToVelocityContext("sessionContext", sessionContext);
+		fes.addToVelocityContext("ui", ui);
+		fes.addToVelocityContext("featureToggles", featureToggles);
+		
+	}
+	
+	protected void setupFormEntrySession(FormEntrySession fes, VisitDomainWrapper visitDomainWrapper,
+	        Date defaultEncounterDate, UiUtils ui, UiSessionContext sessionContext, String returnUrl) {
+		
+		fes.setAttribute("uiSessionContext", sessionContext);
+		fes.setAttribute("uiUtils", ui);
+		
+		// note that we pass the plain visit object to the form entry context, but the velocity context and the model get the "wrapped" visit--not sure if we want to pass the wrapped visit to HFE as well
+		fes.getContext().setVisit(visitDomainWrapper != null ? visitDomainWrapper.getVisit() : null);
+		fes.getContext().setDefaultEncounterDate(defaultEncounterDate);
+		
+		if (StringUtils.hasText(returnUrl)) {
+			fes.setReturnUrl(returnUrl);
+			
+		}
+	}
 }

@@ -48,117 +48,131 @@ import static org.mockito.Mockito.when;
 @RunWith(PowerMockRunner.class)
 @PrepareForTest(Context.class)
 public class UiMessageTagHandlerTest {
-
-    Locale currentLocale;
-    MessageSourceService messageSourceService;
-    private String messageCodeWithNoArg = "message.code.noarg";
-    private String messageCodeWithArg = "message.code.arg";
-    private String englishMessageWithNoArg = "Translated Message";
-    private String englishMessageWithArg = "Translated Message {0}";
-    private String frenchMessageWithNoArg = "Message traduit";
-    private String frenchMessageWithArg = "Message traduit {0}";
-
-    FormEntrySession formEntrySession;
-    FormEntryContext formEntryContext;
-    Translator translator;
-
-    UiMessageTagHandler tagHandler;
-
-    @Before
-    public void setUp() throws Exception {
-        currentLocale = Locale.ENGLISH;
-
-        PowerMockito.mockStatic(Context.class, new Answer<Locale>() {
-            @Override
-            public Locale answer(InvocationOnMock invocationOnMock) throws Throwable {
-                return currentLocale;
-            }
-        });
-
-        messageSourceService = mock(MessageSourceService.class);
-        when(messageSourceService.getMessage(messageCodeWithNoArg, null, Locale.ENGLISH)).thenReturn(englishMessageWithNoArg);
-        when(messageSourceService.getMessage(eq(messageCodeWithArg), any(Object[].class), eq(Locale.ENGLISH))).thenAnswer(new Answer<String>() {
-            @Override
-            public String answer(InvocationOnMock invocationOnMock) {
-                Object[] messageArgs = (Object[]) invocationOnMock.getArguments()[1];
-                return englishMessageWithArg.replace("{0}", messageArgs[0].toString());
-            }
-        });
-        when(messageSourceService.getMessage(messageCodeWithNoArg, null, Locale.FRENCH)).thenReturn(frenchMessageWithNoArg);
-        when(messageSourceService.getMessage(eq(messageCodeWithArg), any(Object[].class), eq(Locale.FRENCH))).thenAnswer(new Answer<String>() {
-            @Override
-            public String answer(InvocationOnMock invocationOnMock) {
-                Object[] messageArgs = (Object[]) invocationOnMock.getArguments()[1];
-                return frenchMessageWithArg.replace("{0}", messageArgs[0].toString());
-            }
-        });
-
-        tagHandler = new UiMessageTagHandler(messageSourceService);
-
-        formEntrySession = mock(FormEntrySession.class);
-        formEntryContext = mock(FormEntryContext.class);
-        translator = mock(Translator.class);
-        when(formEntrySession.getContext()).thenReturn(formEntryContext);
-        when(formEntryContext.getTranslator()).thenReturn(translator);
-
-        when(translator.translate(Locale.ENGLISH.toString(), messageCodeWithNoArg)).thenReturn(englishMessageWithNoArg);
-        when(translator.translate(Locale.FRENCH.toString(), messageCodeWithNoArg)).thenReturn(frenchMessageWithNoArg);
-    }
-
-    @Test
-    public void testGetSubstitutionWithNoArguments() throws Exception {
-        Map<String, String> args = new HashMap<String, String>();
-        args.put("code", messageCodeWithNoArg);
-
-        String substitution = tagHandler.getSubstitution(formEntrySession, null, args);
-
-        assertThat(substitution, is(englishMessageWithNoArg));
-        verify(messageSourceService, never()).getMessage(anyString(), any(Object[].class), eq(Locale.ENGLISH));
-    }
-
-    @Test
-    public void testGetSubstitutionWithArguments() throws Exception {
-        String argValue = "Arg Value";
-
-        Map<String, String> args = new HashMap<String, String>();
-        args.put("code", messageCodeWithArg);
-        args.put("arg0", argValue);
-
-        String substitution = tagHandler.getSubstitution(formEntrySession, null, args);
-
-        String expected = englishMessageWithArg.replace("{0}", argValue);
-        assertThat(substitution, is(expected));
-    }
-
-    @Test
-    public void testGetSubstitutionInDifferentLocaleThanTagHandlerWasInstantiatedIn() throws Exception {
-        currentLocale = Locale.FRENCH;
-
-        Map<String, String> args = new HashMap<String, String>();
-        args.put("code", messageCodeWithNoArg);
-
-        String substitution = tagHandler.getSubstitution(formEntrySession, null, args);
-
-        assertThat(substitution, is(frenchMessageWithNoArg));
-        verify(messageSourceService, never()).getMessage(anyString(), any(Object[].class), eq(Locale.FRENCH));
-    }
-
-    @Test
-    public void testGetSubstitutionWithArgumentsInDifferentLocaleThanTagHandlerWasInstantiedIn() throws Exception {
-
-        currentLocale = Locale.FRENCH;
-
-        String argValue = "Arg Value";
-
-        Map<String, String> args = new HashMap<String, String>();
-        args.put("code", messageCodeWithArg);
-        args.put("arg0", argValue);
-
-        String substitution = tagHandler.getSubstitution(formEntrySession, null, args);
-
-        String expected = frenchMessageWithArg.replace("{0}", argValue);
-        assertThat(substitution, is(expected));
-    }
-
-
+	
+	Locale currentLocale;
+	
+	MessageSourceService messageSourceService;
+	
+	private String messageCodeWithNoArg = "message.code.noarg";
+	
+	private String messageCodeWithArg = "message.code.arg";
+	
+	private String englishMessageWithNoArg = "Translated Message";
+	
+	private String englishMessageWithArg = "Translated Message {0}";
+	
+	private String frenchMessageWithNoArg = "Message traduit";
+	
+	private String frenchMessageWithArg = "Message traduit {0}";
+	
+	FormEntrySession formEntrySession;
+	
+	FormEntryContext formEntryContext;
+	
+	Translator translator;
+	
+	UiMessageTagHandler tagHandler;
+	
+	@Before
+	public void setUp() throws Exception {
+		currentLocale = Locale.ENGLISH;
+		
+		PowerMockito.mockStatic(Context.class, new Answer<Locale>() {
+			
+			@Override
+			public Locale answer(InvocationOnMock invocationOnMock) throws Throwable {
+				return currentLocale;
+			}
+		});
+		
+		messageSourceService = mock(MessageSourceService.class);
+		when(messageSourceService.getMessage(messageCodeWithNoArg, null, Locale.ENGLISH))
+		        .thenReturn(englishMessageWithNoArg);
+		when(messageSourceService.getMessage(eq(messageCodeWithArg), any(Object[].class), eq(Locale.ENGLISH)))
+		        .thenAnswer(new Answer<String>() {
+			        
+			        @Override
+			        public String answer(InvocationOnMock invocationOnMock) {
+				        Object[] messageArgs = (Object[]) invocationOnMock.getArguments()[1];
+				        return englishMessageWithArg.replace("{0}", messageArgs[0].toString());
+			        }
+		        });
+		when(messageSourceService.getMessage(messageCodeWithNoArg, null, Locale.FRENCH)).thenReturn(frenchMessageWithNoArg);
+		when(messageSourceService.getMessage(eq(messageCodeWithArg), any(Object[].class), eq(Locale.FRENCH)))
+		        .thenAnswer(new Answer<String>() {
+			        
+			        @Override
+			        public String answer(InvocationOnMock invocationOnMock) {
+				        Object[] messageArgs = (Object[]) invocationOnMock.getArguments()[1];
+				        return frenchMessageWithArg.replace("{0}", messageArgs[0].toString());
+			        }
+		        });
+		
+		tagHandler = new UiMessageTagHandler(messageSourceService);
+		
+		formEntrySession = mock(FormEntrySession.class);
+		formEntryContext = mock(FormEntryContext.class);
+		translator = mock(Translator.class);
+		when(formEntrySession.getContext()).thenReturn(formEntryContext);
+		when(formEntryContext.getTranslator()).thenReturn(translator);
+		
+		when(translator.translate(Locale.ENGLISH.toString(), messageCodeWithNoArg)).thenReturn(englishMessageWithNoArg);
+		when(translator.translate(Locale.FRENCH.toString(), messageCodeWithNoArg)).thenReturn(frenchMessageWithNoArg);
+	}
+	
+	@Test
+	public void testGetSubstitutionWithNoArguments() throws Exception {
+		Map<String, String> args = new HashMap<String, String>();
+		args.put("code", messageCodeWithNoArg);
+		
+		String substitution = tagHandler.getSubstitution(formEntrySession, null, args);
+		
+		assertThat(substitution, is(englishMessageWithNoArg));
+		verify(messageSourceService, never()).getMessage(anyString(), any(Object[].class), eq(Locale.ENGLISH));
+	}
+	
+	@Test
+	public void testGetSubstitutionWithArguments() throws Exception {
+		String argValue = "Arg Value";
+		
+		Map<String, String> args = new HashMap<String, String>();
+		args.put("code", messageCodeWithArg);
+		args.put("arg0", argValue);
+		
+		String substitution = tagHandler.getSubstitution(formEntrySession, null, args);
+		
+		String expected = englishMessageWithArg.replace("{0}", argValue);
+		assertThat(substitution, is(expected));
+	}
+	
+	@Test
+	public void testGetSubstitutionInDifferentLocaleThanTagHandlerWasInstantiatedIn() throws Exception {
+		currentLocale = Locale.FRENCH;
+		
+		Map<String, String> args = new HashMap<String, String>();
+		args.put("code", messageCodeWithNoArg);
+		
+		String substitution = tagHandler.getSubstitution(formEntrySession, null, args);
+		
+		assertThat(substitution, is(frenchMessageWithNoArg));
+		verify(messageSourceService, never()).getMessage(anyString(), any(Object[].class), eq(Locale.FRENCH));
+	}
+	
+	@Test
+	public void testGetSubstitutionWithArgumentsInDifferentLocaleThanTagHandlerWasInstantiedIn() throws Exception {
+		
+		currentLocale = Locale.FRENCH;
+		
+		String argValue = "Arg Value";
+		
+		Map<String, String> args = new HashMap<String, String>();
+		args.put("code", messageCodeWithArg);
+		args.put("arg0", argValue);
+		
+		String substitution = tagHandler.getSubstitution(formEntrySession, null, args);
+		
+		String expected = frenchMessageWithArg.replace("{0}", argValue);
+		assertThat(substitution, is(expected));
+	}
+	
 }

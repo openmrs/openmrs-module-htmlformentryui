@@ -15,7 +15,7 @@
 package org.openmrs.module.htmlformentryui.page.controller.htmlform;
 
 public class EnterHtmlFormWithStandardUiPageController extends BaseEnterHtmlFormPageController {
-
-    // Complete implementation is in abstract superclass
-
+	
+	// Complete implementation is in abstract superclass
+	
 }
