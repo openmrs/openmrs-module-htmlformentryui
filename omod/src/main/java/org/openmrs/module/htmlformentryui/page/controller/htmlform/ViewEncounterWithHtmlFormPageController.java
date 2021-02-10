@@ -16,8 +16,12 @@ import org.openmrs.ui.framework.annotation.InjectBeans;
 import org.openmrs.ui.framework.annotation.SpringBean;
 import org.openmrs.ui.framework.page.PageModel;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.context.request.WebRequest;
 
 public class ViewEncounterWithHtmlFormPageController {
 	
@@ -65,13 +69,10 @@ public class ViewEncounterWithHtmlFormPageController {
         model.addAttribute("showPatientHeader", showPatientHeader);
 
         HtmlForm htmlForm = htmlFormEntryService.getHtmlFormByForm(encounter.getForm());
-//        HttpSession session = request.getSession();
+        
         if (htmlForm == null) {
-//        	 HttpSession session = request.getSession();
              message = messageSourceService.getMessage("encounter.form is not an HTML Form" +encounter.getForm());
-              log.warn("Active drugs are not supported yet");
-//             session.setAttribute(WebConstants.OPENMRS_ERROR_ATTR, message);
-//           throw new IllegalArgumentException("encounter.form is not an HTML Form: " + encounter.getForm());
+              log.warn("Active drugs are cannot be editted");
               model.addAttribute("htmlForm", htmlForm);
               
         
@@ -87,10 +88,11 @@ public class ViewEncounterWithHtmlFormPageController {
         return Character.toUpperCase(word.charAt(0)) + word.substring(1).toLowerCase();
     }
     
-    @ExceptionHandler(value= NullPointerException.class)
-    public String HandleNullPointerException(Exception e) {
-    	  log.warn(message);
+     @ExceptionHandler(value= NullPointerException.class)
+     public String HandleNullPointerException(Exception e) {
+     	  log.warn("encounter.form is not an HTML Form");
     	  return "NullPointerException";
-    }
+     }
+ 
 
 }
