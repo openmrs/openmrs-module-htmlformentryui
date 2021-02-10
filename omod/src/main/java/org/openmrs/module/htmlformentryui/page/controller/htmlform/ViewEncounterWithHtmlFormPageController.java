@@ -3,6 +3,8 @@ package org.openmrs.module.htmlformentryui.page.controller.htmlform;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import java.util.List;
+
 import org.apache.commons.lang.StringUtils;
 import org.openmrs.Encounter;
 import org.openmrs.api.AdministrationService;
@@ -37,6 +39,7 @@ public class ViewEncounterWithHtmlFormPageController {
                     @SpringBean("htmlFormEntryService") HtmlFormEntryService htmlFormEntryService,
                     @SpringBean("adminService") AdministrationService administrationService,
                     UiUtils ui,
+                    List<String> errors,
                     PageModel model) {
 
         patient.setPatient(encounter.getPatient());
@@ -67,9 +70,8 @@ public class ViewEncounterWithHtmlFormPageController {
         HtmlForm htmlForm = htmlFormEntryService.getHtmlFormByForm(encounter.getForm());
         
         if (htmlForm == null) {
-             message = messageSourceService.getMessage("encounter.form is not an HTML Form" +encounter.getForm());
-            log.warn("Active drugs are cannot be editted");
-            
+        	 log.warn("Active drugs are cannot be editted");
+        	errors.add("encounter.form is not an HTML Form:"+encounter.getForm());
         }
         model.addAttribute("htmlForm", htmlForm);
     }
