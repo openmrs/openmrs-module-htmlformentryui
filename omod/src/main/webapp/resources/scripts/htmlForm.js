@@ -40,6 +40,11 @@
         return jq(".submitButton.confirm").is(":disabled");
     }
 
+
+    /**
+     * Change the hours, minutes and seconds dropdowns to new date with client timezone
+     * also change the encounterDate datepicker current date to new date with client timezone
+     **/
     var changeTimeWidgetClientTimeZone = function (clientDateTime) {
         getField('encounterDate.value').datepicker('setDate', clientDateTime)
         jq("#encounterDate").find(".hfe-hours").val(clientDateTime.getHours()).change();
@@ -271,6 +276,7 @@
     // TODO: these methods (getEncounter*Date*) will have to be modified when/if we switch datepickers
     // TODO: could/should be generalized so as not to be datepicker dependent?
 
+    //Set encounterDate datepicker start date
     htmlForm.setEncounterStartDateRange = function(date) {
         if (getField('encounterDate.value')) {
             if (jq("#encounterDate").find(".hfe-timezone").length) {
@@ -282,6 +288,7 @@
         }
     };
 
+    //Set encounterDate datepicker stop date
     htmlForm.setEncounterStopDateRange = function(date) {
         if (getField('encounterDate.value')) {
             if ( jq("#encounterDate").find(".hfe-timezone").length) {
@@ -293,19 +300,20 @@
         }
     };
 
+    //Set the encounterDate datepicker value, this value will be overwritten if using timezones.
     htmlForm.setEncounterDate = function(date) {
         if (getField('encounterDate.value')) {
             getField('encounterDate.value').datepicker('setDate',  splitDate(date));
         }
     };
 
+    //Used to adjust encounterDate with client timezone
     htmlForm.adjustTimeZoneEncounterDate = function(setDateTime ) {
         if (jq("#encounterDate").find(".hfe-timezone").length) {
             //Set browser timezone
             jq("#encounterDate").find(".hfe-timezone").val(Intl.DateTimeFormat().resolvedOptions().timeZone)
             //Translate from UTC to client timezone
             var dateWithClientTimeZone =  new Date(setDateTime)
-            console.log("DATE ", setDateTime, " cliendtZ " , dateWithClientTimeZone )
             changeTimeWidgetClientTimeZone(dateWithClientTimeZone);
         };
     };

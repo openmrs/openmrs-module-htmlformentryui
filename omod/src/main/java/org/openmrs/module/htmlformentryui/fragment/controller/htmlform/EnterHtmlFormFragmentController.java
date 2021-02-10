@@ -43,6 +43,7 @@ import org.openmrs.ui.framework.fragment.FragmentModel;
 import org.openmrs.ui.framework.resource.ResourceFactory;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.openmrs.module.htmlformentry.HtmlFormEntryConstants;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -54,6 +55,8 @@ import java.util.List;
 import java.util.Map;
 import java.text.SimpleDateFormat;
 import java.util.TimeZone;
+
+import static org.openmrs.util.TimeZoneUtil.toRFC3339;
 
 
 /**
@@ -143,19 +146,25 @@ public class EnterHtmlFormFragmentController extends BaseHtmlFormFragmentControl
         String visitStartDatetime = null;
         String visitStopDatetime = null;
         String encounterDatetimeUTC= null;
-        SimpleDateFormat formater= new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
 
+        //Format without timezone associated, used for
+        SimpleDateFormat formaterWithoutTimezone= new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ");
+
+         //If GP timezone is true, it will set the var encounterDatetimeUTC, otherwise it will be null
         if(handleAllTimezones){
-            formater.setTimeZone(TimeZone.getTimeZone("UTC"));
-            encounterDatetimeUTC = encounter != null ? formater.format(encounter.getEncounterDatetime()) : null;
+            formaterWithoutTimezone.setTimeZone(TimeZone.getTimeZone("UTC"));
+            encounterDatetimeUTC = encounter != null ? toRFC3339(encounter.getEncounterDatetime()) : null;
         }
+        //If GP timezone is true, it will convert the visitStartDatetime and visitStopDatetime to UTC and format RFC3339
         if(visit !=null){
-           /* if(handleAllTimezones){
-                formater.setTimeZone(TimeZone.getTimeZone("UTC"));
-            }*/
-
-            visitStartDatetime = visit.getStartDatetime() != null ? formater.format(visit.getStartDatetime()) : null;
-            visitStopDatetime = visit.getStopDatetime() != null ? formater.format(visit.getStopDatetime()) : formater.format(new Date()) ;
+           if(visit.getStartDatetime() != null){
+               visitStartDatetime = handleAllTimezones ? toRFC3339(visit.getStartDatetime()) : formaterWithoutTimezone.format(visit.getStartDatetime()) ;
+           }
+            if(visit.getStopDatetime() != null){
+                visitStopDatetime = handleAllTimezones ? toRFC3339(visit.getStopDatetime()) : formaterWithoutTimezone.format(visit.getStopDatetime()) ;
+            }else{
+                visitStopDatetime =  formaterWithoutTimezone.format(new Date());
+            }
         }
 
         VisitDomainWrapper visitDomainWrapper = getVisitDomainWrapper(visit, encounter, adtService);

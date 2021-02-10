@@ -3,13 +3,15 @@
 
     ui.includeJavascript("htmlformentryui", "htmlform/viewEncounterWithHtmlForm.js")
     ui.includeCss("htmlformentryui", "htmlform/viewEncounterWithHtmlForm.css")
+    ui.includeJavascript("htmlformentryui", "utilsTimezone.js")
 %>
 
 <script type="text/javascript">
     window.viewHtmlForm = {
         encounterId: ${ encounter.id },
         returnUrl: "${ ui.escapeJs(returnUrl) }",
-        htmlFormId: ${htmlForm.id}
+        htmlFormId: ${htmlForm.id},
+        formatDatetime: "${datetimeFormat}"
     };
 
     var breadcrumbs = [

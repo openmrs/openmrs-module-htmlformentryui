@@ -1,9 +1,11 @@
 $(function() {
 
-    if (jq(".rfc3339-date").length) {
-        var dateTime= jq(".rfc3339-date").text()
+    //Convert encounterDate from rfc3339 (UTC) date to client timezone
+    if (jq("#encounterDate").find(".rfc3339-date").length) {
+        console.log(moment('es'))
+        var dateTime= jq("#encounterDate").find(".rfc3339-date").text()
         var convertUtcToClientTZ = new Date(dateTime)
-        jq(".rfc3339-date").text(moment(convertUtcToClientTZ).format('DD/MM/YYYY HH:mm:ss'));
+        jq("#encounterDate").find(".rfc3339-date").text( formatDatetime(new Date(convertUtcToClientTZ), window.viewHtmlForm.formatDatetime, window.locale));
     }
 
     var dialog = emr.setupConfirmationDialog({

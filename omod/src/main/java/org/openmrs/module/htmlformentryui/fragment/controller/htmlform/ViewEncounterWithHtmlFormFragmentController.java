@@ -69,6 +69,7 @@ public class ViewEncounterWithHtmlFormFragmentController extends BaseHtmlFormFra
                 definitionUiResource, ui, sessionContext, httpSession, visitWrapper, featureToggleProperties);
 
         generateHtmlAndAddToModel(model, fes);
+
     }
 
     public SimpleObject getAsHtml(@SpringBean("htmlFormEntryService") HtmlFormEntryService htmlFormEntryService,

@@ -68,14 +68,13 @@
                 <% }%>
             <% } else if (usingTimezone) { %>
                 <%   if (encounterDatetimeUTC != null) { %>
-                    // Editing an encounter
+                    //Editing an encounter
                     htmlForm.adjustTimeZoneEncounterDate('${(encounterDatetimeUTC)}');
                 <% } else{ %>
                     //New encounter for recent visit
                     htmlForm.adjustTimeZoneEncounterDate('${(currentDate)}');
                 <% }%>
             <% }%>
-            //set client Timezone
             // set valid date range based on visit getStartDatetime
             htmlForm.setEncounterStartDateRange('${visitStartDatetime}');
             htmlForm.setEncounterStopDateRange('${visitStopDatetime}');
