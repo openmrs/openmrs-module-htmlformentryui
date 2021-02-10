@@ -1,43 +1,45 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-    <modelVersion>4.0.0</modelVersion>
 
+    <modelVersion>4.0.0</modelVersion>
+    
     <groupId>org.openmrs.module</groupId>
     <artifactId>htmlformentryui</artifactId>
     <version>1.12.0-SNAPSHOT</version>
     <packaging>pom</packaging>
     <name>HTML Form Entry UI Framework Integration Module</name>
     <description>Pages and Fragments for using the HTML Form Entry module along with the UI Framework</description>
-
+    
     <url>https://wiki.openmrs.org/display/docs/HTML+Form+Entry+UI+Framework+Integration+Module+Module</url>
-
+    
     <developers>
         <developer>
             <name>OpenMRS</name>
         </developer>
     </developers>
+    
     <organization>
         <name>OpenMRS</name>
         <url>http://openmrs.org</url>
     </organization>
-
+    
     <scm>
         <connection>scm:git:git@github.com:openmrs/openmrs-module-htmlformentryui.git</connection>
         <developerConnection>scm:git:git@github.com:openmrs/openmrs-module-htmlformentryui.git</developerConnection>
         <url>scm:git:git@github.com:openmrs/openmrs-module-htmlformentryui.git</url>
         <tag>HEAD</tag>
     </scm>
-
+    
     <modules>
         <module>api</module>
         <module>omod</module>
     </modules>
-
+    
     <properties>
-        <openMRSVersion>1.10.4</openMRSVersion>
+        <openMRSVersion>2.1.0</openMRSVersion>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <htmlformentryVersion>3.9.2</htmlformentryVersion>
-        <uiframeworkVersion>3.9</uiframeworkVersion>
-        <appframeworkVersion>2.9</appframeworkVersion>
+        <htmlformentryVersion>4.0.0-SNAPSHOT</htmlformentryVersion>
+        <uiframeworkVersion>3.21.0-SNAPSHOT</uiframeworkVersion>
+        <appframeworkVersion>2.17.0</appframeworkVersion>
         <appuiVersion>1.7</appuiVersion>
         <emrapiVersion>1.18</emrapiVersion>
         <uicommonsVersion>2.1</uicommonsVersion>
@@ -46,7 +48,7 @@
         <calculationVersion>1.2</calculationVersion>
         <serializationXstreamVersion>0.2.12</serializationXstreamVersion>
     </properties>
-
+    
     <dependencies>
         <!-- Begin OpenMRS modules -->
         <dependency>
@@ -196,10 +198,45 @@
             <scope>test</scope>
         </dependency>
     </dependencies>
-
+    
     <build>
+        <plugins>
+            <plugin>
+                <groupId>net.revelc.code.formatter</groupId>
+                <artifactId>formatter-maven-plugin</artifactId>
+                <version>2.10.0</version>
+                <executions>
+                    <execution>
+                        <phase>compile</phase>
+                        <goals>
+                            <goal>format</goal>
+                        </goals>
+                        <configuration>
+                            <directories>
+                                <directory>.</directory>
+                            </directories>
+                            <configFile>eclipse/OpenMRSFormatter.xml</configFile>
+                            <includes>
+                                <include>**/*.java</include>
+                            </includes>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
         <pluginManagement>
             <plugins>
+                <plugin>
+                    <groupId>net.revelc.code.formatter</groupId>
+                    <artifactId>formatter-maven-plugin</artifactId>
+                    <dependencies>
+                        <dependency>
+                            <groupId>org.openmrs.tools</groupId>
+                            <artifactId>openmrs-tools</artifactId>
+                            <version>${openMRSVersion}</version>
+                        </dependency>
+                    </dependencies>
+                </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-compiler-plugin</artifactId>
@@ -291,5 +328,5 @@
             <url>https://openmrs.jfrog.io/artifactory/snapshots</url>
         </snapshotRepository>
     </distributionManagement>
-
+    
 </project>
