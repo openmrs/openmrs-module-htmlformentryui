@@ -3,7 +3,7 @@
 
     ui.includeJavascript("htmlformentryui", "htmlform/viewEncounterWithHtmlForm.js")
     ui.includeCss("htmlformentryui", "htmlform/viewEncounterWithHtmlForm.css")
-    ui.includeJavascript("htmlformentryui", "utilsTimezone.js")
+    ui.includeJavascript("uicommons", "moment-with-locales.min.js")
 %>
 
 <script type="text/javascript">

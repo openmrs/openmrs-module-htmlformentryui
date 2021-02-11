@@ -4,7 +4,17 @@ $(function() {
     if (jq("#encounterDate").find(".rfc3339-date").length) {
         var dateTime= jq("#encounterDate").find(".rfc3339-date").text()
         var convertUtcToClientTZ = new Date(dateTime)
-        jq("#encounterDate").find(".rfc3339-date").text( formatDatetime(new Date(convertUtcToClientTZ), window.viewHtmlForm.datetimeFormat, window.locale));
+        jq("#encounterDate").find(".rfc3339-date").text( formatDatetimeClient(new Date(convertUtcToClientTZ), window.viewHtmlForm.datetimeFormat, window.locale));
+    }
+
+    function formatDatetimeClient(date, format, locale) {
+        var defaultFormat = 'YYYY-MMM-DD';
+        try{
+            moment.locale(locale);
+            return moment(date).format(format);
+        } catch(err) {
+            return moment(date).format(defaultFormat);
+        }
     }
 
     var dialog = emr.setupConfirmationDialog({
