@@ -70,8 +70,8 @@ public class ViewEncounterWithHtmlFormPageController {
         HtmlForm htmlForm = htmlFormEntryService.getHtmlFormByForm(encounter.getForm());
         
         if (htmlForm == null) {
-        	 log.warn("Active drugs are cannot be editted");
-        	errors.add("encounter.form is not an HTML Form:"+encounter.getForm());
+        	 log.warn("encounter.form is not an HTML Form");
+        	 errors.add("encounter.form is not an HTML Form:"+encounter.getForm());
         }
         model.addAttribute("htmlForm", htmlForm);
     }
@@ -84,10 +84,10 @@ public class ViewEncounterWithHtmlFormPageController {
         return Character.toUpperCase(word.charAt(0)) + word.substring(1).toLowerCase();
     }
     
-     @ExceptionHandler(value= NullPointerException.class)
-     public String HandleNullPointerException(Exception e) {
+     @ExceptionHandler(value= IllegalArgumentException.class)
+     public String HandleIllegalArgumentException(Exception e) {
     	  log.warn("encounter.form is not an HTML Form");
-   	     return "NullPointerException";
+   	     return "IllegalArgumentException";
     }
  
 
