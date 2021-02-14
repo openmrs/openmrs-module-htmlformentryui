@@ -1,8 +1,14 @@
 package org.openmrs.module.htmlformentryui.page.controller.htmlform;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
+import java.util.List;
+
 import org.apache.commons.lang.StringUtils;
 import org.openmrs.Encounter;
 import org.openmrs.api.AdministrationService;
+import org.openmrs.messagesource.MessageSourceService;
 import org.openmrs.module.emrapi.patient.PatientDomainWrapper;
 import org.openmrs.module.htmlformentry.HtmlForm;
 import org.openmrs.module.htmlformentry.HtmlFormEntryService;
@@ -11,9 +17,18 @@ import org.openmrs.ui.framework.UiUtils;
 import org.openmrs.ui.framework.annotation.InjectBeans;
 import org.openmrs.ui.framework.annotation.SpringBean;
 import org.openmrs.ui.framework.page.PageModel;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RequestParam;
 
 public class ViewEncounterWithHtmlFormPageController {
+	
+	private static final Log log = LogFactory.getLog(ViewEncounterWithHtmlFormPageController.class);
+	
+	@Autowired
+	private MessageSourceService messageSourceService;
+	
+	private String message;
 
     public void get(@RequestParam("encounter") Encounter encounter,
                     @RequestParam(value = "showPatientHeader", defaultValue = "true") boolean showPatientHeader,
@@ -24,6 +39,7 @@ public class ViewEncounterWithHtmlFormPageController {
                     @SpringBean("htmlFormEntryService") HtmlFormEntryService htmlFormEntryService,
                     @SpringBean("adminService") AdministrationService administrationService,
                     UiUtils ui,
+                    List<String> errors,
                     PageModel model) {
 
         patient.setPatient(encounter.getPatient());
@@ -52,8 +68,10 @@ public class ViewEncounterWithHtmlFormPageController {
         model.addAttribute("showPatientHeader", showPatientHeader);
 
         HtmlForm htmlForm = htmlFormEntryService.getHtmlFormByForm(encounter.getForm());
+        
         if (htmlForm == null) {
-            throw new IllegalArgumentException("encounter.form is not an HTML Form: " + encounter.getForm());
+        	 log.warn("encounter.form is not an HTML Form");
+        	 errors.add("encounter.form is not an HTML Form:"+encounter.getForm());
         }
         model.addAttribute("htmlForm", htmlForm);
     }
@@ -65,5 +83,12 @@ public class ViewEncounterWithHtmlFormPageController {
     private String fixCase(String word) {
         return Character.toUpperCase(word.charAt(0)) + word.substring(1).toLowerCase();
     }
+    
+     @ExceptionHandler(value= IllegalArgumentException.class)
+     public String HandleIllegalArgumentException(Exception e) {
+    	  log.warn("encounter.form is not an HTML Form");
+   	     return "IllegalArgumentException";
+    }
+ 
 
 }
