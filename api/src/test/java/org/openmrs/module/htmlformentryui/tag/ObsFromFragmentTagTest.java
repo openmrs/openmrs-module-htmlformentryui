@@ -21,7 +21,7 @@ public class ObsFromFragmentTagTest extends BaseModuleContextSensitiveTest {
 		
 	@Before
 	public void setup() throws Exception {
-		executeDataSet("org/openmrs/module/htmlformentry/include/RegressionTest-data-openmrs-1.10.xml");
+		executeDataSet("org/openmrs/module/htmlformentry/data/RegressionTest-data-openmrs-2.1.xml");
 		HtmlFormEntryUtil.getService().addHandler("obsFromFragment", Context.getRegisteredComponent("obsFromFragmentTagHandler", SubstitutionTagHandler.class));
 	}
 	

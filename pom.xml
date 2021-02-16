@@ -1,6 +1,12 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
     <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>org.openmrs.maven.parents</groupId>
+        <artifactId>maven-parent-openmrs-module</artifactId>
+        <version>1.1.1</version>
+    </parent>
     
     <groupId>org.openmrs.module</groupId>
     <artifactId>htmlformentryui</artifactId>
@@ -35,7 +41,7 @@
     </modules>
     
     <properties>
-        <openMRSVersion>2.1.0</openMRSVersion>
+        <openmrsPlatformVersion>2.1.0</openmrsPlatformVersion>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <htmlformentryVersion>4.0.0-SNAPSHOT</htmlformentryVersion>
         <uiframeworkVersion>3.9</uiframeworkVersion>
@@ -47,42 +53,11 @@
         <reportingVersion>0.10.4</reportingVersion>
         <calculationVersion>1.2</calculationVersion>
         <serializationXstreamVersion>0.2.12</serializationXstreamVersion>
+        <junitVersion>4.13.1</junitVersion>
+        <javaxServletVersion>4.0.1</javaxServletVersion>
     </properties>
     
     <dependencies>
-
-        <!-- BEGIN Test libs -->
-        <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-            <version>4.13.1</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.hamcrest</groupId>
-            <artifactId>hamcrest-all</artifactId>
-            <version>1.3</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.powermock</groupId>
-            <artifactId>powermock-api-mockito</artifactId>
-            <version>1.6.1</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.powermock</groupId>
-            <artifactId>powermock-module-junit4</artifactId>
-            <version>1.6.1</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>javax.servlet</groupId>
-            <artifactId>javax.servlet-api</artifactId>
-            <version>4.0.1</version>
-            <scope>test</scope>
-        </dependency>
-        <!-- END Test libs -->
 
         <!-- Begin OpenMRS modules -->
         <dependency>
@@ -152,7 +127,7 @@
         <dependency>
             <groupId>org.openmrs.api</groupId>
             <artifactId>openmrs-api</artifactId>
-            <version>${openMRSVersion}</version>
+            <version>${openmrsPlatformVersion}</version>
             <type>jar</type>
             <scope>provided</scope>
             <!-- The javassist version that comes with the platform doesn't support java 8
@@ -170,7 +145,7 @@
         <dependency>
             <groupId>org.openmrs.api</groupId>
             <artifactId>openmrs-api</artifactId>
-            <version>${openMRSVersion}</version>
+            <version>${openmrsPlatformVersion}</version>
             <type>test-jar</type>
             <scope>test</scope>
             <exclusions>
@@ -183,7 +158,7 @@
         <dependency>
             <groupId>org.openmrs.test</groupId>
             <artifactId>openmrs-test</artifactId>
-            <version>${openMRSVersion}</version>
+            <version>${openmrsPlatformVersion}</version>
             <type>pom</type>
             <scope>test</scope>
             <exclusions>
@@ -261,7 +236,7 @@
                         <dependency>
                             <groupId>org.openmrs.tools</groupId>
                             <artifactId>openmrs-tools</artifactId>
-                            <version>${openMRSVersion}</version>
+                            <version>${openmrsPlatformVersion}</version>
                         </dependency>
                     </dependencies>
                 </plugin>

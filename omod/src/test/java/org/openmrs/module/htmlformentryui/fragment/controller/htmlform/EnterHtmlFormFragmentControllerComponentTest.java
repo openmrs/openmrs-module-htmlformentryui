@@ -112,8 +112,9 @@ public class EnterHtmlFormFragmentControllerComponentTest extends BaseModuleWebC
 
     UiSessionContext sessionContext;
 
-    public static final String FORM_DEFINITION = "<htmlform formUuid=\"form-uuid\" formName=\"Form Name\" formVersion=\"1.0\">Weight:<obs id=\"weight\" conceptId=\"5089\"/> <encounterDate showTime=\"true\"/> <encounterLocation/> <encounterProvider/></htmlform>";
-    public static final String FEATURE_TOGGLE_TEST_FORM_DEFINITION = "<htmlform formUuid=\"form-uuid\" formName=\"Form Name\" formVersion=\"1.0\"> <includeIf velocityTest=\"$featureToggles.isFeatureEnabled('someFeatureToggle')\"> featureToggledOn </includeIf>"
+    public static final String FORM_DEFINITION = "<htmlform formUuid=\"form-uuid\" formName=\"Form Name\" formVersion=\"1.0\" formEncounterType=\"61ae96f4-6afe-4351-b6f8-cd4fc383cce1\">Weight:<obs id=\"weight\" conceptId=\"5089\"/> <encounterDate showTime=\"true\"/> <encounterLocation/> <encounterProvider/></htmlform>";
+    
+    public static final String FEATURE_TOGGLE_TEST_FORM_DEFINITION = "<htmlform formUuid=\"form-uuid\" formName=\"Form Name\" formVersion=\"1.0\" formEncounterType=\"61ae96f4-6afe-4351-b6f8-cd4fc383cce1\"> <includeIf velocityTest=\"$featureToggles.isFeatureEnabled('someFeatureToggle')\"> featureToggledOn </includeIf>"
             + "<encounterDate showTime=\"true\"/> <encounterLocation/> <encounterProvider/></htmlform>";
 
     private EnterHtmlFormFragmentController controller;
