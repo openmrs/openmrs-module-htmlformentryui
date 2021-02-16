@@ -30,10 +30,13 @@ import org.w3c.dom.Node;
 public class UiIcludeTagHandlerTest {
 	
 	private FormEntrySession session;
+	
 	private UiIncludeTagHandler handler;
+	
 	private Node node;
 	
 	private static final String PATIENT_UUID = "ea7ae6ac-e9de-430f-a5ce-4adcf3b1ed43";
+	
 	private static final Integer VISIT_ID = 15;
 	
 	@Before
@@ -98,54 +101,53 @@ public class UiIcludeTagHandlerTest {
 		verify(handler).paramsToMap("path/fragment?retired=true&visitId=" + VISIT_ID);
 	}
 	
-	
 	/**
-	 *  {@link Node} implementation for unit testing purposes
+	 * {@link Node} implementation for unit testing purposes
 	 */
 	private class TestNode extends DefaultNode {
 		
 		@Override
 		public NamedNodeMap getAttributes() {
-	    	return new NamedNodeMapTest();
-	    }
+			return new NamedNodeMapTest();
+		}
 		
 		private class NamedNodeMapTest implements NamedNodeMap {
-
+			
 			@Override
 			public Node getNamedItem(String name) {
 				return null;
 			}
-
+			
 			@Override
 			public Node setNamedItem(Node arg) throws DOMException {
 				return null;
 			}
-
+			
 			@Override
 			public Node removeNamedItem(String name) throws DOMException {
 				return null;
 			}
-
+			
 			@Override
 			public Node item(int index) {
 				return null;
 			}
-
+			
 			@Override
 			public int getLength() {
 				return 0;
 			}
-
+			
 			@Override
 			public Node getNamedItemNS(String namespaceURI, String localName) throws DOMException {
 				return null;
 			}
-
+			
 			@Override
 			public Node setNamedItemNS(Node arg) throws DOMException {
 				return null;
 			}
-
+			
 			@Override
 			public Node removeNamedItemNS(String namespaceURI, String localName) throws DOMException {
 				return null;
