@@ -33,15 +33,21 @@ import org.openmrs.ui.framework.WebConstants;
 import org.openmrs.ui.framework.page.PageAction;
 
 public class ObsFromFragmentElement implements HtmlGeneratorElement, FormSubmissionControllerAction {
-
+	
 	private UiUtils uiUtils;
+	
 	private Map<String, Object> fragmentParams;
+	
 	private Concept concept;
+	
 	private String viewProvider;
+	
 	private String fragment;
+	
 	private String initFragmentParamName;
+	
 	private Obs existingObs;
-		
+	
 	// For tests only
 	public ObsFromFragmentElement() {
 		
@@ -68,16 +74,17 @@ public class ObsFromFragmentElement implements HtmlGeneratorElement, FormSubmiss
 		StringBuilder fragmentUrlBuilder = new StringBuilder();
 		fragmentUrlBuilder.append(fragment);
 		fragmentUrlBuilder.append("?");
-        // evaluate any velocity expressions
+		// evaluate any velocity expressions
 		String fragmentParamsString = session.evaluateVelocityExpression(parameters.get("fragmentParams"));
 		// replace any whitespace with a '+'
 		String paramsWithoutWhiteSpace = fragmentParamsString.replaceAll("\\s+", "+");
 		fragmentUrlBuilder.append(paramsWithoutWhiteSpace);
 		try {
-		  fragmentParams = UiIncludeTagHandler.paramsToMap(fragmentUrlBuilder.toString());
-													
-		} catch (URISyntaxException e) {
-			throw new FragmentException("Invalid fragment URI: " + fragmentUrlBuilder.toString() , e);
+			fragmentParams = UiIncludeTagHandler.paramsToMap(fragmentUrlBuilder.toString());
+			
+		}
+		catch (URISyntaxException e) {
+			throw new FragmentException("Invalid fragment URI: " + fragmentUrlBuilder.toString(), e);
 		}
 	}
 	
@@ -87,31 +94,31 @@ public class ObsFromFragmentElement implements HtmlGeneratorElement, FormSubmiss
 			return;
 		}
 		String formFieldName = getFormFieldName();
-
+		
 		if (formFieldName != null) {
 			String valueText = request.getParameter(formFieldName);
 			
 			if (session.getContext().getMode().equals(FormEntryContext.Mode.EDIT) && existingObs != null) {
-				session.getSubmissionActions().modifyObs(existingObs, concept, convertToType(valueText), 
-						new Date(), null, formFieldName);
+				session.getSubmissionActions().modifyObs(existingObs, concept, convertToType(valueText), new Date(), null,
+				    formFieldName);
 				return;
 			}
 			if (StringUtils.isBlank(valueText)) {
 				return;
 			}
 			session.getSubmissionActions().createObs(concept, convertToType(valueText), new Date(), null,
-					// Set the formFieldName of the widget as the Obs comment 
-					// this helps to map an Obs to it's fragment widget for cases were the same concept
-					// was used in more than one <obsFromFragment/> tag on the same form 
-					formFieldName);
+			    // Set the formFieldName of the widget as the Obs comment 
+			    // this helps to map an Obs to it's fragment widget for cases were the same concept
+			    // was used in more than one <obsFromFragment/> tag on the same form 
+			    formFieldName);
 		}
 	}
-
+	
 	@Override
 	public Collection<FormSubmissionError> validateSubmission(FormEntryContext context, HttpServletRequest request) {
 		return Collections.emptyList();
 	}
-
+	
 	@Override
 	public String generateHtml(FormEntryContext context) {
 		String wrapperDivId = getFormFieldName() + "-wrapper";
@@ -129,16 +136,18 @@ public class ObsFromFragmentElement implements HtmlGeneratorElement, FormSubmiss
 					// if datetimepicker fragment, disable the calendar icon
 					sb.append("jq('#" + wrapperDivId + " .add-on').eq(0).off('click');");
 				}
-				sb.append("</script>");	
+				sb.append("</script>");
 			}
 			return sb.toString();
-		} catch (NullPointerException e) {
+		}
+		catch (NullPointerException e) {
 			// if we are validating/submitting the form, then this method is being called from a fragment action method
-            // and the UiUtils we have access to doesn't have a FragmentIncluder. That's okay, because we don't actually
-            // need to generate the HTML, so we can pass on this exception.
-            // (This is hacky, but I don't see a better way to do it.)
-            return "Submitting the form, so we don't generate HTML";
-		} catch (PageAction e) {
+			// and the UiUtils we have access to doesn't have a FragmentIncluder. That's okay, because we don't actually
+			// need to generate the HTML, so we can pass on this exception.
+			// (This is hacky, but I don't see a better way to do it.)
+			return "Submitting the form, so we don't generate HTML";
+		}
+		catch (PageAction e) {
 			throw new IllegalStateException("Tried to include a fragment that threw a PageAction.", e);
 		}
 	}
@@ -156,7 +165,8 @@ public class ObsFromFragmentElement implements HtmlGeneratorElement, FormSubmiss
 				DateFormat df = new SimpleDateFormat(WebConstants.DATE_FORMAT_DATETIME);
 				df.setLenient(false);
 				return df.parse(val);
-			} catch (ParseException e) {
+			}
+			catch (ParseException e) {
 				throw new IllegalArgumentException("Failed to parse date: " + val, e);
 			}
 		}
@@ -214,7 +224,7 @@ public class ObsFromFragmentElement implements HtmlGeneratorElement, FormSubmiss
 						String formFieldName = candidate.getComment() != null ? candidate.getComment() : "";
 						if (candidate.getConcept().equals(concept) && formFieldName.equals(getFormFieldName())) {
 							// Initialise existingObs
-							existingObs = candidate;		
+							existingObs = candidate;
 							Object initialValue = getObsValue(existingObs);
 							if (initialValue != null) {
 								fragmentParams.put(initFragmentParamName, initialValue);
@@ -222,7 +232,7 @@ public class ObsFromFragmentElement implements HtmlGeneratorElement, FormSubmiss
 							break;
 						}
 					}
-				}			
+				}
 			}
 			
 		}
@@ -260,7 +270,7 @@ public class ObsFromFragmentElement implements HtmlGeneratorElement, FormSubmiss
 		}
 		throw new RuntimeException("Unsupported concept datatype: " + datatype.getName());
 	}
-		
+	
 	private String getFormFieldName() {
 		return (String) fragmentParams.get("formFieldName");
 	}
@@ -268,47 +278,47 @@ public class ObsFromFragmentElement implements HtmlGeneratorElement, FormSubmiss
 	public UiUtils getUiUtils() {
 		return uiUtils;
 	}
-
+	
 	public void setUiUtils(UiUtils uiUtils) {
 		this.uiUtils = uiUtils;
 	}
-
+	
 	public Map<String, Object> getFragmentParams() {
 		return fragmentParams;
 	}
-
+	
 	public void setFragmentParams(Map<String, Object> fragmentParams) {
 		this.fragmentParams = fragmentParams;
 	}
-
+	
 	public Concept getConcept() {
 		return concept;
 	}
-
+	
 	public void setConcept(Concept concept) {
 		this.concept = concept;
 	}
-
+	
 	public String getViewProvider() {
 		return viewProvider;
 	}
-
+	
 	public void setViewProvider(String viewProvider) {
 		this.viewProvider = viewProvider;
 	}
-
+	
 	public String getFragment() {
 		return fragment;
 	}
-
+	
 	public void setFragment(String fragment) {
 		this.fragment = fragment;
 	}
-
+	
 	public String getInitFragmentParamName() {
 		return initFragmentParamName;
 	}
-
+	
 	public void setInitFragmentParamName(String initFragmentParamName) {
 		this.initFragmentParamName = initFragmentParamName;
 	}
@@ -316,11 +326,11 @@ public class ObsFromFragmentElement implements HtmlGeneratorElement, FormSubmiss
 	public Obs getExistingObs() {
 		return existingObs;
 	}
-
+	
 	public void setExistingObs(Obs existingObs) {
 		this.existingObs = existingObs;
 	}
-
+	
 	public static class Option {
 		
 		private String value;
@@ -347,35 +357,35 @@ public class ObsFromFragmentElement implements HtmlGeneratorElement, FormSubmiss
 				this.label = label;
 			}
 		}
-
+		
 		public String getValue() {
 			return value;
 		}
-
+		
 		public void setValue(String value) {
 			this.value = value;
 		}
-
+		
 		public boolean isChecked() {
 			return checked;
 		}
-
+		
 		public void setChecked(boolean checked) {
 			this.checked = checked;
 		}
-
+		
 		public boolean isSelected() {
 			return selected;
 		}
-
+		
 		public void setSelected(boolean selected) {
 			this.selected = selected;
 		}
-
+		
 		public String getLabel() {
 			return label;
 		}
-
+		
 		public void setLabel(String label) {
 			this.label = label;
 		}

@@ -31,52 +31,53 @@ import java.util.Map;
  *
  */
 public class UiMessageTagHandler extends SubstitutionTagHandler {
-
-    MessageSourceService messageSourceService;
-
-    public UiMessageTagHandler() {
-        messageSourceService = Context.getMessageSourceService();
-    }
-
-    public UiMessageTagHandler(MessageSourceService messageSourceService) {
-        this.messageSourceService = messageSourceService;
-    }
-
-    @Override
-    protected String getSubstitution(FormEntrySession session, FormSubmissionController controllerActions, Map<String, String> parameters) throws BadFormDesignException {
-        String codeParam = parameters.get("code");
-        if (codeParam == null) {
-            return "Missing \"code\" attribute";
-        }
-
-        List<String> argList = new ArrayList<String>();
-        int index = 0;
-        while (true) {
-            String argValue = parameters.get("arg" + index);
-            if (argValue == null) {
-                break;
-            }
-            argList.add(argValue);
-            ++index;
-        }
-        Object[] args = argList.isEmpty() ? null : argList.toArray();
-
-        Locale locale = Context.getLocale();
-
-        // defer to the HFE translator if args = 0 (otherwise go directly to the message source since the HFE translator doesn't support arguments)
-        // the HFE translator first checks any translations defined by the <translations> tag, and otherwise defers to the message source service
-
-       String message = null;
-
-       if (args == null || args.length == 0) {
-            message = session.getContext().getTranslator().translate(locale.toString(), codeParam);
-       }
-
-       if (StringUtils.isBlank(message)) {
-            message = messageSourceService.getMessage(codeParam, args, locale);
-       }
-
-        return  message;
-    }
-
+	
+	MessageSourceService messageSourceService;
+	
+	public UiMessageTagHandler() {
+		messageSourceService = Context.getMessageSourceService();
+	}
+	
+	public UiMessageTagHandler(MessageSourceService messageSourceService) {
+		this.messageSourceService = messageSourceService;
+	}
+	
+	@Override
+	protected String getSubstitution(FormEntrySession session, FormSubmissionController controllerActions,
+	        Map<String, String> parameters) throws BadFormDesignException {
+		String codeParam = parameters.get("code");
+		if (codeParam == null) {
+			return "Missing \"code\" attribute";
+		}
+		
+		List<String> argList = new ArrayList<String>();
+		int index = 0;
+		while (true) {
+			String argValue = parameters.get("arg" + index);
+			if (argValue == null) {
+				break;
+			}
+			argList.add(argValue);
+			++index;
+		}
+		Object[] args = argList.isEmpty() ? null : argList.toArray();
+		
+		Locale locale = Context.getLocale();
+		
+		// defer to the HFE translator if args = 0 (otherwise go directly to the message source since the HFE translator doesn't support arguments)
+		// the HFE translator first checks any translations defined by the <translations> tag, and otherwise defers to the message source service
+		
+		String message = null;
+		
+		if (args == null || args.length == 0) {
+			message = session.getContext().getTranslator().translate(locale.toString(), codeParam);
+		}
+		
+		if (StringUtils.isBlank(message)) {
+			message = messageSourceService.getMessage(codeParam, args, locale);
+		}
+		
+		return message;
+	}
+	
 }
