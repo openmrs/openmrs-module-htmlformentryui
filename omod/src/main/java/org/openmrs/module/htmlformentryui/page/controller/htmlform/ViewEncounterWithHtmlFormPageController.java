@@ -3,12 +3,10 @@ package org.openmrs.module.htmlformentryui.page.controller.htmlform;
 import org.apache.commons.lang.StringUtils;
 import org.openmrs.Encounter;
 import org.openmrs.api.AdministrationService;
-import org.openmrs.api.context.Context;
 import org.openmrs.module.emrapi.patient.PatientDomainWrapper;
 import org.openmrs.module.htmlformentry.HtmlForm;
 import org.openmrs.module.htmlformentry.HtmlFormEntryService;
 import org.openmrs.ui.framework.SimpleObject;
-import org.openmrs.ui.framework.UiFrameworkConstants;
 import org.openmrs.ui.framework.UiUtils;
 import org.openmrs.ui.framework.annotation.InjectBeans;
 import org.openmrs.ui.framework.annotation.SpringBean;
@@ -58,8 +56,6 @@ public class ViewEncounterWithHtmlFormPageController {
             throw new IllegalArgumentException("encounter.form is not an HTML Form: " + encounter.getForm());
         }
         model.addAttribute("htmlForm", htmlForm);
-        String datetimeFormat= Context.getAdministrationService().getGlobalProperty(UiFrameworkConstants.GP_FORMATTER_JS_DATETIME_FORMAT);
-        model.addAttribute("datetimeFormat" ,datetimeFormat);
 
     }
 

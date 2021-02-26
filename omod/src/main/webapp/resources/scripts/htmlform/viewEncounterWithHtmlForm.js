@@ -8,7 +8,7 @@ $(function() {
     }
 
     function formatDatetimeClient(date, format, locale) {
-        var defaultFormat = 'YYYY-MMM-DD';
+        var defaultFormat =  window.viewHtmlForm.dateFormat;
         try{
             moment.locale(locale);
             return moment(date).format(format);

@@ -11,7 +11,8 @@
         encounterId: ${ encounter.id },
         returnUrl: "${ ui.escapeJs(returnUrl) }",
         htmlFormId: ${htmlForm.id},
-        datetimeFormat: "${datetimeFormat}"
+        datetimeFormat:"${ui.getJSDatetimeFormat()}",
+        dateFormat:"${ui.getJSDateFormat()}"
     };
 
     var breadcrumbs = [

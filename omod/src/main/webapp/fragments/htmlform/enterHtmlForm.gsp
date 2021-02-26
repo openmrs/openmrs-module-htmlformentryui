@@ -62,11 +62,11 @@
             <% if (command.context.mode.toString().equals('ENTER') && !visit.isOpen()) { %>
                 // set default date to the visit start date for retrospective visits
                 htmlForm.setEncounterDate('${ visitStartDatetime}');
-                <% if (usingTimezone) { %>
+                <% if (ui.handleTimeZones()) { %>
                     //New encounter for past visit
                     htmlForm.adjustTimeZoneEncounterDate('${visitStartDatetime}');
                 <% }%>
-            <% } else if (usingTimezone) { %>
+            <% } else if (ui.handleTimeZones()) { %>
                 <%   if (encounterDatetimeUTC != null) { %>
                     //Editing an encounter
                     htmlForm.adjustTimeZoneEncounterDate('${(encounterDatetimeUTC)}');
@@ -82,7 +82,7 @@
             // note that we need to get the current datetime from the *server*, in case the server and client are in different time zones
             htmlForm.setEncounterDate('${(currentDate)}');
             //set client Timezone
-            <% if (usingTimezone != null) { %>
+            <% if (ui.handleTimeZones() != null) { %>
                 //without visit
                 htmlForm.adjustTimeZoneEncounterDate('${currentDate}');
             <% }%>

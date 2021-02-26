@@ -140,8 +140,6 @@ public class EnterHtmlFormFragmentController extends BaseHtmlFormFragmentControl
         else {
             fes = new FormEntrySession(patient, hf, FormEntryContext.Mode.ENTER, null, httpSession, automaticValidation, !automaticValidation);
         }
-        boolean handleAllTimezones = Boolean.parseBoolean(
-                Context.getAdministrationService().getGlobalProperty(HtmlFormEntryConstants.GP_HANDLE_TIMEZONES));
 
         String visitStartDatetime = null;
         String visitStopDatetime = null;
@@ -151,17 +149,17 @@ public class EnterHtmlFormFragmentController extends BaseHtmlFormFragmentControl
         SimpleDateFormat formaterWithoutTimezone= new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ");
 
          //If GP timezone is true, it will set the var encounterDatetimeUTC, otherwise it will be null
-        if(handleAllTimezones){
+        if(ui.handleTimeZones()){
             formaterWithoutTimezone.setTimeZone(TimeZone.getTimeZone("UTC"));
             encounterDatetimeUTC = encounter != null ? toRFC3339(encounter.getEncounterDatetime()) : null;
         }
         //If GP timezone is true, it will convert the visitStartDatetime and visitStopDatetime to UTC and format RFC3339
         if(visit !=null){
            if(visit.getStartDatetime() != null){
-               visitStartDatetime = handleAllTimezones ? toRFC3339(visit.getStartDatetime()) : formaterWithoutTimezone.format(visit.getStartDatetime()) ;
+               visitStartDatetime = ui.handleTimeZones() ? toRFC3339(visit.getStartDatetime()) : formaterWithoutTimezone.format(visit.getStartDatetime()) ;
            }
             if(visit.getStopDatetime() != null){
-                visitStopDatetime = handleAllTimezones ? toRFC3339(visit.getStopDatetime()) : formaterWithoutTimezone.format(visit.getStopDatetime()) ;
+                visitStopDatetime = ui.handleTimeZones() ? toRFC3339(visit.getStopDatetime()) : formaterWithoutTimezone.format(visit.getStopDatetime()) ;
             }else{
                 visitStopDatetime =  formaterWithoutTimezone.format(new Date());
             }
@@ -170,7 +168,7 @@ public class EnterHtmlFormFragmentController extends BaseHtmlFormFragmentControl
         VisitDomainWrapper visitDomainWrapper = getVisitDomainWrapper(visit, encounter, adtService);
         setupVelocityContext(fes, visitDomainWrapper, ui, sessionContext,featureToggles);
         setupFormEntrySession(fes, visitDomainWrapper, defaultEncounterDate, ui, sessionContext, returnUrl);
-        setupModel(model, fes, visitDomainWrapper, createVisit , encounterDatetimeUTC  , visitStartDatetime, visitStopDatetime , handleAllTimezones);
+        setupModel(model, fes, visitDomainWrapper, createVisit , encounterDatetimeUTC  , visitStartDatetime, visitStopDatetime , ui);
 
     }
 
@@ -340,18 +338,16 @@ public class EnterHtmlFormFragmentController extends BaseHtmlFormFragmentControl
 
     }
 
-    private void setupModel(FragmentModel model, FormEntrySession fes, VisitDomainWrapper visitDomainWrapper, Boolean createVisit , String encounterDatetimeUTC , String visitStartDatetime ,String visitStopDatetime, boolean handleTimezone) {
+    private void setupModel(FragmentModel model, FormEntrySession fes, VisitDomainWrapper visitDomainWrapper, Boolean createVisit , String encounterDatetimeUTC , String visitStartDatetime ,String visitStopDatetime, UiUtils ui) {
         SimpleDateFormat formatToUTC= new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
         formatToUTC.setTimeZone(TimeZone.getTimeZone("UTC"));
-        String currentDate = handleTimezone  ? formatToUTC.format(new Date()) : new Date().toString();
-
+        String currentDate = ui.handleTimeZones()  ? formatToUTC.format(new Date()) : new Date().toString();
         model.addAttribute("visitStartDatetime", visitStartDatetime);
         model.addAttribute("visitStopDatetime", visitStopDatetime);
         model.addAttribute("currentDate", currentDate);
         model.addAttribute("command", fes);
         model.addAttribute("visit", visitDomainWrapper);
         model.addAttribute("encounterDatetimeUTC" , encounterDatetimeUTC);
-        model.addAttribute("usingTimezone", handleTimezone);
 
         if (createVisit!=null) {
             model.addAttribute("createVisit", createVisit.toString());
