@@ -15,56 +15,54 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 public class ViewEncounterWithHtmlFormPageController {
 
-    public void get(@RequestParam("encounter") Encounter encounter,
-                    @RequestParam(value = "showPatientHeader", defaultValue = "true") boolean showPatientHeader,
-                    @RequestParam(value = "returnUrl", required = false) String returnUrl,
-                    @RequestParam(value = "returnLabel", required = false) String returnLabel,
-                    @RequestParam(value = "editStyle", defaultValue = "standard") String editStyle,
-                    @InjectBeans PatientDomainWrapper patient,
-                    @SpringBean("htmlFormEntryService") HtmlFormEntryService htmlFormEntryService,
-                    @SpringBean("adminService") AdministrationService administrationService,
-                    UiUtils ui,
-                    PageModel model) {
+	public void get(@RequestParam("encounter") Encounter encounter,
+	        @RequestParam(value = "showPatientHeader", defaultValue = "true") boolean showPatientHeader,
+	        @RequestParam(value = "returnUrl", required = false) String returnUrl,
+	        @RequestParam(value = "returnLabel", required = false) String returnLabel,
+	        @RequestParam(value = "editStyle", defaultValue = "standard") String editStyle,
+	        @InjectBeans PatientDomainWrapper patient,
+	        @SpringBean("htmlFormEntryService") HtmlFormEntryService htmlFormEntryService,
+	        @SpringBean("adminService") AdministrationService administrationService, UiUtils ui, PageModel model) {
 
-        patient.setPatient(encounter.getPatient());
-        
-        String customPrintProvider = administrationService.getGlobalProperty("htmlformentryui.customPrintProvider");
-        String customPrintPageName = administrationService.getGlobalProperty("htmlformentryui.customPrintPageName");
-        String customPrintTarget = administrationService.getGlobalProperty("htmlformentryui.customPrintTarget");
+		patient.setPatient(encounter.getPatient());
 
-        model.addAttribute("customPrintProvider", customPrintProvider);
-        model.addAttribute("customPrintPageName", customPrintPageName);
-        model.addAttribute("customPrintTarget", customPrintTarget);
+		String customPrintProvider = administrationService.getGlobalProperty("htmlformentryui.customPrintProvider");
+		String customPrintPageName = administrationService.getGlobalProperty("htmlformentryui.customPrintPageName");
+		String customPrintTarget = administrationService.getGlobalProperty("htmlformentryui.customPrintTarget");
 
-        if (StringUtils.isEmpty(returnUrl)) {
-            returnUrl = ui.pageLink("coreapps", "patientdashboard/patientDashboard", SimpleObject.create("patientId", patient.getId()));
-        }
-        if (StringUtils.isEmpty(returnLabel)) {
-            returnLabel = ui.escapeJs(ui.format(patient.getPatient()));
-        }
+		model.addAttribute("customPrintProvider", customPrintProvider);
+		model.addAttribute("customPrintPageName", customPrintPageName);
+		model.addAttribute("customPrintTarget", customPrintTarget);
 
-        model.addAttribute("patient", patient);
-        model.addAttribute("visit", encounter.getVisit());
-        model.addAttribute("encounter", encounter);
-        model.addAttribute("returnUrl", returnUrl);
-        model.addAttribute("returnLabel", returnLabel);
-        model.addAttribute("editStyle", fixCase(editStyle));
-        model.addAttribute("showPatientHeader", showPatientHeader);
+		if (StringUtils.isEmpty(returnUrl)) {
+			returnUrl = ui.pageLink("coreapps", "patientdashboard/patientDashboard",
+			    SimpleObject.create("patientId", patient.getId()));
+		}
+		if (StringUtils.isEmpty(returnLabel)) {
+			returnLabel = ui.escapeJs(ui.format(patient.getPatient()));
+		}
 
-        HtmlForm htmlForm = htmlFormEntryService.getHtmlFormByForm(encounter.getForm());
-        if (htmlForm == null) {
-            throw new IllegalArgumentException("encounter.form is not an HTML Form: " + encounter.getForm());
-        }
-        model.addAttribute("htmlForm", htmlForm);
+		model.addAttribute("patient", patient);
+		model.addAttribute("visit", encounter.getVisit());
+		model.addAttribute("encounter", encounter);
+		model.addAttribute("returnUrl", returnUrl);
+		model.addAttribute("returnLabel", returnLabel);
+		model.addAttribute("editStyle", fixCase(editStyle));
+		model.addAttribute("showPatientHeader", showPatientHeader);
 
-    }
+		HtmlForm htmlForm = htmlFormEntryService.getHtmlFormByForm(encounter.getForm());
+		if (htmlForm == null) {
+			throw new IllegalArgumentException("encounter.form is not an HTML Form: " + encounter.getForm());
+		}
+		model.addAttribute("htmlForm", htmlForm);
+	}
 
-    /**
-     * @param word
-     * @return word with the first letter uppercase, and the rest lowercase
-     */
-    private String fixCase(String word) {
-        return Character.toUpperCase(word.charAt(0)) + word.substring(1).toLowerCase();
-    }
+	/**
+	 * @param word
+	 * @return word with the first letter uppercase, and the rest lowercase
+	 */
+	private String fixCase(String word) {
+		return Character.toUpperCase(word.charAt(0)) + word.substring(1).toLowerCase();
+	}
 
 }

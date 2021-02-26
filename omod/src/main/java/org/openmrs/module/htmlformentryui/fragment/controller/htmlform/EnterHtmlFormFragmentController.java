@@ -15,6 +15,8 @@
 package org.openmrs.module.htmlformentryui.fragment.controller.htmlform;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.joda.time.DateMidnight;
 import org.openmrs.Encounter;
 import org.openmrs.Form;
@@ -23,6 +25,7 @@ import org.openmrs.Visit;
 import org.openmrs.api.FormService;
 import org.openmrs.api.context.Context;
 import org.openmrs.api.context.ContextAuthenticationException;
+import org.openmrs.module.ModuleFactory;
 import org.openmrs.module.appframework.feature.FeatureToggleProperties;
 import org.openmrs.module.appui.UiSessionContext;
 import org.openmrs.module.emrapi.EmrApiProperties;
@@ -31,7 +34,12 @@ import org.openmrs.module.emrapi.adt.exception.EncounterDateAfterVisitStopDateEx
 import org.openmrs.module.emrapi.adt.exception.EncounterDateBeforeVisitStartDateException;
 import org.openmrs.module.emrapi.encounter.EncounterDomainWrapper;
 import org.openmrs.module.emrapi.visit.VisitDomainWrapper;
-import org.openmrs.module.htmlformentry.*;
+import org.openmrs.module.htmlformentry.FormEntryContext;
+import org.openmrs.module.htmlformentry.FormEntrySession;
+import org.openmrs.module.htmlformentry.FormSubmissionError;
+import org.openmrs.module.htmlformentry.HtmlForm;
+import org.openmrs.module.htmlformentry.HtmlFormEntryService;
+import org.openmrs.module.htmlformentry.HtmlFormEntryUtil;
 import org.openmrs.module.htmlformentryui.HtmlFormUtil;
 import org.openmrs.module.uicommons.UiCommonsConstants;
 import org.openmrs.ui.framework.SimpleObject;
@@ -43,7 +51,6 @@ import org.openmrs.ui.framework.fragment.FragmentModel;
 import org.openmrs.ui.framework.resource.ResourceFactory;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.openmrs.module.htmlformentry.HtmlFormEntryConstants;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -53,11 +60,6 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.text.SimpleDateFormat;
-import java.util.TimeZone;
-
-import static org.openmrs.util.TimeZoneUtil.toRFC3339;
-
 
 /**
  *
@@ -141,34 +143,10 @@ public class EnterHtmlFormFragmentController extends BaseHtmlFormFragmentControl
             fes = new FormEntrySession(patient, hf, FormEntryContext.Mode.ENTER, null, httpSession, automaticValidation, !automaticValidation);
         }
 
-        String visitStartDatetime = null;
-        String visitStopDatetime = null;
-        String encounterDatetimeUTC= null;
-
-        //Format without timezone associated, used for
-        SimpleDateFormat formaterWithoutTimezone= new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ");
-
-         //If GP timezone is true, it will set the var encounterDatetimeUTC, otherwise it will be null
-        if(ui.handleTimeZones()){
-            formaterWithoutTimezone.setTimeZone(TimeZone.getTimeZone("UTC"));
-            encounterDatetimeUTC = encounter != null ? toRFC3339(encounter.getEncounterDatetime()) : null;
-        }
-        //If GP timezone is true, it will convert the visitStartDatetime and visitStopDatetime to UTC and format RFC3339
-        if(visit !=null){
-           if(visit.getStartDatetime() != null){
-               visitStartDatetime = ui.handleTimeZones() ? toRFC3339(visit.getStartDatetime()) : formaterWithoutTimezone.format(visit.getStartDatetime()) ;
-           }
-            if(visit.getStopDatetime() != null){
-                visitStopDatetime = ui.handleTimeZones() ? toRFC3339(visit.getStopDatetime()) : formaterWithoutTimezone.format(visit.getStopDatetime()) ;
-            }else{
-                visitStopDatetime =  formaterWithoutTimezone.format(new Date());
-            }
-        }
-
         VisitDomainWrapper visitDomainWrapper = getVisitDomainWrapper(visit, encounter, adtService);
         setupVelocityContext(fes, visitDomainWrapper, ui, sessionContext,featureToggles);
         setupFormEntrySession(fes, visitDomainWrapper, defaultEncounterDate, ui, sessionContext, returnUrl);
-        setupModel(model, fes, visitDomainWrapper, createVisit , encounterDatetimeUTC  , visitStartDatetime, visitStopDatetime , ui);
+        setupModel(model, fes, visitDomainWrapper, createVisit);
 
     }
 
@@ -338,17 +316,11 @@ public class EnterHtmlFormFragmentController extends BaseHtmlFormFragmentControl
 
     }
 
-    private void setupModel(FragmentModel model, FormEntrySession fes, VisitDomainWrapper visitDomainWrapper, Boolean createVisit , String encounterDatetimeUTC , String visitStartDatetime ,String visitStopDatetime, UiUtils ui) {
-        SimpleDateFormat formatToUTC= new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
-        formatToUTC.setTimeZone(TimeZone.getTimeZone("UTC"));
-        String currentDate = ui.handleTimeZones()  ? formatToUTC.format(new Date()) : new Date().toString();
-        model.addAttribute("visitStartDatetime", visitStartDatetime);
-        model.addAttribute("visitStopDatetime", visitStopDatetime);
-        model.addAttribute("currentDate", currentDate);
+    private void setupModel(FragmentModel model, FormEntrySession fes, VisitDomainWrapper visitDomainWrapper, Boolean createVisit) {
+
+        model.addAttribute("currentDate", (new DateMidnight()).toDate());
         model.addAttribute("command", fes);
         model.addAttribute("visit", visitDomainWrapper);
-        model.addAttribute("encounterDatetimeUTC" , encounterDatetimeUTC);
-
         if (createVisit!=null) {
             model.addAttribute("createVisit", createVisit.toString());
         } else {
@@ -372,4 +344,3 @@ public class EnterHtmlFormFragmentController extends BaseHtmlFormFragmentControl
     }
 
 }
-

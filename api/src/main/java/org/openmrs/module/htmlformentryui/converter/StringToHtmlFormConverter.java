@@ -29,22 +29,20 @@ import java.util.regex.Pattern;
  */
 @Component
 public class StringToHtmlFormConverter implements Converter<String, HtmlForm> {
-
-    private Pattern onlyDigits = Pattern.compile("\\d+");
-
-    @Autowired
-    @Qualifier("htmlFormEntryService")
-    HtmlFormEntryService htmlFormEntryService;
-
-    public HtmlForm convert(String source) {
-        if (StringUtils.isBlank(source)) {
-            return null;
-        }
-        else if (onlyDigits.matcher(source).matches()) {
-            return htmlFormEntryService.getHtmlForm(Integer.valueOf(source));
-        }
-        else {
-            return htmlFormEntryService.getHtmlFormByUuid(source);
-        }
-    }
+	
+	private Pattern onlyDigits = Pattern.compile("\\d+");
+	
+	@Autowired
+	@Qualifier("htmlFormEntryService")
+	HtmlFormEntryService htmlFormEntryService;
+	
+	public HtmlForm convert(String source) {
+		if (StringUtils.isBlank(source)) {
+			return null;
+		} else if (onlyDigits.matcher(source).matches()) {
+			return htmlFormEntryService.getHtmlForm(Integer.valueOf(source));
+		} else {
+			return htmlFormEntryService.getHtmlFormByUuid(source);
+		}
+	}
 }

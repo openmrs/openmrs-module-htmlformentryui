@@ -23,21 +23,19 @@ import org.springframework.web.bind.annotation.RequestParam;
  * Provides encounter-specific actions
  */
 public class EncounterActionFragmentController {
-
-    public SimpleObject delete(@SpringBean("encounterService") EncounterService encounterService,
-                               @RequestParam("encounter") Encounter encounter,
-                               @RequestParam("reason") String reason) throws Exception {
-
-        SimpleObject ret = new SimpleObject();
-        ret.put("success", true);
-        try {
-            encounterService.voidEncounter(encounter, reason);
-        }
-        catch (Exception e) {
-            ret.put("success", false);
-            ret.put("message", e.getMessage());
-        }
-        return ret;
-    }
+	
+	public SimpleObject delete(@SpringBean("encounterService") EncounterService encounterService,
+	        @RequestParam("encounter") Encounter encounter, @RequestParam("reason") String reason) throws Exception {
+		
+		SimpleObject ret = new SimpleObject();
+		ret.put("success", true);
+		try {
+			encounterService.voidEncounter(encounter, reason);
+		}
+		catch (Exception e) {
+			ret.put("success", false);
+			ret.put("message", e.getMessage());
+		}
+		return ret;
+	}
 }
-

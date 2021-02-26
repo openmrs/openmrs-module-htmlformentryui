@@ -73,16 +73,16 @@ public class ObsFromFragmentElementTest {
 	
 	@Mock
 	private ConceptService conceptService;
-
+	
 	@Mock
 	private FormEntrySession session;
-		
+	
 	private Map<String, Object> fragmentParams;
 	
 	private ObsFromFragmentElement element;
 	
 	private String formFieldName = "test-field";
-		
+	
 	@Before
 	public void setup() {
 		mockStatic(Context.class);
@@ -185,7 +185,7 @@ public class ObsFromFragmentElementTest {
 		element.initializeFragment(context);
 		
 		// Verify
-		List<Option> options = (List<Option>) element.getFragmentParams().get("options");	
+		List<Option> options = (List<Option>) element.getFragmentParams().get("options");
 		Assert.assertTrue(options.size() == 2);
 		Assert.assertEquals("Concept Answer 1", options.get(0).getValue());
 		Assert.assertEquals("Concept Answer 2", options.get(1).getValue());
@@ -205,7 +205,7 @@ public class ObsFromFragmentElementTest {
 		element.initializeFragment(context);
 		
 		// Verify
-		String selectedOption = (String) element.getFragmentParams().get("initialValue");	
+		String selectedOption = (String) element.getFragmentParams().get("initialValue");
 		Assert.assertEquals("Concept Answer 1", selectedOption);
 	}
 	
@@ -235,25 +235,27 @@ public class ObsFromFragmentElementTest {
 		when(concept.getDatatype()).thenReturn(numericDatatype);
 		element.setConcept(concept);
 		
-		when(submissionActions.createObs(any(Concept.class), any(Object.class), any(Date.class), any(String.class))).thenAnswer(new Answer() {
-
-			@Override
-			public Object answer(InvocationOnMock invocation) throws Throwable {
-				Concept concept = (Concept) invocation.getArguments()[0];
-				Double valueNumeric = (Double) invocation.getArguments()[1];
-
-				// Verify
-				Assert.assertTrue(concept.getDatatype().isNumeric());
-				Assert.assertThat(new Double(78), is(valueNumeric));
-				return new Obs();
-			}
-		});
+		when(submissionActions.createObs(any(Concept.class), any(Object.class), any(Date.class), any(String.class)))
+		        .thenAnswer(new Answer() {
+			        
+			        @Override
+			        public Object answer(InvocationOnMock invocation) throws Throwable {
+				        Concept concept = (Concept) invocation.getArguments()[0];
+				        Double valueNumeric = (Double) invocation.getArguments()[1];
+				        
+				        // Verify
+				        Assert.assertTrue(concept.getDatatype().isNumeric());
+				        Assert.assertThat(new Double(78), is(valueNumeric));
+				        return new Obs();
+			        }
+		        });
 		
 		// Replay
-		element.handleSubmission(session, request);	
+		element.handleSubmission(session, request);
 		
 		// Verify
-		verify(submissionActions, times(1)).createObs(any(Concept.class), any(Object.class), any(Date.class), any(String.class), any(String.class));
+		verify(submissionActions, times(1)).createObs(any(Concept.class), any(Object.class), any(Date.class),
+		    any(String.class), any(String.class));
 	}
 	
 	@Test
@@ -263,26 +265,28 @@ public class ObsFromFragmentElementTest {
 		when(request.getParameter(formFieldName)).thenReturn("Concept Answer 2");
 		element.setConcept(createMockedCodedConcept());
 		
-		when(submissionActions.createObs(any(Concept.class), any(Object.class), any(Date.class), any(String.class))).thenAnswer(new Answer() {
-
-			@Override
-			public Object answer(InvocationOnMock invocation) throws Throwable {
-				Concept question = (Concept) invocation.getArguments()[0];
-				Concept answer = (Concept) invocation.getArguments()[1];
-
-				// Verify
-				Assert.assertTrue(question.getDatatype().isCoded());
-				Assert.assertEquals("Concept Answer 2", answer.getName().getName());
-				return new Obs();
-			}
-		});
+		when(submissionActions.createObs(any(Concept.class), any(Object.class), any(Date.class), any(String.class)))
+		        .thenAnswer(new Answer() {
+			        
+			        @Override
+			        public Object answer(InvocationOnMock invocation) throws Throwable {
+				        Concept question = (Concept) invocation.getArguments()[0];
+				        Concept answer = (Concept) invocation.getArguments()[1];
+				        
+				        // Verify
+				        Assert.assertTrue(question.getDatatype().isCoded());
+				        Assert.assertEquals("Concept Answer 2", answer.getName().getName());
+				        return new Obs();
+			        }
+		        });
 		
 		// Replay
-		element.handleSubmission(session, request);	
+		element.handleSubmission(session, request);
 		
 		// Verify
-		verify(submissionActions, times(1)).createObs(any(Concept.class), any(Object.class), any(Date.class), any(String.class), any(String.class));
-
+		verify(submissionActions, times(1)).createObs(any(Concept.class), any(Object.class), any(Date.class),
+		    any(String.class), any(String.class));
+		
 	}
 	
 	@Test
@@ -295,28 +299,30 @@ public class ObsFromFragmentElementTest {
 		dateDatatype.setUuid(ConceptDatatype.DATE_UUID);
 		when(concept.getDatatype()).thenReturn(dateDatatype);
 		element.setConcept(concept);
-		  
-		when(submissionActions.createObs(any(Concept.class), any(Object.class), any(Date.class), any(String.class), any(String.class))).thenAnswer(new Answer() {
-
-			@Override
-			public Object answer(InvocationOnMock invocation) throws Throwable {
-				Date expectedDate = new SimpleDateFormat("yyyy-MM-dd").parse("2017-08-14");
-				Concept concept = (Concept) invocation.getArguments()[0];
-				Date valueDate = (Date) invocation.getArguments()[1];
-
-				// Verify
-				Assert.assertTrue(concept.getDatatype().isDate());
-				Assert.assertEquals(expectedDate, valueDate);
-				return new Obs();
-			}
-		});
+		
+		when(submissionActions.createObs(any(Concept.class), any(Object.class), any(Date.class), any(String.class),
+		    any(String.class))).thenAnswer(new Answer() {
+			    
+			    @Override
+			    public Object answer(InvocationOnMock invocation) throws Throwable {
+				    Date expectedDate = new SimpleDateFormat("yyyy-MM-dd").parse("2017-08-14");
+				    Concept concept = (Concept) invocation.getArguments()[0];
+				    Date valueDate = (Date) invocation.getArguments()[1];
+				    
+				    // Verify
+				    Assert.assertTrue(concept.getDatatype().isDate());
+				    Assert.assertEquals(expectedDate, valueDate);
+				    return new Obs();
+			    }
+		    });
 		
 		// Replay
-		element.handleSubmission(session, request);	
+		element.handleSubmission(session, request);
 		
 		// Verify
-		verify(submissionActions, times(1)).createObs(any(Concept.class), any(Object.class), any(Date.class), any(String.class), any(String.class));
-
+		verify(submissionActions, times(1)).createObs(any(Concept.class), any(Object.class), any(Date.class),
+		    any(String.class), any(String.class));
+		
 	}
 	
 	@Test
@@ -334,13 +340,13 @@ public class ObsFromFragmentElementTest {
 		element.setExistingObs(obs);
 		
 		doAnswer(new Answer() {
-
+			
 			@Override
 			public Object answer(InvocationOnMock invocation) throws Throwable {
 				Obs existingObs = (Obs) invocation.getArguments()[0];
 				Concept question = (Concept) invocation.getArguments()[1];
 				Boolean newValueBoolean = (Boolean) invocation.getArguments()[2];
-
+				
 				// Verify
 				Assert.assertTrue(question.getDatatype().isBoolean());
 				Assert.assertTrue(existingObs.getValueBoolean());
@@ -348,39 +354,41 @@ public class ObsFromFragmentElementTest {
 				return null;
 			}
 			
-		}).when(submissionActions).modifyObs(any(Obs.class), any(Concept.class), any(Object.class), any(Date.class), any(String.class), eq(formFieldName));
+		}).when(submissionActions).modifyObs(any(Obs.class), any(Concept.class), any(Object.class), any(Date.class),
+		    any(String.class), eq(formFieldName));
 		
 		// Replay
-		element.handleSubmission(session, request);	
+		element.handleSubmission(session, request);
 		
 		// Verify
-		verify(submissionActions, times(1)).modifyObs(any(Obs.class), any(Concept.class), any(Object.class), any(Date.class), any(String.class), eq(formFieldName));
-
+		verify(submissionActions, times(1)).modifyObs(any(Obs.class), any(Concept.class), any(Object.class), any(Date.class),
+		    any(String.class), eq(formFieldName));
+		
 	}
 	
-    @Test
+	@Test
 	public void shouldEvaluateVelocityExpressions() throws Exception {
-      // Setup
-      Date date = new GregorianCalendar(2019, Calendar.SEPTEMBER, 16).getTime();
-      when(conceptService.getConcept(5)).thenReturn(concept);
-      session = new FormEntrySession(new Patient(), "xml", null);
-      session.addToVelocityContext("date", date);
-      HashMap<String, String> parameters = new HashMap<String, String>();
-      parameters.put("provider", "uicommons");
-      parameters.put("fragment", "field/datetimepicker");
-      parameters.put("initFragmentParamName", "defaultDate");
-      parameters.put("conceptId", "5");
-      parameters.put("fragmentParams", "label=Field+Label;testDate=$date");
-      
-	  // Replay
-	  ObsFromFragmentElement element = new ObsFromFragmentElement(parameters, null, session);
-	  
-	  // Verify
-	  Object testDate = element.getFragmentParams().get("testDate");
-	  Assert.assertEquals(date.toString(), testDate);
-	  
+		// Setup
+		Date date = new GregorianCalendar(2019, Calendar.SEPTEMBER, 16).getTime();
+		when(conceptService.getConcept(5)).thenReturn(concept);
+		session = new FormEntrySession(new Patient(), "xml", null);
+		session.addToVelocityContext("date", date);
+		HashMap<String, String> parameters = new HashMap<String, String>();
+		parameters.put("provider", "uicommons");
+		parameters.put("fragment", "field/datetimepicker");
+		parameters.put("initFragmentParamName", "defaultDate");
+		parameters.put("conceptId", "5");
+		parameters.put("fragmentParams", "label=Field+Label;testDate=$date");
+		
+		// Replay
+		ObsFromFragmentElement element = new ObsFromFragmentElement(parameters, null, session);
+		
+		// Verify
+		Object testDate = element.getFragmentParams().get("testDate");
+		Assert.assertEquals(date.toString(), testDate);
+		
 	}
-	    
+	
 	private Concept createMockedCodedConcept() {
 		Concept question = mock(Concept.class);
 		Concept answer1 = mock(Concept.class);
@@ -400,8 +408,8 @@ public class ObsFromFragmentElementTest {
 	}
 	
 	/**
-	 * Convenient factory method to create a populated Concept with a one fully specified name and
-	 * one short name
+	 * Convenient factory method to create a populated Concept with a one fully specified name and one
+	 * short name
 	 */
 	private Concept createConcept(String name, String datatypeUuid) {
 		Concept concept = new Concept();
@@ -415,8 +423,7 @@ public class ObsFromFragmentElementTest {
 	/**
 	 * Convenient factory method to create a populated Concept name.
 	 */
-	private ConceptName createConceptName(String name, ConceptNameType conceptNameType,
-	        Boolean isLocalePreferred) {
+	private ConceptName createConceptName(String name, ConceptNameType conceptNameType, Boolean isLocalePreferred) {
 		ConceptName result = new ConceptName();
 		result.setName(name);
 		result.setConceptNameType(conceptNameType);

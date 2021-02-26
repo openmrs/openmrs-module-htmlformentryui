@@ -12,17 +12,17 @@ import org.openmrs.ui.framework.BasicUiUtils;
 import org.openmrs.ui.framework.UiUtils;
 
 public class ObsFromFragmentTagHandler extends SubstitutionTagHandler {
-
+	
 	private UiUtils uiUtils;
 	
 	@Override
-	protected String getSubstitution(FormEntrySession session, FormSubmissionController controller, Map<String, String> parameters)
-			throws BadFormDesignException {
-		uiUtils = (UiUtils) (session.getAttribute("uiUtils") != null ? session.getAttribute("uiUtils") : Context.getRegisteredComponent("uiUtils", BasicUiUtils.class));
+	protected String getSubstitution(FormEntrySession session, FormSubmissionController controller,
+	        Map<String, String> parameters) throws BadFormDesignException {
+		uiUtils = (UiUtils) (session.getAttribute("uiUtils") != null ? session.getAttribute("uiUtils")
+		        : Context.getRegisteredComponent("uiUtils", BasicUiUtils.class));
 		ObsFromFragmentElement element = new ObsFromFragmentElement(parameters, uiUtils, session);
 		session.getSubmissionController().addAction(element);
-		return element.generateHtml(session.getContext());	
+		return element.generateHtml(session.getContext());
 	}
-
 	
 }

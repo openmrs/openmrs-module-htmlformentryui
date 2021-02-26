@@ -34,55 +34,54 @@ import org.springframework.web.bind.annotation.RequestParam;
  *
  */
 public abstract class BaseEnterHtmlFormPageController {
-
-    public void get(UiSessionContext sessionContext,
-                    @RequestParam("patientId") Patient currentPatient,
-                    @RequestParam(value = "formUuid", required = false) String formUuid,
-                    @RequestParam(value = "htmlFormId", required = false) HtmlForm htmlForm,
-                    @RequestParam(value = "definitionUiResource", required = false) String definitionUiResource,
-                    @RequestParam(value = "visitId", required = false) Visit visit,
-                    @RequestParam(value = "createVisit", required = false) Boolean createVisit,
-                    @RequestParam(value = "returnUrl", required = false) String returnUrl,
-                    @RequestParam(value = "returnProvider", required =  false) String returnProvider,
-                    @RequestParam(value = "returnPage", required = false) String returnPage,
-                    @RequestParam(value = "returnLabel", required = false) String returnLabel,
-                    @RequestParam(value = "breadcrumbOverride", required = false) String breadcrumbOverride,
-                    @SpringBean("htmlFormEntryService") HtmlFormEntryService htmlFormEntryService,
-                    @SpringBean("formService") FormService formService,
-                    @SpringBean("coreResourceFactory") ResourceFactory resourceFactory,
-                    @SpringBean("featureToggles") FeatureToggleProperties featureToggles,
-                    UiUtils ui,
-                    PageModel model) throws Exception {
-
-        // TODO: maybe EditHtmlFormWithStandardUiPageController should probably be merged into this?
-
-        sessionContext.requireAuthentication();
-
-        if (htmlForm == null && StringUtils.isNotEmpty(definitionUiResource)) {
-            htmlForm = HtmlFormUtil.getHtmlFormFromUiResource(resourceFactory, formService, htmlFormEntryService, definitionUiResource);
-        }
-        if (htmlForm == null && formUuid != null) {
-            Form form = formService.getFormByUuid(formUuid);
-            if (form != null) {
-                htmlForm = htmlFormEntryService.getHtmlFormByForm(form);
-            }
-        }
-
-        if (htmlForm == null) {
-            throw new IllegalArgumentException("Couldn't find a form");
-        }
-
-        returnUrl = HtmlFormUtil.determineReturnUrl(returnUrl, returnProvider, returnPage, currentPatient, visit, ui);
-        returnLabel = HtmlFormUtil.determineReturnLabel(returnLabel, currentPatient, ui);
-
-        model.addAttribute("htmlForm", htmlForm);
-        model.addAttribute("patient", currentPatient);
-        model.addAttribute("visit", visit);
-        model.addAttribute("createVisit", createVisit);
-        model.addAttribute("returnUrl", returnUrl);
-        model.addAttribute("returnLabel", returnLabel);
-        model.addAttribute("breadcrumbOverride", breadcrumbOverride);
-        model.addAttribute("featureToggles", featureToggles);
-    }
-
+	
+	public void get(UiSessionContext sessionContext, @RequestParam("patientId") Patient currentPatient,
+	        @RequestParam(value = "formUuid", required = false) String formUuid,
+	        @RequestParam(value = "htmlFormId", required = false) HtmlForm htmlForm,
+	        @RequestParam(value = "definitionUiResource", required = false) String definitionUiResource,
+	        @RequestParam(value = "visitId", required = false) Visit visit,
+	        @RequestParam(value = "createVisit", required = false) Boolean createVisit,
+	        @RequestParam(value = "returnUrl", required = false) String returnUrl,
+	        @RequestParam(value = "returnProvider", required = false) String returnProvider,
+	        @RequestParam(value = "returnPage", required = false) String returnPage,
+	        @RequestParam(value = "returnLabel", required = false) String returnLabel,
+	        @RequestParam(value = "breadcrumbOverride", required = false) String breadcrumbOverride,
+	        @SpringBean("htmlFormEntryService") HtmlFormEntryService htmlFormEntryService,
+	        @SpringBean("formService") FormService formService,
+	        @SpringBean("coreResourceFactory") ResourceFactory resourceFactory,
+	        @SpringBean("featureToggles") FeatureToggleProperties featureToggles, UiUtils ui, PageModel model)
+	        throws Exception {
+		
+		// TODO: maybe EditHtmlFormWithStandardUiPageController should probably be merged into this?
+		
+		sessionContext.requireAuthentication();
+		
+		if (htmlForm == null && StringUtils.isNotEmpty(definitionUiResource)) {
+			htmlForm = HtmlFormUtil.getHtmlFormFromUiResource(resourceFactory, formService, htmlFormEntryService,
+			    definitionUiResource);
+		}
+		if (htmlForm == null && formUuid != null) {
+			Form form = formService.getFormByUuid(formUuid);
+			if (form != null) {
+				htmlForm = htmlFormEntryService.getHtmlFormByForm(form);
+			}
+		}
+		
+		if (htmlForm == null) {
+			throw new IllegalArgumentException("Couldn't find a form");
+		}
+		
+		returnUrl = HtmlFormUtil.determineReturnUrl(returnUrl, returnProvider, returnPage, currentPatient, visit, ui);
+		returnLabel = HtmlFormUtil.determineReturnLabel(returnLabel, currentPatient, ui);
+		
+		model.addAttribute("htmlForm", htmlForm);
+		model.addAttribute("patient", currentPatient);
+		model.addAttribute("visit", visit);
+		model.addAttribute("createVisit", createVisit);
+		model.addAttribute("returnUrl", returnUrl);
+		model.addAttribute("returnLabel", returnLabel);
+		model.addAttribute("breadcrumbOverride", breadcrumbOverride);
+		model.addAttribute("featureToggles", featureToggles);
+	}
+	
 }
