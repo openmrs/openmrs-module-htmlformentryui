@@ -4,7 +4,7 @@ $(function() {
     if (jq("#encounterDate").find(".rfc3339-date").length) {
         var dateTime= jq("#encounterDate").find(".rfc3339-date").text()
         var convertUtcToClientTZ = new Date(dateTime)
-        jq("#encounterDate").find(".rfc3339-date").text( formatDatetimeClient(new Date(convertUtcToClientTZ), window.viewHtmlForm.datetimeFormat, window.locale));
+        jq("#encounterDate").find(".rfc3339-date").text( formatDatetimeClient(new Date(convertUtcToClientTZ), window.viewHtmlForm.datetimeFormat, window.viewHtmlForm.locale));
     }
 
     function formatDatetimeClient(date, format, locale) {

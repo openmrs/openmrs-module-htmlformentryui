@@ -44,11 +44,11 @@ public class TimeZoneUtil {
 	public static Calendar toUTCCalendar(Date date) {
 		return new DateTime(date.getTime(), UTC).toGregorianCalendar();
 	}
-
+	
 	/**
-	 * Gets a String date in ISO8601 format. This always returns a Date converted from UTC to the server timezone
-	 * subclass.
-	 *
+	 * Gets a String date in ISO8601 format. This always returns a Date converted from UTC to the server
+	 * timezone subclass.
+	 * 
 	 * @param ISOStringDate A String in a ISO 8601 Format.
 	 * @return Date with the server timezone.
 	 */

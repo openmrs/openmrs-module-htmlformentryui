@@ -12,7 +12,8 @@
         returnUrl: "${ ui.escapeJs(returnUrl) }",
         htmlFormId: ${htmlForm.id},
         datetimeFormat:"${ui.getJSDatetimeFormat()}",
-        dateFormat:"${ui.getJSDateFormat()}"
+        dateFormat:"${ui.getJSDateFormat()}",
+        locale:"${ui.getLocale()}"
     };
 
     var breadcrumbs = [
