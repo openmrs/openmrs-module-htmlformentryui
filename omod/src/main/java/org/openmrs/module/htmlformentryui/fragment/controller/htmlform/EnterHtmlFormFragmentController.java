@@ -70,6 +70,8 @@ import static org.openmrs.util.TimeZoneUtil.toRFC3339;
  */
 public class EnterHtmlFormFragmentController extends BaseHtmlFormFragmentController {
 	
+	private static final Log log = LogFactory.getLog(EnterHtmlFormFragmentController.class);
+	
 	/**
 	 * @param config
 	 * @param sessionContext
@@ -380,6 +382,20 @@ public class EnterHtmlFormFragmentController extends BaseHtmlFormFragmentControl
 		} else {
 			model.addAttribute("createVisit", "false");
 		}
+		
+		Integer hfeMajorVersion = 1;
+		Integer hfeMinorVersion = 0;
+		try {
+			String hfeVersion = ModuleFactory.getStartedModuleById("htmlformentry").getVersion();
+			String[] versionSplit = hfeVersion.split("\\.");
+			hfeMajorVersion = Integer.valueOf(versionSplit[0]);
+			hfeMinorVersion = Integer.valueOf(versionSplit[1]);
+		}
+		catch (Exception e) {
+			log.warn("Unable to retrieve htmlformentry major and minor versions", e);
+		}
+		model.addAttribute("hfeMajorVersion", hfeMajorVersion);
+		model.addAttribute("hfeMinorVersion", hfeMinorVersion);
 		
 	}
 	
