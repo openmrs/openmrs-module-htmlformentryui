@@ -48,7 +48,7 @@
         <appframeworkVersion>2.9</appframeworkVersion>
         <appuiVersion>1.7</appuiVersion>
         <emrapiVersion>1.18</emrapiVersion>
-        <uicommonsVersion>2.10.0</uicommonsVersion>
+        <uicommonsVersion>2.1</uicommonsVersion>
         <providermanagementVersion>2.5.0</providermanagementVersion>
         <reportingVersion>0.10.4</reportingVersion>
         <calculationVersion>1.2</calculationVersion>
