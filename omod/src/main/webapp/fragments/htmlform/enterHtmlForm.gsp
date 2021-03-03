@@ -81,8 +81,8 @@
                 <% }%>
             <% }%>
             // set valid date range based on visit getStartDatetime
-            htmlForm.setEncounterStartDateRange('${visitStartDatetime}');
-            htmlForm.setEncounterStopDateRange('${visitStopDatetime}');
+            htmlForm.setEncounterStartDateRange('${visitStartDatetime}', ${ui.handleTimeZones()});
+            htmlForm.setEncounterStopDateRange('${visitStopDatetime}', ${ui.handleTimeZones()});
         <% } else { %>
             // note that we need to get the current datetime from the *server*, in case the server and client are in different time zones
             htmlForm.setEncounterDate('${(currentDate)}');
@@ -91,7 +91,7 @@
                 //without visit
                 htmlForm.adjustTimeZoneEncounterDate('${currentDate}');
             <% }%>
-            htmlForm.setEncounterStopDateRange('${(currentDate)}');
+            htmlForm.setEncounterStopDateRange('${(currentDate)}' , ${ui.handleTimeZones()});
         <% } %>
         // for now, just disable manual entry until we figure out proper validation
         htmlForm.disableEncounterDateManualEntry();

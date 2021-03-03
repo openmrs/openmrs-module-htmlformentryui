@@ -277,9 +277,9 @@
     // TODO: could/should be generalized so as not to be datepicker dependent?
 
     //Set encounterDate datepicker start date
-    htmlForm.setEncounterStartDateRange = function(date) {
+    htmlForm.setEncounterStartDateRange = function(date , handletimezones) {
         if (getField('encounterDate.value')) {
-            if (jq("#encounterDate").find(".hfe-timezone").length) {
+            if (handletimezones) {
                 var startDateClientTimezone = new Date(date)
                 getField('encounterDate.value').datepicker('option', 'minDate', startDateClientTimezone)
             }else{
@@ -289,9 +289,9 @@
     };
 
     //Set encounterDate datepicker stop date
-    htmlForm.setEncounterStopDateRange = function(date) {
+    htmlForm.setEncounterStopDateRange = function(date, handletimezones) {
         if (getField('encounterDate.value')) {
-            if ( jq("#encounterDate").find(".hfe-timezone").length) {
+            if (handletimezones) {
                 var stopDateClientTimezone = new Date(date)
                 getField('encounterDate.value').datepicker('option', 'maxDate', stopDateClientTimezone > new Date ? new Date : stopDateClientTimezone)
             }else{
