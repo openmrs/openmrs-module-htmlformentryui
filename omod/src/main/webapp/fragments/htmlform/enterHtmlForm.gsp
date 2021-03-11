@@ -16,8 +16,8 @@
 <link href="/${ contextPath }/moduleResources/htmlformentry/htmlFormEntry.css" type="text/css" rel="stylesheet" />
 
 <% if (hfeMajorVersion >= 4) { %>
-    <link href="/${ contextPath }/moduleResources/htmlformentry/drugOrderWidget.css" type="text/css" rel="stylesheet" />
-    <script type="text/javascript" src="/${ contextPath }/moduleResources/htmlformentry/drugOrderWidget.js"></script>
+    <link href="/${ contextPath }/moduleResources/htmlformentry/orderWidget.css" type="text/css" rel="stylesheet" />
+    <script type="text/javascript" src="/${ contextPath }/moduleResources/htmlformentry/orderWidget.js"></script>
 <% } %>
 
 <script type="text/javascript">
