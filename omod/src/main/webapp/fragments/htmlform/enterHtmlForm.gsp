@@ -67,11 +67,11 @@
             <% if (command.context.mode.toString().equals('ENTER') && !visit.isOpen()) { %>
                 // set default date to the visit start date for retrospective visits
                 htmlForm.setEncounterDate('${ visitStartDatetime}');
-                <% if (ui.handleTimeZones()) { %>
+                <% if (ui.convertTimezones()) { %>
                     //New encounter for past visit
                     htmlForm.adjustTimeZoneEncounterDate('${visitStartDatetime}');
                 <% }%>
-            <% } else if (ui.handleTimeZones()) { %>
+            <% } else if (ui.convertTimezones()) { %>
                 <%   if (encounterDatetimeUTC != null) { %>
                     //Editing an encounter
                     htmlForm.adjustTimeZoneEncounterDate('${(encounterDatetimeUTC)}');
@@ -81,17 +81,17 @@
                 <% }%>
             <% }%>
             // set valid date range based on visit getStartDatetime
-            htmlForm.setEncounterStartDateRange('${visitStartDatetime}', ${ui.handleTimeZones()});
-            htmlForm.setEncounterStopDateRange('${visitStopDatetime}', ${ui.handleTimeZones()});
+            htmlForm.setEncounterStartDateRange('${visitStartDatetime}', ${ui.convertTimezones()});
+            htmlForm.setEncounterStopDateRange('${visitStopDatetime}', ${ui.convertTimezones()});
         <% } else { %>
             // note that we need to get the current datetime from the *server*, in case the server and client are in different time zones
             htmlForm.setEncounterDate('${(currentDate)}');
             //set client Timezone
-            <% if (ui.handleTimeZones() != null) { %>
+            <% if (ui.convertTimezones() != null) { %>
                 //without visit
                 htmlForm.adjustTimeZoneEncounterDate('${currentDate}');
             <% }%>
-            htmlForm.setEncounterStopDateRange('${(currentDate)}' , ${ui.handleTimeZones()});
+            htmlForm.setEncounterStopDateRange('${(currentDate)}' , ${ui.convertTimezones()});
         <% } %>
         // for now, just disable manual entry until we figure out proper validation
         htmlForm.disableEncounterDateManualEntry();

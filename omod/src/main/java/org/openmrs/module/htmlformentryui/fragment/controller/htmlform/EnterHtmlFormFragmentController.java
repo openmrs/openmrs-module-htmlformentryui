@@ -156,18 +156,18 @@ public class EnterHtmlFormFragmentController extends BaseHtmlFormFragmentControl
 		SimpleDateFormat formaterWithoutTimezone = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ");
 		
 		//If GP timezone is true, it will set the var encounterDatetimeUTC, otherwise it will be null
-		if (ui.handleTimeZones()) {
+		if (ui.convertTimezones()) {
 			formaterWithoutTimezone.setTimeZone(TimeZone.getTimeZone("UTC"));
 			encounterDatetimeUTC = encounter != null ? toRFC3339(encounter.getEncounterDatetime()) : null;
 		}
 		//If GP timezone is true, it will convert the visitStartDatetime and visitStopDatetime to UTC and format RFC3339
 		if (visit != null) {
 			if (visit.getStartDatetime() != null) {
-				visitStartDatetime = ui.handleTimeZones() ? toRFC3339(visit.getStartDatetime())
+				visitStartDatetime = ui.convertTimezones() ? toRFC3339(visit.getStartDatetime())
 				        : formaterWithoutTimezone.format(visit.getStartDatetime());
 			}
 			if (visit.getStopDatetime() != null) {
-				visitStopDatetime = ui.handleTimeZones() ? toRFC3339(visit.getStopDatetime())
+				visitStopDatetime = ui.convertTimezones() ? toRFC3339(visit.getStopDatetime())
 				        : formaterWithoutTimezone.format(visit.getStopDatetime());
 			} else {
 				visitStopDatetime = formaterWithoutTimezone.format(new Date());
@@ -369,7 +369,7 @@ public class EnterHtmlFormFragmentController extends BaseHtmlFormFragmentControl
 	        Boolean createVisit, String encounterDatetimeUTC, String visitStartDatetime, String visitStopDatetime,
 	        UiUtils ui) {
 		
-		String currentDate = ui.handleTimeZones() ? toRFC3339(new Date()) : new Date().toString();
+		String currentDate = ui.convertTimezones() ? toRFC3339(new Date()) : new Date().toString();
 		model.addAttribute("visitStartDatetime", visitStartDatetime);
 		model.addAttribute("visitStopDatetime", visitStopDatetime);
 		model.addAttribute("currentDate", currentDate);
