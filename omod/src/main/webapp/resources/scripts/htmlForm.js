@@ -312,7 +312,7 @@
         if (jq("#encounterDate").find(".hfe-timezone").length) {
             //Set browser timezone
             jq("#encounterDate").find(".hfe-timezone").val(Intl.DateTimeFormat().resolvedOptions().timeZone)
-            //Translate from UTC to client timezone
+            //Set encounterDate default date and time
             var dateWithClientTimeZone =  new Date(setDateTime)
             changeTimeWidgetClientTimeZone(dateWithClientTimeZone);
         };

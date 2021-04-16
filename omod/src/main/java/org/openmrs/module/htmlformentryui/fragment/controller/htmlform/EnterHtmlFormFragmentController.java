@@ -63,8 +63,6 @@ import java.util.Map;
 import java.text.SimpleDateFormat;
 import java.util.TimeZone;
 
-import static org.openmrs.util.TimeZoneUtil.toRFC3339;
-
 /**
  *
  */
@@ -150,34 +148,35 @@ public class EnterHtmlFormFragmentController extends BaseHtmlFormFragmentControl
 		
 		String visitStartDatetime = null;
 		String visitStopDatetime = null;
-		String encounterDatetimeUTC = null;
+		String encounterDatetime = null;
 		
 		//Format without timezone associated, used for
 		SimpleDateFormat formaterWithoutTimezone = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ");
 		
-		//If GP timezone is true, it will set the var encounterDatetimeUTC, otherwise it will be null
+		//If GP timezone is true, it will set the var encounterDatetime, otherwise it will be null
 		if (ui.convertTimezones()) {
 			formaterWithoutTimezone.setTimeZone(TimeZone.getTimeZone("UTC"));
-			encounterDatetimeUTC = encounter != null ? toRFC3339(encounter.getEncounterDatetime()) : null;
+			encounterDatetime = encounter != null ? ui.format(encounter.getEncounterDatetime()) : null;
 		}
 		//If GP timezone is true, it will convert the visitStartDatetime and visitStopDatetime to UTC and format RFC3339
 		if (visit != null) {
 			if (visit.getStartDatetime() != null) {
-				visitStartDatetime = ui.convertTimezones() ? toRFC3339(visit.getStartDatetime())
+				visitStartDatetime = ui.convertTimezones() ? ui.format(visit.getStartDatetime())
 				        : formaterWithoutTimezone.format(visit.getStartDatetime());
 			}
 			if (visit.getStopDatetime() != null) {
-				visitStopDatetime = ui.convertTimezones() ? toRFC3339(visit.getStopDatetime())
+				visitStopDatetime = ui.convertTimezones() ? ui.format(visit.getStopDatetime())
 				        : formaterWithoutTimezone.format(visit.getStopDatetime());
 			} else {
-				visitStopDatetime = formaterWithoutTimezone.format(new Date());
+				visitStopDatetime = ui.convertTimezones() ? ui.format(new Date())
+				        : formaterWithoutTimezone.format(new Date());
 			}
 		}
 		
 		VisitDomainWrapper visitDomainWrapper = getVisitDomainWrapper(visit, encounter, adtService);
 		setupVelocityContext(fes, visitDomainWrapper, ui, sessionContext, featureToggles);
 		setupFormEntrySession(fes, visitDomainWrapper, defaultEncounterDate, ui, sessionContext, returnUrl);
-		setupModel(model, fes, visitDomainWrapper, createVisit, encounterDatetimeUTC, visitStartDatetime, visitStopDatetime,
+		setupModel(model, fes, visitDomainWrapper, createVisit, encounterDatetime, visitStartDatetime, visitStopDatetime,
 		    ui);
 		
 	}
@@ -366,16 +365,16 @@ public class EnterHtmlFormFragmentController extends BaseHtmlFormFragmentControl
 	}
 	
 	private void setupModel(FragmentModel model, FormEntrySession fes, VisitDomainWrapper visitDomainWrapper,
-	        Boolean createVisit, String encounterDatetimeUTC, String visitStartDatetime, String visitStopDatetime,
+	        Boolean createVisit, String encounterDatetime, String visitStartDatetime, String visitStopDatetime,
 	        UiUtils ui) {
 		
-		String currentDate = ui.convertTimezones() ? toRFC3339(new Date()) : new Date().toString();
+		String currentDate = ui.convertTimezones() ? ui.format(new Date()) : new Date().toString();
 		model.addAttribute("visitStartDatetime", visitStartDatetime);
 		model.addAttribute("visitStopDatetime", visitStopDatetime);
 		model.addAttribute("currentDate", currentDate);
 		model.addAttribute("command", fes);
 		model.addAttribute("visit", visitDomainWrapper);
-		model.addAttribute("encounterDatetimeUTC", encounterDatetimeUTC);
+		model.addAttribute("encounterDatetime", encounterDatetime);
 		
 		if (createVisit != null) {
 			model.addAttribute("createVisit", createVisit.toString());

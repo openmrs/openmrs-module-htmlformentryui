@@ -65,16 +65,17 @@
 
         <% if (visit) { %>
             <% if (command.context.mode.toString().equals('ENTER') && !visit.isOpen()) { %>
-                // set default date to the visit start date for retrospective visits
-                htmlForm.setEncounterDate('${ visitStartDatetime}');
                 <% if (ui.convertTimezones()) { %>
                     //New encounter for past visit
                     htmlForm.adjustTimeZoneEncounterDate('${visitStartDatetime}');
-                <% }%>
+                <% } else {%>
+                    // set default date to the visit start date for retrospective visits
+                    htmlForm.setEncounterDate('${ visitStartDatetime}');
+                <% } %>
             <% } else if (ui.convertTimezones()) { %>
-                <%   if (encounterDatetimeUTC != null) { %>
+                <%   if (encounterDatetime != null) { %>
                     //Editing an encounter
-                    htmlForm.adjustTimeZoneEncounterDate('${(encounterDatetimeUTC)}');
+                    htmlForm.adjustTimeZoneEncounterDate('${(encounterDatetime)}');
                 <% } else{ %>
                     //New encounter for recent visit
                     htmlForm.adjustTimeZoneEncounterDate('${(currentDate)}');
