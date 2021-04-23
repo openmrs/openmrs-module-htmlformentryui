@@ -72,8 +72,8 @@ public abstract class BaseEnterHtmlFormPageController {
 			throw new IllegalArgumentException("Couldn't find a form");
 		}
 		
-		returnUrl = HtmlFormUtil.determineReturnUrl(StringEscapeUtils.escapeHtml(returnUrl), returnProvider, returnPage,
-		    currentPatient, visit, ui);
+		returnUrl = HtmlFormUtil.determineReturnUrl(StringEscapeUtils.escapeJavaScript(returnUrl), returnProvider,
+		    returnPage, currentPatient, visit, ui);
 		returnLabel = HtmlFormUtil.determineReturnLabel(returnLabel, currentPatient, ui);
 		
 		model.addAttribute("htmlForm", htmlForm);
