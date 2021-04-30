@@ -72,15 +72,7 @@
                     // set default date to the visit start date for retrospective visits
                     htmlForm.setEncounterDate('${ visitStartDatetime}');
                 <% } %>
-            <% } else if (ui.convertTimezones()) { %>
-                <%   if (encounterDatetime != null) { %>
-                    //Editing an encounter
-                    htmlForm.adjustTimeZoneEncounterDate('${(encounterDatetime)}');
-                <% } else{ %>
-                    //New encounter for recent visit
-                    htmlForm.adjustTimeZoneEncounterDate('${(currentDate)}');
-                <% }%>
-            <% }%>
+            <% } %>
             // set valid date range based on visit getStartDatetime
             htmlForm.setEncounterStartDateRange('${visitStartDatetime}', ${ui.convertTimezones()});
             htmlForm.setEncounterStopDateRange('${visitStopDatetime}', ${ui.convertTimezones()});

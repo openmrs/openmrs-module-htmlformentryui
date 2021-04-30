@@ -290,6 +290,10 @@
 
     //Set encounterDate datepicker stop date
     htmlForm.setEncounterStopDateRange = function(date, handletimezones) {
+        //Set browser timezone
+        if(jq("#encounterDate").find(".hfe-timezone")){
+            jq("#encounterDate").find(".hfe-timezone").val(Intl.DateTimeFormat().resolvedOptions().timeZone)
+        }
         if (getField('encounterDate.value')) {
             if (handletimezones) {
                 var stopDateClientTimezone = new Date(date)
@@ -310,8 +314,6 @@
     //Used to adjust encounterDate with client timezone
     htmlForm.adjustTimeZoneEncounterDate = function(setDateTime ) {
         if (jq("#encounterDate").find(".hfe-timezone").length) {
-            //Set browser timezone
-            jq("#encounterDate").find(".hfe-timezone").val(Intl.DateTimeFormat().resolvedOptions().timeZone)
             //Set encounterDate default date and time
             var dateWithClientTimeZone =  new Date(setDateTime)
             changeTimeWidgetClientTimeZone(dateWithClientTimeZone);
