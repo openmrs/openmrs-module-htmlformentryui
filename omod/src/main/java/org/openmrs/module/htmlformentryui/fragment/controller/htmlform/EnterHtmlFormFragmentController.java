@@ -281,6 +281,19 @@ public class EnterHtmlFormFragmentController extends BaseHtmlFormFragmentControl
 			if (validationErrors.size() > 0) {
 				return returnHelper(validationErrors, fes, null);
 			}
+		} else if(visit != null) {
+			if (encounter.getEncounterDatetime().before(visit.getStartDatetime())) {
+				validationErrors.add(
+						new FormSubmissionError("general-form-error", ui.message("htmlformentryui.datetimeAfterVisitDate")));
+			}
+
+			if (visit.getStopDatetime() != null && encounter.getEncounterDatetime().after(visit.getStopDatetime())) {
+				validationErrors.add(
+						new FormSubmissionError("general-form-error", ui.message("htmlformentryui.datetimeBeforeVisitDate")));
+			}
+			if (validationErrors.size() > 0) {
+				return returnHelper(validationErrors, fes, null);
+			}
 		}
 		
 		// Do actual encounter creation/updating
