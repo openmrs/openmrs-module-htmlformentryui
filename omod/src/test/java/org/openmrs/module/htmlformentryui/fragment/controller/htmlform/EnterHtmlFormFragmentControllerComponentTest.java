@@ -113,17 +113,17 @@ public class EnterHtmlFormFragmentControllerComponentTest extends BaseModuleWebC
 	@Qualifier("messageSource")
 	@Autowired
 	MessageSource messageSource;
-	
+
 	ResourceFactory resourceFactory;
 	
 	UiUtils ui;
 	
 	UiSessionContext sessionContext;
 	
-	public static final String FORM_DEFINITION = "<htmlform formUuid=\"form-uuid\" formName=\"Form Name\" formVersion=\"1.0\" formEncounterType=\"61ae96f4-6afe-4351-b6f8-cd4fc383cce1\">Weight:<obs id=\"weight\" conceptId=\"5089\"/> <encounterDate showTime=\"true\"/> <encounterLocation/> <encounterProvider/></htmlform>";
+	public static final String FORM_DEFINITION = "<htmlform formUuid=\"form-uuid\" formName=\"Form Name\" formVersion=\"1.0\" formEncounterType=\"61ae96f4-6afe-4351-b6f8-cd4fc383cce1\">Weight:<obs id=\"weight\" conceptId=\"5089\"/> <encounterDate /> <encounterLocation/> <encounterProvider/></htmlform>";
 	
 	public static final String FEATURE_TOGGLE_TEST_FORM_DEFINITION = "<htmlform formUuid=\"form-uuid\" formName=\"Form Name\" formVersion=\"1.0\" formEncounterType=\"61ae96f4-6afe-4351-b6f8-cd4fc383cce1\"> <includeIf velocityTest=\"$featureToggles.isFeatureEnabled('someFeatureToggle')\"> featureToggledOn </includeIf>"
-	        + "<encounterDate showTime=\"true\"/> <encounterLocation/> <encounterProvider/></htmlform>";
+	        + "<encounterDate/> <encounterLocation/> <encounterProvider/></htmlform>";
 	
 	private EnterHtmlFormFragmentController controller;
 	
@@ -131,7 +131,6 @@ public class EnterHtmlFormFragmentControllerComponentTest extends BaseModuleWebC
 	public void before() throws Exception {
 		
 		executeDataSet("enterHtmlFormFragmentControllerTestDataset.xml");
-		
 		resourceFactory = mock(ResourceFactory.class);
 		when(resourceFactory.getResourceAsString("emr", "htmlforms/vitals.xml")).thenReturn(FORM_DEFINITION);
 		
@@ -142,12 +141,13 @@ public class EnterHtmlFormFragmentControllerComponentTest extends BaseModuleWebC
 		
 		FormatterImpl formatter = (FormatterImpl) Whitebox.getInternalState(ui, "formatter");
 		Whitebox.setInternalState(formatter, "messageSource", messageSource);
-		
+
 		controller = new EnterHtmlFormFragmentController();
 	}
 	
 	@Test
 	public void testDefiningAnHtmlFormInUiResource() throws Exception {
+
 		FragmentModel model = new FragmentModel();
 		Patient patient = new Patient();
 		String resourcePath = "emr:htmlforms/vitals.xml";
@@ -167,6 +167,7 @@ public class EnterHtmlFormFragmentControllerComponentTest extends BaseModuleWebC
 	
 	@Test
 	public void testSubmittingHtmlFormDefinedInUiResource() throws Exception {
+
 		// first, ensure the form is created and persisted, by calling the controller display method
 		testDefiningAnHtmlFormInUiResource();
 		HtmlForm hf = htmlFormEntryService.getHtmlFormByForm(formService.getFormByUuid("form-uuid"));
@@ -190,10 +191,6 @@ public class EnterHtmlFormFragmentControllerComponentTest extends BaseModuleWebC
 		MockHttpServletRequest request = new MockHttpServletRequest();
 		request.addParameter("w2", "70"); // weight in kg
 		request.addParameter("w3", dateString); // date
-		request.addParameter("w3hours", "0");
-		request.addParameter("w3minutes", "0");
-		request.addParameter("w3seconds", "0");
-		request.addParameter("w3timezone", TimeZone.getDefault().getID());
 		request.addParameter("w5", "2"); // location = Xanadu
 		request.addParameter("w7", "502"); // provider = Hippocrates
 		
@@ -214,6 +211,7 @@ public class EnterHtmlFormFragmentControllerComponentTest extends BaseModuleWebC
 	
 	@Test
 	public void testSubmittingHtmlFormDefinedInUiResourceShouldCreateOpenVisit() throws Exception {
+
 		// first, ensure the form is created and persisted, by calling the controller display method
 		testDefiningAnHtmlFormInUiResource();
 		HtmlForm hf = htmlFormEntryService.getHtmlFormByForm(formService.getFormByUuid("form-uuid"));
@@ -232,10 +230,6 @@ public class EnterHtmlFormFragmentControllerComponentTest extends BaseModuleWebC
 		MockHttpServletRequest request = new MockHttpServletRequest();
 		request.addParameter("w2", "70"); // weight in kg
 		request.addParameter("w3", dateString); // date
-		request.addParameter("w3hours", "0");
-		request.addParameter("w3minutes", "0");
-		request.addParameter("w3seconds", "0");
-		request.addParameter("w3timezone", TimeZone.getDefault().getID());
 		request.addParameter("w5", "2"); // location = Xanadu
 		request.addParameter("w7", "502"); // provider = Hippocrates
 		
@@ -246,13 +240,14 @@ public class EnterHtmlFormFragmentControllerComponentTest extends BaseModuleWebC
 		Encounter created = encounterService.getEncountersByPatient(patient).get(0);
 		
 		assertNotNull(created.getVisit());
-		assertThat(created.getEncounterDatetime(), DateMatchers.within(1, TimeUnit.SECONDS, new Date()));
-		assertThat(created.getVisit().getStartDatetime(), DateMatchers.within(1, TimeUnit.SECONDS, new Date()));
+		assertThat(created.getEncounterDatetime(), DateMatchers.within(2, TimeUnit.SECONDS, new Date()));
+		assertThat(created.getVisit().getStartDatetime(), DateMatchers.within(2, TimeUnit.SECONDS, new Date()));
 		assertNull(created.getVisit().getStopDatetime());
 	}
 	
 	@Test
 	public void testSubmittingHtmlFormDefinedInUiResourceShouldAssociateWithExistingVisit() throws Exception {
+
 		// first, ensure the form is created and persisted, by calling the controller display method
 		testDefiningAnHtmlFormInUiResource();
 		HtmlForm hf = htmlFormEntryService.getHtmlFormByForm(formService.getFormByUuid("form-uuid"));
@@ -273,10 +268,6 @@ public class EnterHtmlFormFragmentControllerComponentTest extends BaseModuleWebC
 		MockHttpServletRequest request = new MockHttpServletRequest();
 		request.addParameter("w2", "70"); // weight in kg
 		request.addParameter("w3", dateString); // date
-		request.addParameter("w3hours", "0");
-		request.addParameter("w3minutes", "0");
-		request.addParameter("w3seconds", "0");
-		request.addParameter("w3timezone", TimeZone.getDefault().getID());
 		request.addParameter("w5", "2"); // location = Xanadu
 		request.addParameter("w7", "502"); // provider = Hippocrates
 		
@@ -290,121 +281,7 @@ public class EnterHtmlFormFragmentControllerComponentTest extends BaseModuleWebC
 		assertThat(created.getVisit(), is(visit));
 		assertThat(created.getEncounterDatetime(), is(visit.getStartDatetime())); // make sure the encounter date has been shifted to match the visit start time of 10:10:10
 	}
-	
-	@Test
-	public void testEditingHtmlFormDefinedInUiResourceShouldChangeTimeOfEncounterDateIfNewDateHasTimeComponentEvenIfNotDifferentFromCurrentDate()
-	        throws Exception {
-		// first, ensure the form is created and persisted, by calling the controller display method
-		testDefiningAnHtmlFormInUiResource();
-		HtmlForm hf = htmlFormEntryService.getHtmlFormByForm(formService.getFormByUuid("form-uuid"));
-		
-		// make "Hippocrates" a provider
-		Provider provider = new Provider();
-		provider.setPerson(personService.getPerson(502));
-		providerService.saveProvider(provider);
-		
-		Patient patient = patientService.getPatient(8);
-		assertThat(encounterService.getEncountersByPatient(patient).size(), is(0));
-		
-		Date initialEncounterDate = new DateTime(2012, 1, 20, 10, 10, 10, 0).toDate();
-		String dateString = new SimpleDateFormat("yyyy-MM-dd").format(initialEncounterDate);
-		
-		MockHttpServletRequest request = new MockHttpServletRequest();
-		request.addParameter("w2", "70"); // weight in kg
-		request.addParameter("w3", dateString); // date
-		request.addParameter("w3hours", "10");
-		request.addParameter("w3minutes", "10");
-		request.addParameter("w3seconds", "10");
-		request.addParameter("w3timezone", TimeZone.getDefault().getID());
-		request.addParameter("w5", "2"); // location = Xanadu
-		request.addParameter("w7", "502"); // provider = Hippocrates
-		
-		SimpleObject result = controller.submit(sessionContext, patient, hf, null, null, false, null, adtService,
-		    featureToggles, ui, request);
-		assertThat((Boolean) result.get("success"), is(Boolean.TRUE));
-		assertThat(encounterService.getEncountersByPatient(patient).size(), is(1));
-		Encounter created = encounterService.getEncountersByPatient(patient).get(0);
-		
-		Date updatedEncounterDate = new DateTime(2012, 1, 10, 10, 10, 10, 0).toDate();
-		String updatedDateString = new SimpleDateFormat("yyyy-MM-dd").format(updatedEncounterDate);
-		
-		MockHttpServletRequest editRequest = new MockHttpServletRequest();
-		editRequest.addParameter("w2", "70"); // weight in kg
-		editRequest.addParameter("w3", updatedDateString); // date
-		editRequest.addParameter("w3hours", "10"); /// note that we are zeroing out the hour, minute and day component
-		editRequest.addParameter("w3minutes", "10");
-		editRequest.addParameter("w3seconds", "10");
-		editRequest.addParameter("w3timezone", TimeZone.getDefault().getID());
-		editRequest.addParameter("w5", "2"); // location = Xanadu
-		editRequest.addParameter("w7", "502"); // provider = Hippocrates
-		
-		result = controller.submit(sessionContext, patient, hf, created, null, false, null, adtService, featureToggles, ui,
-		    editRequest);
-		assertThat((Boolean) result.get("success"), is(Boolean.TRUE));
-		assertThat(encounterService.getEncountersByPatient(patient).size(), is(1));
-		
-		// this the date we input has an updated time component, we want to have updated the encounter date
-		assertThat(created.getEncounterDatetime(), is(updatedEncounterDate));
-		
-	}
-	
-	@Test
-	public void testEditingHtmlFormDefinedInUiResourceShouldChangeTimeOfEncounterDateIfNewDateDifferentFromOldDate()
-	        throws Exception {
-		// first, ensure the form is created and persisted, by calling the controller display method
-		testDefiningAnHtmlFormInUiResource();
-		HtmlForm hf = htmlFormEntryService.getHtmlFormByForm(formService.getFormByUuid("form-uuid"));
-		
-		// make "Hippocrates" a provider
-		Provider provider = new Provider();
-		provider.setPerson(personService.getPerson(502));
-		providerService.saveProvider(provider);
-		
-		Patient patient = patientService.getPatient(8);
-		assertThat(encounterService.getEncountersByPatient(patient).size(), is(0));
-		
-		Date initialEncounterDate = new DateTime(2012, 1, 20, 10, 10, 10, 0).toDate();
-		String dateString = new SimpleDateFormat("yyyy-MM-dd").format(initialEncounterDate);
-		
-		MockHttpServletRequest request = new MockHttpServletRequest();
-		request.addParameter("w2", "70"); // weight in kg
-		request.addParameter("w3", dateString); // date
-		request.addParameter("w3hours", "10");
-		request.addParameter("w3minutes", "10");
-		request.addParameter("w3seconds", "10");
-		request.addParameter("w3timezone", TimeZone.getDefault().getID());
-		request.addParameter("w5", "2"); // location = Xanadu
-		request.addParameter("w7", "502"); // provider = Hippocrates
-		
-		SimpleObject result = controller.submit(sessionContext, patient, hf, null, null, false, null, adtService,
-		    featureToggles, ui, request);
-		assertThat((Boolean) result.get("success"), is(Boolean.TRUE));
-		assertThat(encounterService.getEncountersByPatient(patient).size(), is(1));
-		Encounter created = encounterService.getEncountersByPatient(patient).get(0);
-		
-		Date updatedEncounterDate = new DateTime(2012, 1, 22, 0, 0, 0, 0).toDate();
-		String updatedDateString = new SimpleDateFormat("yyyy-MM-dd").format(updatedEncounterDate);
-		
-		MockHttpServletRequest editRequest = new MockHttpServletRequest();
-		editRequest.addParameter("w2", "70"); // weight in kg
-		editRequest.addParameter("w3", updatedDateString); // date
-		editRequest.addParameter("w3hours", "0"); /// note that we are zeroing out the hour, minute and day component
-		editRequest.addParameter("w3minutes", "0");
-		editRequest.addParameter("w3seconds", "0");
-		editRequest.addParameter("w3timezone", TimeZone.getDefault().getID());
-		editRequest.addParameter("w5", "2"); // location = Xanadu
-		editRequest.addParameter("w7", "502"); // provider = Hippocrates
-		
-		result = controller.submit(sessionContext, patient, hf, created, null, false, null, adtService, featureToggles, ui,
-		    editRequest);
-		assertThat((Boolean) result.get("success"), is(Boolean.TRUE));
-		assertThat(encounterService.getEncountersByPatient(patient).size(), is(1));
-		
-		// this the date we input has an updated time component, we want to have updated the encounter date
-		assertThat(created.getEncounterDatetime(), is(updatedEncounterDate));
-		
-	}
-	
+
 	@Test
 	public void testFeatureTogglingViaVelocityShouldNotShowFeatureIfToggledOff() throws Exception {
 		FragmentModel model = new FragmentModel();

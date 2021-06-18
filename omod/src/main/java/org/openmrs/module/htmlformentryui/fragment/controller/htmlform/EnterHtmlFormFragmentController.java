@@ -269,14 +269,6 @@ public class EnterHtmlFormFragmentController extends BaseHtmlFormFragmentControl
 		        ? fes.getSubmissionActions().getEncountersToCreate().get(0)
 		        : encounter;
 		
-		// this will handled in HFE (and could be removed from here) as-of HFE 3.9.0, see: https://issues.openmrs.org/browse/HTML-678
-		// we don't want to lose any time information just because we edited it with a form that only collects date
-		if (fes.getContext().getMode() == FormEntryContext.Mode.EDIT
-		        && hasNoTimeComponent(formEncounter.getEncounterDatetime())) {
-			keepTimeComponentOfEncounterIfDateComponentHasNotChanged(fes.getContext().getPreviousEncounterDate(),
-			    formEncounter);
-		}
-		
 		// create a visit if necessary (note that this currently only works in real-time mode)
 		if (createVisit != null && (createVisit) && visit == null) {
 			visit = adtService.ensureActiveVisit(patient, sessionContext.getSessionLocation());
