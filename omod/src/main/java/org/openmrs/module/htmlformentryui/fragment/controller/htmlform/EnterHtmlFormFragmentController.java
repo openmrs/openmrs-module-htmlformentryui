@@ -120,7 +120,7 @@ public class EnterHtmlFormFragmentController extends BaseHtmlFormFragmentControl
 				hf = htmlFormEntryService.getHtmlFormByForm(form);
 			} else if (StringUtils.isNotBlank(definitionUiResource)) {
 				hf = HtmlFormUtil.getHtmlFormFromUiResource(resourceFactory, formService, htmlFormEntryService,
-				    definitionUiResource);
+				    definitionUiResource, encounter);
 			}
 		}
 		if (hf == null && encounter != null) {

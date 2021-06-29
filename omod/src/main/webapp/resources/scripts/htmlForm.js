@@ -52,7 +52,11 @@
         jq("#encounterDate").find(".hfe-seconds").val(clientDateTime.getSeconds()).change();
     }
 
-    var splitDate= function (date) {
+    /**
+     * Receives a datetime on ISO8601 format and return only the date part.
+     * Example: receives the datetime 2021-04-01T15:00:00.000+0000, the output is 04-01-2021.
+     **/
+    var splitDate = function (date) {
         date = date.substring(0,10).split('-')
         date = date[1] + '-' + date[2] + '-' + date[0]
         return new Date(date)
