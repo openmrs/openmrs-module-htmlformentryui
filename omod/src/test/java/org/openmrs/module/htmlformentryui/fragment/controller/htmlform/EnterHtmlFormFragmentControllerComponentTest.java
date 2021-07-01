@@ -285,21 +285,17 @@ public class EnterHtmlFormFragmentControllerComponentTest extends BaseModuleWebC
 		assertThat(encounterService.getEncountersByPatient(patient).size(), is(0));
 
 		Visit visit = visitService.getVisit(1001);
-		visit.setStartDatetime(new DateTime(2012, 1, 20, 10, 10, 10, 0).toDate());
 
-		Date initialEncounterDate = new DateTime(2012, 1, 20, 10, 10, 10, 0).toDate();
-		String dateString = new SimpleDateFormat("yyyy-MM-dd").format(initialEncounterDate);
+		Date date = new DateMidnight(2012, 1, 20).toDate();
+		String dateString = new SimpleDateFormat("yyyy-MM-dd").format(date);
 
 		MockHttpServletRequest request = new MockHttpServletRequest();
 		request.addParameter("w2", "70"); // weight in kg
-		request.addParameter("w5", dateString); // date
-		request.addParameter("w3hours", "10");
-		request.addParameter("w3minutes", "10");
-		request.addParameter("w3seconds", "10");
-		request.addParameter("w7", "2"); // location = Xanadu
-		request.addParameter("w9", "502"); // provider = Hippocrates
+		request.addParameter("w3", dateString); // date
+		request.addParameter("w5", "2"); // location = Xanadu
+		request.addParameter("w7", "502"); // provider = Hippocrates
 
-		SimpleObject result = controller.submit(sessionContext, patient, hf, null, visit, false, null, adtService,
+		SimpleObject result = controller.submit(sessionContext, patient, hf, null, visit, true, null, adtService,
 				featureToggles, ui, request);
 		assertThat((Boolean) result.get("success"), is(Boolean.TRUE));
 		assertThat(encounterService.getEncountersByPatient(patient).size(), is(1));
@@ -313,11 +309,8 @@ public class EnterHtmlFormFragmentControllerComponentTest extends BaseModuleWebC
 		MockHttpServletRequest editRequest = new MockHttpServletRequest();
 		editRequest.addParameter("w2", "70"); // weight in kg
 		editRequest.addParameter("w5", updatedDateString); // date
-		editRequest.addParameter("w3hours", "9"); /// note that we are zeroing out the hour, minute and day component
-		editRequest.addParameter("w3minutes", "10");
-		editRequest.addParameter("w3seconds", "10");
-		editRequest.addParameter("w7", "2"); // location = Xanadu
-		editRequest.addParameter("w9", "502"); // provider = Hippocrates
+		editRequest.addParameter("w5", "2"); // location = Xanadu
+		editRequest.addParameter("w7", "502"); // provider = Hippocrates
 
 		result = controller.submit(sessionContext, patient, hf, created, visit, false, null, adtService, featureToggles, ui,
 				editRequest);
