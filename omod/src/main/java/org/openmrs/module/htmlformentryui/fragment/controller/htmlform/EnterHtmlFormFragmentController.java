@@ -348,7 +348,7 @@ public class EnterHtmlFormFragmentController extends BaseHtmlFormFragmentControl
 	private void setupModel(FragmentModel model, FormEntrySession fes, VisitDomainWrapper visitDomainWrapper,
 	        Boolean createVisit, String visitStartDatetime, String visitStopDatetime, UiUtils ui) {
 		
-		String currentDate = ui.convertTimezones() ? ui.format(new Date()) : new Date().toString();
+		String currentDate = ui.convertTimezones() ? ui.format(new Date()) : ui.dateToISOString(new Date());
 		model.addAttribute("visitStartDatetime", visitStartDatetime);
 		model.addAttribute("visitStopDatetime", visitStopDatetime);
 		model.addAttribute("currentDate", currentDate);

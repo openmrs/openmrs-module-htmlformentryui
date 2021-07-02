@@ -77,13 +77,13 @@
             htmlForm.setEncounterStartDateRange('${visitStartDatetime}', ${ui.convertTimezones()});
             htmlForm.setEncounterStopDateRange('${visitStopDatetime}', ${ui.convertTimezones()});
         <% } else { %>
-            // note that we need to get the current datetime from the *server*, in case the server and client are in different time zones
-            htmlForm.setEncounterDate('${(currentDate)}');
-            //set client Timezone
-            <% if (ui.convertTimezones() != null) { %>
+            <% if (ui.convertTimezones()) { %>
                 //without visit
                 htmlForm.adjustTimeZoneEncounterDate('${currentDate}');
-            <% }%>
+            <% } else { %>
+                // note that we need to get the current datetime from the *server*, in case the server and client are in different time zones
+                htmlForm.setEncounterDate('${(currentDate)}');
+            <% } %>
             htmlForm.setEncounterStopDateRange('${(currentDate)}' , ${ui.convertTimezones()});
         <% } %>
         // for now, just disable manual entry until we figure out proper validation
