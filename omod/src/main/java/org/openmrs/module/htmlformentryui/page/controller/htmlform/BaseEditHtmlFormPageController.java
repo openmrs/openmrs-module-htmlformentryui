@@ -14,9 +14,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 public class BaseEditHtmlFormPageController {
 	
-	public void get(
-	        @RequestParam("encounterId") Encounter encounter,
-	        @RequestParam("patientId") Patient patient, // explicitly require this instead of inferring from encounter because this sets up the global context
+	public void get(@RequestParam("encounterId") Encounter encounter, @RequestParam("patientId") Patient patient, // explicitly require this instead of inferring from encounter because this sets up the global context
 	        @RequestParam(value = "returnUrl", required = false) String returnUrl,
 	        @RequestParam(value = "returnProvider", required = false) String returnProvider,
 	        @RequestParam(value = "returnPage", required = false) String returnPage,
@@ -52,8 +50,8 @@ public class BaseEditHtmlFormPageController {
 			throw new IllegalArgumentException("encounter.form is not an HTML Form: " + encounter.getForm());
 		}
 		
-		returnUrl = HtmlFormUtil
-		        .determineReturnUrl(returnUrl, returnProvider, returnPage, patient, encounter.getVisit(), ui);
+		returnUrl = HtmlFormUtil.determineReturnUrl(returnUrl, returnProvider, returnPage, patient, encounter.getVisit(),
+		    ui);
 		returnLabel = HtmlFormUtil.determineReturnLabel(returnLabel, patient, ui);
 		
 		pageModel.addAttribute("encounter", encounter);
