@@ -55,8 +55,8 @@ public class ViewEncounterWithHtmlFormFragmentController extends BaseHtmlFormFra
 	        @FragmentParam(value = "definitionUiResource", required = false) String definitionUiResource,
 	        HttpSession httpSession, UiUtils ui, UiSessionContext sessionContext, FragmentModel model) throws Exception {
 		
-		VisitDomainWrapper visitWrapper = encounter.getVisit() == null ? null
-		        : new VisitDomainWrapper(encounter.getVisit(), emrApiProperties, dispositionService);
+		VisitDomainWrapper visitWrapper = encounter.getVisit() == null ? null : new VisitDomainWrapper(encounter.getVisit(),
+		        emrApiProperties, dispositionService);
 		
 		model.addAttribute("encounterDatetime", encounter.getEncounterDatetime());
 		model.addAttribute("formattedEncounterDatetime", ui.formatDatetimePretty(encounter.getEncounterDatetime()));
@@ -76,8 +76,8 @@ public class ViewEncounterWithHtmlFormFragmentController extends BaseHtmlFormFra
 	        @RequestParam(value = "definitionUiResource", required = false) String definitionUiResource, UiUtils ui,
 	        UiSessionContext sessionContext, HttpSession httpSession) throws Exception {
 		
-		VisitDomainWrapper visitWrapper = encounter.getVisit() == null ? null
-		        : new VisitDomainWrapper(encounter.getVisit(), emrApiProperties, dispositionService);
+		VisitDomainWrapper visitWrapper = encounter.getVisit() == null ? null : new VisitDomainWrapper(encounter.getVisit(),
+		        emrApiProperties, dispositionService);
 		
 		SimpleObject simpleObject = new SimpleObject();
 		simpleObject.put("encounterDatetime", encounter.getEncounterDatetime());

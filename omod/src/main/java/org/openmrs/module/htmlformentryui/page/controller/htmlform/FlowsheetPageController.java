@@ -153,8 +153,7 @@ public class FlowsheetPageController {
 	/**
 	 * @return an HtmlForm that is represented by the given resource in the web project
 	 */
-	protected HtmlForm getHtmlFormFromResource(String resource, ResourceFactory rf, FormService fs,
-	        HtmlFormEntryService hfs) {
+	protected HtmlForm getHtmlFormFromResource(String resource, ResourceFactory rf, FormService fs, HtmlFormEntryService hfs) {
 		try {
 			// TODO figure out how flowsheets might work with: https://issues.openmrs.org/browse/HTML-768
 			HtmlForm form = HtmlFormUtil.getHtmlFormFromUiResource(rf, fs, hfs, resource);
@@ -169,7 +168,8 @@ public class FlowsheetPageController {
 	}
 	
 	/**
-	 * @return all encounters for the given patient that have the same encounter type as the given form
+	 * @return all encounters for the given patient that have the same encounter type as the given
+	 *         form
 	 */
 	protected List<Encounter> getEncountersForForm(Patient p, HtmlForm form, String conceptStr) {
 		

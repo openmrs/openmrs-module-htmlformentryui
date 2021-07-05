@@ -32,8 +32,7 @@ public class HtmlFormPageController {
 	        @RequestParam(value = "formName") String formName, @RequestParam(value = "editMode") Boolean editMode,
 	        @RequestParam(value = "encounter", required = false) Encounter encounter,
 	        @RequestParam(value = "returnUrl", required = false) String returnUrl,
-	        @RequestParam(value = "encounterDate", required = false) Date defaultEncounterDate, UiUtils ui,
-	        PageModel model) {
+	        @RequestParam(value = "encounterDate", required = false) Date defaultEncounterDate, UiUtils ui, PageModel model) {
 		
 		model.addAttribute("fragmentProvider", "htmlformentryui");
 		model.addAttribute("fragmentName", editMode ? "htmlform/enterHtmlForm" : "htmlform/viewEncounterWithHtmlForm");

@@ -82,17 +82,21 @@ public class EnterHtmlFormFragmentController extends BaseHtmlFormFragmentControl
 	 * @param encounter
 	 * @param visit
 	 * @param returnUrl
-	 * @param automaticValidation defaults to true. If you don't want HFE's automatic validation, set it
-	 *            to false
+	 * @param automaticValidation defaults to true. If you don't want HFE's automatic validation,
+	 *            set it to false
 	 * @param model
 	 * @param httpSession
 	 * @throws Exception
 	 */
-	public void controller(FragmentConfiguration config, UiSessionContext sessionContext, UiUtils ui,
+	public void controller(FragmentConfiguration config,
+	        UiSessionContext sessionContext,
+	        UiUtils ui,
 	        @SpringBean("htmlFormEntryService") HtmlFormEntryService htmlFormEntryService,
-	        @SpringBean("adtService") AdtService adtService, @SpringBean("formService") FormService formService,
+	        @SpringBean("adtService") AdtService adtService,
+	        @SpringBean("formService") FormService formService,
 	        @SpringBean("coreResourceFactory") ResourceFactory resourceFactory,
-	        @SpringBean("featureToggles") FeatureToggleProperties featureToggles, @FragmentParam("patient") Patient patient,
+	        @SpringBean("featureToggles") FeatureToggleProperties featureToggles,
+	        @FragmentParam("patient") Patient patient,
 	        @FragmentParam(value = "htmlForm", required = false) HtmlForm hf,
 	        @FragmentParam(value = "htmlFormId", required = false) Integer htmlFormId,
 	        @FragmentParam(value = "formId", required = false) Form form,
@@ -234,21 +238,21 @@ public class EnterHtmlFormFragmentController extends BaseHtmlFormFragmentControl
 		catch (Exception ex) {
 			StringWriter sw = new StringWriter();
 			ex.printStackTrace(new PrintWriter(sw));
-			validationErrors.add(new FormSubmissionError("general-form-error",
-			        "Form submission error " + ex.getMessage() + "<br/>" + sw.toString()));
+			validationErrors.add(new FormSubmissionError("general-form-error", "Form submission error " + ex.getMessage()
+			        + "<br/>" + sw.toString()));
 			return returnHelper(validationErrors, fes, null);
 		}
 		
 		// Check this form will actually create an encounter if its supposed to
-		if (fes.getContext().getMode() == FormEntryContext.Mode.ENTER && fes.hasEncouterTag()
-		        && (fes.getSubmissionActions().getEncountersToCreate() == null
-		                || fes.getSubmissionActions().getEncountersToCreate().size() == 0)) {
+		if (fes.getContext().getMode() == FormEntryContext.Mode.ENTER
+		        && fes.hasEncouterTag()
+		        && (fes.getSubmissionActions().getEncountersToCreate() == null || fes.getSubmissionActions()
+		                .getEncountersToCreate().size() == 0)) {
 			throw new IllegalArgumentException("This form is not going to create an encounter");
 		}
 		
-		Encounter formEncounter = fes.getContext().getMode() == FormEntryContext.Mode.ENTER
-		        ? fes.getSubmissionActions().getEncountersToCreate().get(0)
-		        : encounter;
+		Encounter formEncounter = fes.getContext().getMode() == FormEntryContext.Mode.ENTER ? fes.getSubmissionActions()
+		        .getEncountersToCreate().get(0) : encounter;
 		
 		// create a visit if necessary (note that this currently only works in real-time mode)
 		if (createVisit != null && (createVisit) && visit == null) {
@@ -262,12 +266,12 @@ public class EnterHtmlFormFragmentController extends BaseHtmlFormFragmentControl
 				new EncounterDomainWrapper(formEncounter).attachToVisit(visit);
 			}
 			catch (EncounterDateBeforeVisitStartDateException e) {
-				validationErrors.add(
-				    new FormSubmissionError("general-form-error", ui.message("htmlformentryui.datetimeAfterVisitDate")));
+				validationErrors.add(new FormSubmissionError("general-form-error", ui
+				        .message("htmlformentryui.datetimeAfterVisitDate")));
 			}
 			catch (EncounterDateAfterVisitStopDateException e) {
-				validationErrors.add(
-				    new FormSubmissionError("general-form-error", ui.message("htmlformentryui.datetimeBeforeVisitDate")));
+				validationErrors.add(new FormSubmissionError("general-form-error", ui
+				        .message("htmlformentryui.datetimeBeforeVisitDate")));
 			}
 			
 			if (validationErrors.size() > 0) {
@@ -278,10 +282,11 @@ public class EnterHtmlFormFragmentController extends BaseHtmlFormFragmentControl
 		// Do actual encounter creation/updating
 		fes.applyActions();
 		
-		request.getSession().setAttribute(UiCommonsConstants.SESSION_ATTRIBUTE_INFO_MESSAGE,
-		    ui.message(
-		        editMode ? "htmlformentryui.editHtmlForm.successMessage" : "htmlformentryui.enterHtmlForm.successMessage",
-		        ui.format(hf.getForm()), ui.escapeJs(ui.format(patient))));
+		request.getSession().setAttribute(
+		    UiCommonsConstants.SESSION_ATTRIBUTE_INFO_MESSAGE,
+		    ui.message(editMode ? "htmlformentryui.editHtmlForm.successMessage"
+		            : "htmlformentryui.enterHtmlForm.successMessage", ui.format(hf.getForm()), ui.encodeJavaScript(ui
+		            .format(patient))));
 		request.getSession().setAttribute(UiCommonsConstants.SESSION_ATTRIBUTE_TOAST_MESSAGE, "true");
 		
 		return returnHelper(null, fes, formEncounter);
@@ -293,13 +298,12 @@ public class EnterHtmlFormFragmentController extends BaseHtmlFormFragmentControl
 			String afterSaveUrl = session.getAfterSaveUrlTemplate();
 			if (afterSaveUrl != null) {
 				afterSaveUrl = afterSaveUrl.replaceAll("\\{\\{patient.id\\}\\}", session.getPatient().getId().toString());
-				afterSaveUrl = afterSaveUrl.replaceAll("\\{\\{encounter.id\\}\\}",
-				    session.getEncounter().getId().toString());
+				afterSaveUrl = afterSaveUrl
+				        .replaceAll("\\{\\{encounter.id\\}\\}", session.getEncounter().getId().toString());
 			}
-			return SimpleObject.create("success", true, "encounterId", encounter.getId(), "encounterUuid",
-			    encounter.getUuid(), "encounterTypeUuid",
-			    encounter.getEncounterType() != null ? encounter.getEncounterType().getUuid() : null, "goToUrl",
-			    afterSaveUrl);
+			return SimpleObject.create("success", true, "encounterId", encounter.getId(), "encounterUuid", encounter
+			        .getUuid(), "encounterTypeUuid", encounter.getEncounterType() != null ? encounter.getEncounterType()
+			        .getUuid() : null, "goToUrl", afterSaveUrl);
 		} else {
 			Map<String, String> errors = new HashMap<String, String>();
 			for (FormSubmissionError err : validationErrors) {
@@ -316,8 +320,7 @@ public class EnterHtmlFormFragmentController extends BaseHtmlFormFragmentControl
 		return new DateMidnight(date).toDate().equals(date);
 	}
 	
-	private void keepTimeComponentOfEncounterIfDateComponentHasNotChanged(Date previousEncounterDate,
-	        Encounter formEncounter) {
+	private void keepTimeComponentOfEncounterIfDateComponentHasNotChanged(Date previousEncounterDate, Encounter formEncounter) {
 		
 		if (previousEncounterDate != null
 		        && new DateMidnight(previousEncounterDate).equals(new DateMidnight(formEncounter.getEncounterDatetime()))) {

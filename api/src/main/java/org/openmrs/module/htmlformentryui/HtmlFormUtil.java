@@ -203,7 +203,7 @@ public class HtmlFormUtil {
 		if (org.apache.commons.lang.StringUtils.isNotBlank(returnLabel)) {
 			return ui.message(returnLabel);
 		} else {
-			return ui.escapeJs(ui.format(patient));
+			return ui.encodeJavaScript(ui.format(patient));
 		}
 		
 	}
