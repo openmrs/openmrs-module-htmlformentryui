@@ -56,7 +56,7 @@
      * Receives a datetime on ISO8601 format and return only the date part.
      * Example: receives the datetime 2021-04-01T15:00:00.000+0000, the output is 04-01-2021.
      **/
-    var splitDate = function (date) {
+    var extractDate = function (date) {
         return moment(date.split('T'))[0].toDate()
     }
 
@@ -285,7 +285,7 @@
                 var startDateClientTimezone = new Date(date)
                 getField('encounterDate.value').datepicker('option', 'minDate', startDateClientTimezone)
             }else{
-                getField('encounterDate.value').datepicker('option', 'minDate',  splitDate(date));
+                getField('encounterDate.value').datepicker('option', 'minDate',  extractDate(date));
             }
         }
     };
@@ -301,7 +301,7 @@
                 var stopDateClientTimezone = new Date(date)
                 getField('encounterDate.value').datepicker('option', 'maxDate', stopDateClientTimezone > new Date ? new Date : stopDateClientTimezone)
             }else{
-                getField('encounterDate.value').datepicker('option', 'maxDate', splitDate(date));
+                getField('encounterDate.value').datepicker('option', 'maxDate', extractDate(date));
             }
         }
     };
@@ -309,7 +309,7 @@
     //Set the encounterDate datepicker value, this value will be overwritten if using timezones.
     htmlForm.setEncounterDate = function(date) {
         if (getField('encounterDate.value')) {
-            getField('encounterDate.value').datepicker('setDate',  splitDate(date));
+            getField('encounterDate.value').datepicker('setDate',  extractDate(date));
         }
     };
 
