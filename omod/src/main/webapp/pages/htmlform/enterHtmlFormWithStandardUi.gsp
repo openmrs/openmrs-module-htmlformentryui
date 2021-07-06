@@ -13,7 +13,7 @@
     var breadcrumbs = _.flatten([
         { icon: "icon-home", link: '/' + OPENMRS_CONTEXT_PATH + '/index.htm' },
         ${ breadcrumbMiddle },
-        { label: "${ ui.message(ui.escapeJs(ui.format(htmlForm.form)) )}" }
+        { label: "${ ui.message(ui.encodeJavaScript(ui.format(htmlForm.form)) )}" }
     ]);
 
     jq(function() {

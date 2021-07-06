@@ -30,7 +30,7 @@ ${ ui.includeFragment("coreapps", "patientHeader", [ patient: patient ]) }
     var breadcrumbs = _.flatten([
         { icon: "icon-home", link: '/' + OPENMRS_CONTEXT_PATH + '/index.htm' },
         ${ ui.encodeHtmlContent(breadcrumbMiddle) } ,
-        { label: "${ ui.escapeJs(ui.format(htmlForm.form)) }" }
+        { label: "${ ui.encodeJavaScript(ui.format(htmlForm.form)) }" }
     ]);
 
     jQuery(function() {

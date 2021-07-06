@@ -300,7 +300,7 @@ public class EnterHtmlFormFragmentController extends BaseHtmlFormFragmentControl
 		request.getSession().setAttribute(UiCommonsConstants.SESSION_ATTRIBUTE_INFO_MESSAGE,
 		    ui.message(
 		        editMode ? "htmlformentryui.editHtmlForm.successMessage" : "htmlformentryui.enterHtmlForm.successMessage",
-		        ui.format(hf.getForm()), ui.escapeJs(ui.format(patient))));
+		        ui.format(hf.getForm()), ui.encodeJavaScript(ui.format(patient))));
 		request.getSession().setAttribute(UiCommonsConstants.SESSION_ATTRIBUTE_TOAST_MESSAGE, "true");
 		
 		return returnHelper(null, fes, formEncounter);

@@ -9,7 +9,7 @@
 <script type="text/javascript">
     window.viewHtmlForm = {
         encounterId: ${ encounter.id },
-        returnUrl: "${ ui.escapeJs(returnUrl) }",
+        returnUrl: "${ ui.encodeJavaScript(returnUrl) }",
         htmlFormId: ${htmlForm.id},
         datetimeFormat:"${ui.getJSDatetimeFormat()}",
         dateFormat:"${ui.getJSDateFormat()}",
@@ -18,8 +18,8 @@
 
     var breadcrumbs = [
         { icon: "icon-home", link: '/' + OPENMRS_CONTEXT_PATH + '/index.htm' },
-        { label: "${ ui.escapeJs(returnLabel) }", link: "${ ui.escapeJs(returnUrl) }" },
-        { label: "${ ui.escapeJs(ui.message("htmlformentryui.viewHtmlForm.breadcrumb", ui.message(ui.format(htmlForm.form)))) }" }
+        { label: "${ ui.encodeJavaScript(returnLabel) }", link: "${ ui.encodeJavaScript(returnUrl) }" },
+        { label: "${ ui.encodeJavaScript(ui.message("htmlformentryui.viewHtmlForm.breadcrumb", ui.message(ui.format(htmlForm.form)))) }" }
     ];
 </script>
 
