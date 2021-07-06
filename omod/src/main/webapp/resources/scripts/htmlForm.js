@@ -57,7 +57,7 @@
      * Example: receives the datetime 2021-04-01T15:00:00.000+0000, the output is 04-01-2021.
      **/
     var extractDate = function (date) {
-        return moment(date.split('T'))[0].toDate()
+        return moment(date.split('T')[0]).toDate()
     }
 
     var findAndHighlightErrors = function() {
