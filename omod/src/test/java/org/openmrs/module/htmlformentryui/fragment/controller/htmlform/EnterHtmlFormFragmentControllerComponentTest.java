@@ -308,7 +308,7 @@ public class EnterHtmlFormFragmentControllerComponentTest extends BaseModuleWebC
 		
 		MockHttpServletRequest editRequest = new MockHttpServletRequest();
 		editRequest.addParameter("w2", "70"); // weight in kg
-		editRequest.addParameter("w5", updatedDateString); // date
+		editRequest.addParameter("w3", updatedDateString); // date
 		editRequest.addParameter("w5", "2"); // location = Xanadu
 		editRequest.addParameter("w7", "502"); // provider = Hippocrates
 		
