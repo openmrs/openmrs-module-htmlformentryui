@@ -11,6 +11,7 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.TimeZone;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang3.StringUtils;
@@ -164,6 +165,9 @@ public class ObsFromFragmentElement implements HtmlGeneratorElement, FormSubmiss
 			try {
 				DateFormat df = new SimpleDateFormat(WebConstants.DATE_FORMAT_DATETIME);
 				df.setLenient(false);
+				if (dataType.isDateTime() && uiUtils.convertTimezones() && uiUtils.getClientTimezone() != null) {
+					df.setTimeZone(TimeZone.getTimeZone(uiUtils.getClientTimezone()));
+				}
 				return df.parse(val);
 			}
 			catch (ParseException e) {

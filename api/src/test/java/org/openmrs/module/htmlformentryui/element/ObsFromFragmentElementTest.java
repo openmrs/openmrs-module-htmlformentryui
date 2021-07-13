@@ -20,6 +20,7 @@ import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.TimeZone;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -42,6 +43,7 @@ import org.openmrs.module.htmlformentry.FormEntryContext;
 import org.openmrs.module.htmlformentry.FormEntrySession;
 import org.openmrs.module.htmlformentry.FormSubmissionActions;
 import org.openmrs.module.htmlformentryui.element.ObsFromFragmentElement.Option;
+import org.openmrs.ui.framework.UiUtils;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 import org.springframework.mock.web.MockHttpServletRequest;
@@ -77,6 +79,9 @@ public class ObsFromFragmentElementTest {
 	@Mock
 	private FormEntrySession session;
 	
+	@Mock
+	private UiUtils uiUtils;
+	
 	private Map<String, Object> fragmentParams;
 	
 	private ObsFromFragmentElement element;
@@ -99,8 +104,10 @@ public class ObsFromFragmentElementTest {
 		fragmentParams.put("formFieldName", formFieldName);
 		
 		element = new ObsFromFragmentElement();
+		element.setUiUtils(uiUtils);
 		element.setFragmentParams(fragmentParams);
 		element.setInitFragmentParamName("initialValue");
+		
 	}
 	
 	@Test
@@ -312,6 +319,45 @@ public class ObsFromFragmentElementTest {
 				    // Verify
 				    Assert.assertTrue(concept.getDatatype().isDate());
 				    Assert.assertEquals(expectedDate, valueDate);
+				    return new Obs();
+			    }
+		    });
+		
+		// Replay
+		element.handleSubmission(session, request);
+		
+		// Verify
+		verify(submissionActions, times(1)).createObs(any(Concept.class), any(Object.class), any(Date.class),
+		    any(String.class), any(String.class));
+		
+	}
+	
+	@Test
+	public void handleSubmission_shouldCreateObsWithAConceptOfDatatypeDatetimeWithTimezoneConversion() {
+		// Setup
+		TimeZone.setDefault(TimeZone.getTimeZone("UTC"));
+		when(uiUtils.convertTimezones()).thenReturn(true);
+		when(uiUtils.getClientTimezone()).thenReturn("Europe/Zurich");
+		when(context.getMode()).thenReturn(FormEntryContext.Mode.ENTER);
+		when(request.getParameter(formFieldName)).thenReturn("2017-08-14 12:10:00");
+		
+		ConceptDatatype dateTimeDatatype = new ConceptDatatype();
+		dateTimeDatatype.setUuid(ConceptDatatype.DATETIME_UUID);
+		when(concept.getDatatype()).thenReturn(dateTimeDatatype);
+		element.setConcept(concept);
+		
+		when(submissionActions.createObs(any(Concept.class), any(Object.class), any(Date.class), any(String.class),
+		    any(String.class))).thenAnswer(new Answer() {
+			    
+			    @Override
+			    public Object answer(InvocationOnMock invocation) throws Throwable {
+				    Date expectedDatetime = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss").parse("2017-08-14 10:10:00");
+				    Concept concept = (Concept) invocation.getArguments()[0];
+				    Date valueDate = (Date) invocation.getArguments()[1];
+				    
+				    // Verify
+				    Assert.assertTrue(concept.getDatatype().isDateTime());
+				    Assert.assertEquals(expectedDatetime, valueDate);
 				    return new Obs();
 			    }
 		    });

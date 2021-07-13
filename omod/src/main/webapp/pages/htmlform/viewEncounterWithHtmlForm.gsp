@@ -3,13 +3,17 @@
 
     ui.includeJavascript("htmlformentryui", "htmlform/viewEncounterWithHtmlForm.js")
     ui.includeCss("htmlformentryui", "htmlform/viewEncounterWithHtmlForm.css")
+    ui.includeJavascript("uicommons", "moment-with-locales.min.js")
 %>
 
 <script type="text/javascript">
     window.viewHtmlForm = {
         encounterId: ${ encounter.id },
         returnUrl: "${ ui.encodeJavaScript(returnUrl) }",
-        htmlFormId: ${htmlForm.id}
+        htmlFormId: ${htmlForm.id},
+        datetimeFormat:"${ui.getJSDatetimeFormat()}",
+        dateFormat:"${ui.getJSDateFormat()}",
+        locale:"${ui.getLocale()}"
     };
 
     var breadcrumbs = [
