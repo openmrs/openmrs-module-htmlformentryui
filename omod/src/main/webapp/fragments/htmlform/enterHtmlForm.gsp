@@ -67,7 +67,7 @@
             <% if (command.context.mode.toString().equals('ENTER') && !visit.isOpen()) { %>
                 <% if (ui.convertTimezones()) { %>
                     //New encounter for past visit
-                    htmlForm.adjustTimeZoneEncounterDate('${visitStartDatetime}');
+                    htmlForm.adjustEncounterDatetimeWithTimezone('${visitStartDatetime}');
                 <% } else {%>
                     // set default date to the visit start date for retrospective visits
                     htmlForm.setEncounterDate('${ visitStartDatetime}');
@@ -79,7 +79,7 @@
         <% } else { %>
             <% if (ui.convertTimezones()) { %>
                 //without visit
-                htmlForm.adjustTimeZoneEncounterDate('${currentDate}');
+                htmlForm.adjustEncounterDatetimeWithTimezone('${currentDate}');
             <% } else { %>
                 // note that we need to get the current datetime from the *server*, in case the server and client are in different time zones
                 htmlForm.setEncounterDate('${(currentDate)}');

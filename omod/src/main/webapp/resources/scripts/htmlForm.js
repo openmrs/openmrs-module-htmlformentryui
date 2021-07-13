@@ -314,7 +314,7 @@
     };
 
     //Used to adjust encounterDate with client timezone
-    htmlForm.adjustTimeZoneEncounterDate = function(setDateTime ) {
+    htmlForm.adjustEncounterDatetimeWithTimezone = function(setDateTime ) {
         if (jq("#encounterDate").find(".hfe-timezone").length) {
             //Set encounterDate default date and time
             var dateWithClientTimeZone =  new Date(setDateTime)
