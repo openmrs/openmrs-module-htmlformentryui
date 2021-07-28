@@ -282,8 +282,8 @@
     htmlForm.setEncounterStartDateRange = function(date , handletimezones) {
         if (getField('encounterDate.value')) {
             if (handletimezones) {
-                var startDateClientTimezone = new Date(date)
-                getField('encounterDate.value').datepicker('option', 'minDate', startDateClientTimezone)
+                var startDateWithClientTimezone = new Date(date)
+                getField('encounterDate.value').datepicker('option', 'minDate', startDateWithClientTimezone)
             }else{
                 getField('encounterDate.value').datepicker('option', 'minDate',  extractDate(date));
             }
@@ -298,8 +298,8 @@
         }
         if (getField('encounterDate.value')) {
             if (handletimezones) {
-                var stopDateClientTimezone = new Date(date)
-                getField('encounterDate.value').datepicker('option', 'maxDate', stopDateClientTimezone > new Date ? new Date : stopDateClientTimezone)
+                var stopDateWithClientTimezone = new Date(date)
+                getField('encounterDate.value').datepicker('option', 'maxDate', stopDateWithClientTimezone > new Date ? new Date : stopDateWithClientTimezone)
             }else{
                 getField('encounterDate.value').datepicker('option', 'maxDate', extractDate(date));
             }
