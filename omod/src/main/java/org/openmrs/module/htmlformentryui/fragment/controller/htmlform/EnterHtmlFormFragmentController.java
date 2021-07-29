@@ -60,6 +60,8 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.text.SimpleDateFormat;
+import java.util.TimeZone;
 
 /**
  *
@@ -144,10 +146,27 @@ public class EnterHtmlFormFragmentController extends BaseHtmlFormFragmentControl
 			        !automaticValidation);
 		}
 		
+		String visitStartDatetime = null;
+		String visitStopDatetime = null;
+		
+		//If GP timezone is true, it will convert the visitStartDatetime and visitStopDatetime to UTC and format RFC3339
+		if (visit != null) {
+			if (visit.getStartDatetime() != null) {
+				visitStartDatetime = ui.convertTimezones() ? ui.format(visit.getStartDatetime())
+				        : ui.dateToISOString(visit.getStartDatetime());
+			}
+			if (visit.getStopDatetime() != null) {
+				visitStopDatetime = ui.convertTimezones() ? ui.format(visit.getStopDatetime())
+				        : ui.dateToISOString(visit.getStopDatetime());
+			} else {
+				visitStopDatetime = ui.convertTimezones() ? ui.format(new Date()) : ui.dateToISOString(new Date());
+			}
+		}
+		
 		VisitDomainWrapper visitDomainWrapper = getVisitDomainWrapper(visit, encounter, adtService);
 		setupVelocityContext(fes, visitDomainWrapper, ui, sessionContext, featureToggles);
 		setupFormEntrySession(fes, visitDomainWrapper, defaultEncounterDate, ui, sessionContext, returnUrl);
-		setupModel(model, fes, visitDomainWrapper, createVisit);
+		setupModel(model, fes, visitDomainWrapper, createVisit, visitStartDatetime, visitStopDatetime, ui);
 		
 	}
 	
@@ -327,11 +346,15 @@ public class EnterHtmlFormFragmentController extends BaseHtmlFormFragmentControl
 	}
 	
 	private void setupModel(FragmentModel model, FormEntrySession fes, VisitDomainWrapper visitDomainWrapper,
-	        Boolean createVisit) {
+	        Boolean createVisit, String visitStartDatetime, String visitStopDatetime, UiUtils ui) {
 		
-		model.addAttribute("currentDate", (new DateMidnight()).toDate());
+		String currentDate = ui.convertTimezones() ? ui.format(new Date()) : ui.dateToISOString(new Date());
+		model.addAttribute("visitStartDatetime", visitStartDatetime);
+		model.addAttribute("visitStopDatetime", visitStopDatetime);
+		model.addAttribute("currentDate", currentDate);
 		model.addAttribute("command", fes);
 		model.addAttribute("visit", visitDomainWrapper);
+		
 		if (createVisit != null) {
 			model.addAttribute("createVisit", createVisit.toString());
 		} else {

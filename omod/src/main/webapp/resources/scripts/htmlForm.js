@@ -40,6 +40,26 @@
         return jq(".submitButton.confirm").is(":disabled");
     }
 
+
+    /**
+     * Change the hours, minutes and seconds dropdowns to new date with client timezone
+     * also change the encounterDate datepicker current date to new date with client timezone
+     **/
+    var changeTimeWidgetClientTimeZone = function (clientDateTime) {
+        getField('encounterDate.value').datepicker('setDate', clientDateTime)
+        jq("#encounterDate").find(".hfe-hours").val(clientDateTime.getHours()).change();
+        jq("#encounterDate").find(".hfe-minutes").val(clientDateTime.getMinutes()).change();
+        jq("#encounterDate").find(".hfe-seconds").val(clientDateTime.getSeconds()).change();
+    }
+
+    /**
+     * Receives a datetime on ISO8601 format and return only the date part.
+     * Example: receives the datetime 2021-04-01T15:00:00.000+0000, the output is 04-01-2021.
+     **/
+    var extractDate = function (date) {
+        return moment(date.split('T')[0]).toDate()
+    }
+
     var findAndHighlightErrors = function() {
         /* see if there are error fields */
         var containError = false
@@ -258,22 +278,48 @@
     // TODO: these methods (getEncounter*Date*) will have to be modified when/if we switch datepickers
     // TODO: could/should be generalized so as not to be datepicker dependent?
 
-    htmlForm.setEncounterStartDateRange = function(date) {
+    //Set encounterDate datepicker start date
+    htmlForm.setEncounterStartDateRange = function(date , handletimezones) {
         if (getField('encounterDate.value')) {
-            getField('encounterDate.value').datepicker('option', 'minDate', date);
+            if (handletimezones) {
+                var startDateWithClientTimezone = new Date(date)
+                getField('encounterDate.value').datepicker('option', 'minDate', startDateWithClientTimezone)
+            }else{
+                getField('encounterDate.value').datepicker('option', 'minDate',  extractDate(date));
+            }
         }
     };
 
-    htmlForm.setEncounterStopDateRange = function(date) {
+    //Set encounterDate datepicker stop date
+    htmlForm.setEncounterStopDateRange = function(date, handletimezones) {
+        //Set browser timezone
+        if(jq("#encounterDate").find(".hfe-timezone")){
+            jq("#encounterDate").find(".hfe-timezone").val(Intl.DateTimeFormat().resolvedOptions().timeZone)
+        }
         if (getField('encounterDate.value')) {
-            getField('encounterDate.value').datepicker('option', 'maxDate', date);
+            if (handletimezones) {
+                var stopDateWithClientTimezone = new Date(date)
+                getField('encounterDate.value').datepicker('option', 'maxDate', stopDateWithClientTimezone > new Date ? new Date : stopDateWithClientTimezone)
+            }else{
+                getField('encounterDate.value').datepicker('option', 'maxDate', extractDate(date));
+            }
         }
     };
 
+    //Set the encounterDate datepicker value, this value will be overwritten if using timezones.
     htmlForm.setEncounterDate = function(date) {
         if (getField('encounterDate.value')) {
-            getField('encounterDate.value').datepicker('setDate', date);
+            getField('encounterDate.value').datepicker('setDate',  extractDate(date));
         }
+    };
+
+    //Used to adjust encounterDate with client timezone
+    htmlForm.adjustEncounterDatetimeWithTimezone = function(setDateTime ) {
+        if (jq("#encounterDate").find(".hfe-timezone").length) {
+            //Set encounterDate default date and time
+            var dateWithClientTimeZone =  new Date(setDateTime)
+            changeTimeWidgetClientTimeZone(dateWithClientTimeZone);
+        };
     };
 
     htmlForm.disableEncounterDateManualEntry = function() {

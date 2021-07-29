@@ -39,19 +39,23 @@ import org.openmrs.module.emrapi.adt.AdtService;
 import org.openmrs.module.htmlformentry.FormEntrySession;
 import org.openmrs.module.htmlformentry.HtmlForm;
 import org.openmrs.module.htmlformentry.HtmlFormEntryService;
+import org.openmrs.ui.framework.FormatterImpl;
 import org.openmrs.ui.framework.SimpleObject;
 import org.openmrs.ui.framework.UiUtils;
 import org.openmrs.ui.framework.fragment.FragmentConfiguration;
 import org.openmrs.ui.framework.fragment.FragmentModel;
 import org.openmrs.ui.framework.resource.ResourceFactory;
 import org.openmrs.web.test.BaseModuleWebContextSensitiveTest;
+import org.powermock.reflect.Whitebox;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.context.MessageSource;
 import org.springframework.mock.web.MockHttpServletRequest;
 import uk.co.it.modular.hamcrest.date.DateMatchers;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.TimeZone;
 import java.util.concurrent.TimeUnit;
 
 import static org.hamcrest.Matchers.is;
@@ -106,6 +110,10 @@ public class EnterHtmlFormFragmentControllerComponentTest extends BaseModuleWebC
 	@Autowired
 	FeatureToggleProperties featureToggles;
 	
+	@Qualifier("messageSource")
+	@Autowired
+	MessageSource messageSource;
+
 	ResourceFactory resourceFactory;
 	
 	UiUtils ui;
@@ -131,12 +139,15 @@ public class EnterHtmlFormFragmentControllerComponentTest extends BaseModuleWebC
 		
 		ui = new TestUiUtils();
 		
+		FormatterImpl formatter = (FormatterImpl) Whitebox.getInternalState(ui, "formatter");
+		Whitebox.setInternalState(formatter, "messageSource", messageSource);
+
 		controller = new EnterHtmlFormFragmentController();
 	}
 	
 	@Test
 	public void testDefiningAnHtmlFormInUiResource() throws Exception {
-		
+
 		FragmentModel model = new FragmentModel();
 		Patient patient = new Patient();
 		String resourcePath = "emr:htmlforms/vitals.xml";
@@ -156,7 +167,7 @@ public class EnterHtmlFormFragmentControllerComponentTest extends BaseModuleWebC
 	
 	@Test
 	public void testSubmittingHtmlFormDefinedInUiResource() throws Exception {
-		
+
 		// first, ensure the form is created and persisted, by calling the controller display method
 		testDefiningAnHtmlFormInUiResource();
 		HtmlForm hf = htmlFormEntryService.getHtmlFormByForm(formService.getFormByUuid("form-uuid"));
@@ -200,7 +211,7 @@ public class EnterHtmlFormFragmentControllerComponentTest extends BaseModuleWebC
 	
 	@Test
 	public void testSubmittingHtmlFormDefinedInUiResourceShouldCreateOpenVisit() throws Exception {
-		
+
 		// first, ensure the form is created and persisted, by calling the controller display method
 		testDefiningAnHtmlFormInUiResource();
 		HtmlForm hf = htmlFormEntryService.getHtmlFormByForm(formService.getFormByUuid("form-uuid"));
@@ -236,7 +247,7 @@ public class EnterHtmlFormFragmentControllerComponentTest extends BaseModuleWebC
 	
 	@Test
 	public void testSubmittingHtmlFormDefinedInUiResourceShouldAssociateWithExistingVisit() throws Exception {
-		
+
 		// first, ensure the form is created and persisted, by calling the controller display method
 		testDefiningAnHtmlFormInUiResource();
 		HtmlForm hf = htmlFormEntryService.getHtmlFormByForm(formService.getFormByUuid("form-uuid"));
@@ -270,7 +281,7 @@ public class EnterHtmlFormFragmentControllerComponentTest extends BaseModuleWebC
 		assertThat(created.getVisit(), is(visit));
 		assertThat(created.getEncounterDatetime(), is(visit.getStartDatetime())); // make sure the encounter date has been shifted to match the visit start time of 10:10:10
 	}
-	
+
 	@Test
 	public void testFeatureTogglingViaVelocityShouldNotShowFeatureIfToggledOff() throws Exception {
 		FragmentModel model = new FragmentModel();

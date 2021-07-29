@@ -65,20 +65,27 @@
 
         <% if (visit) { %>
             <% if (command.context.mode.toString().equals('ENTER') && !visit.isOpen()) { %>
-                // set default date to the visit start date for retrospective visits
-                htmlForm.setEncounterDate(moment('${ ui.dateToISOString(visit.startDate).split('T')[0] }').toDate());
+                <% if (ui.convertTimezones()) { %>
+                    //New encounter for past visit
+                    htmlForm.adjustEncounterDatetimeWithTimezone('${visitStartDatetime}');
+                <% } else {%>
+                    // set default date to the visit start date for retrospective visits
+                    htmlForm.setEncounterDate('${ visitStartDatetime}');
+                <% } %>
             <% } %>
-
-            // set valid date range based on visit
-            htmlForm.setEncounterStartDateRange(moment('${  ui.dateToISOString(visit.startDate).split('T')[0] }').toDate());
-            htmlForm.setEncounterStopDateRange(moment('${ visit.stopDate ? ui.dateToISOString(visit.stopDate).split('T')[0] : ui.dateToISOString(currentDate).split('T')[0] }').toDate());
-
+            // set valid date range based on visit getStartDatetime
+            htmlForm.setEncounterStartDateRange('${visitStartDatetime}', ${ui.convertTimezones()});
+            htmlForm.setEncounterStopDateRange('${visitStopDatetime}', ${ui.convertTimezones()});
         <% } else { %>
-            // note that we need to get the current datetime from the *server*, in case the server and client are in different time zones
-            htmlForm.setEncounterStopDateRange(moment('${  ui.dateToISOString(currentDate).split('T')[0] }').toDate());
-            htmlForm.setEncounterDate(moment('${  ui.dateToISOString(currentDate).split('T')[0] }').toDate());
+            <% if (ui.convertTimezones()) { %>
+                //without visit
+                htmlForm.adjustEncounterDatetimeWithTimezone('${currentDate}');
+            <% } else { %>
+                // note that we need to get the current datetime from the *server*, in case the server and client are in different time zones
+                htmlForm.setEncounterDate('${(currentDate)}');
+            <% } %>
+            htmlForm.setEncounterStopDateRange('${(currentDate)}' , ${ui.convertTimezones()});
         <% } %>
-
         // for now, just disable manual entry until we figure out proper validation
         htmlForm.disableEncounterDateManualEntry();
 
