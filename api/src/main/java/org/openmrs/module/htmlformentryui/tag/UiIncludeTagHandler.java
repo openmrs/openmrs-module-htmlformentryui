@@ -1,14 +1,5 @@
 package org.openmrs.module.htmlformentryui.tag;
 
-import static java.nio.charset.StandardCharsets.UTF_8;
-
-import java.io.PrintWriter;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -21,6 +12,15 @@ import org.openmrs.ui.framework.FragmentException;
 import org.openmrs.ui.framework.UiUtils;
 import org.openmrs.ui.framework.page.PageAction;
 import org.w3c.dom.Node;
+
+import java.io.PrintWriter;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import static java.nio.charset.StandardCharsets.UTF_8;
 
 /**
  * Usage: * <uiInclude provider="yourModuleId" javascript="fileAndPath.js" [priority="5"] /> *
@@ -79,6 +79,21 @@ public class UiIncludeTagHandler extends AbstractTagHandler {
 			catch (NullPointerException e) {
 				// see note above in previous NPE catch block
 			}
+		}
+		
+		String image = getAttribute(node, "image", null);
+		if (StringUtils.isNotEmpty(image)) {
+			String resourceLink = uiUtils.resourceLink(provider, image);
+			Map<String, String> attributes = getAttributes(node);
+			StringBuilder link = new StringBuilder();
+			link.append("<img src=\"").append(resourceLink).append("\" ");
+			for (String attName : attributes.keySet()) {
+				if (!attName.equalsIgnoreCase("provider") && !attName.equalsIgnoreCase("image")) {
+					link.append(attName).append("=\"").append(attributes.get(attName)).append("\" ");
+				}
+			}
+			link.append("/>");
+			out.print(link);
 		}
 		
 		includeFragment(node, uiUtils, formEntrySession, provider, out);
