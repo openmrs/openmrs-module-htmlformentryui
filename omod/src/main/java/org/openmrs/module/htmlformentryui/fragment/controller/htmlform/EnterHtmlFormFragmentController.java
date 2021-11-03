@@ -23,6 +23,7 @@ import org.openmrs.Form;
 import org.openmrs.Patient;
 import org.openmrs.Visit;
 import org.openmrs.api.FormService;
+import org.openmrs.api.ValidationException;
 import org.openmrs.api.context.Context;
 import org.openmrs.api.context.ContextAuthenticationException;
 import org.openmrs.module.ModuleFactory;
@@ -42,6 +43,7 @@ import org.openmrs.module.htmlformentry.HtmlFormEntryService;
 import org.openmrs.module.htmlformentry.HtmlFormEntryUtil;
 import org.openmrs.module.htmlformentryui.HtmlFormUtil;
 import org.openmrs.module.uicommons.UiCommonsConstants;
+import org.openmrs.ui.framework.RequestValidationException;
 import org.openmrs.ui.framework.SimpleObject;
 import org.openmrs.ui.framework.UiUtils;
 import org.openmrs.ui.framework.annotation.FragmentParam;
@@ -50,6 +52,7 @@ import org.openmrs.ui.framework.fragment.FragmentConfiguration;
 import org.openmrs.ui.framework.fragment.FragmentModel;
 import org.openmrs.ui.framework.resource.ResourceFactory;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import javax.servlet.http.HttpServletRequest;
@@ -152,14 +155,14 @@ public class EnterHtmlFormFragmentController extends BaseHtmlFormFragmentControl
 		//If GP timezone is true, it will convert the visitStartDatetime and visitStopDatetime to UTC and format RFC3339
 		if (visit != null) {
 			if (visit.getStartDatetime() != null) {
-				visitStartDatetime = ui.convertTimezones() ? ui.format(visit.getStartDatetime())
+				visitStartDatetime = ui.convertTimezones() ? ui.dateToISOString(visit.getStartDatetime())
 				        : ui.dateToISOString(visit.getStartDatetime());
 			}
 			if (visit.getStopDatetime() != null) {
-				visitStopDatetime = ui.convertTimezones() ? ui.format(visit.getStopDatetime())
+				visitStopDatetime = ui.convertTimezones() ? ui.dateToISOString(visit.getStopDatetime())
 				        : ui.dateToISOString(visit.getStopDatetime());
 			} else {
-				visitStopDatetime = ui.convertTimezones() ? ui.format(new Date()) : ui.dateToISOString(new Date());
+				visitStopDatetime = ui.convertTimezones() ? ui.dateToISOString(new Date()) : ui.dateToISOString(new Date());
 			}
 		}
 		
