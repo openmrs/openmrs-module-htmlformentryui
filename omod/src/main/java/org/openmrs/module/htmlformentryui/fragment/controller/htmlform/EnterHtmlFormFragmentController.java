@@ -152,14 +152,12 @@ public class EnterHtmlFormFragmentController extends BaseHtmlFormFragmentControl
 		//If GP timezone is true, it will convert the visitStartDatetime and visitStopDatetime to UTC and format RFC3339
 		if (visit != null) {
 			if (visit.getStartDatetime() != null) {
-				visitStartDatetime = ui.convertTimezones() ? ui.dateToISOString(visit.getStartDatetime())
-				        : ui.dateToISOString(visit.getStartDatetime());
+				visitStartDatetime = ui.dateToISOString(visit.getStartDatetime());
 			}
 			if (visit.getStopDatetime() != null) {
-				visitStopDatetime = ui.convertTimezones() ? ui.dateToISOString(visit.getStopDatetime())
-				        : ui.dateToISOString(visit.getStopDatetime());
+				visitStopDatetime = ui.dateToISOString(visit.getStopDatetime());
 			} else {
-				visitStopDatetime = ui.convertTimezones() ? ui.dateToISOString(new Date()) : ui.dateToISOString(new Date());
+				visitStopDatetime = ui.dateToISOString(new Date());
 			}
 		}
 		
