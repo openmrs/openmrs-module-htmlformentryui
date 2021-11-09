@@ -54,7 +54,8 @@ public class FlowsheetPageController {
 	public static final String SESSION_LOCATION_ID = "emrContext.sessionLocationId";
 	
 	public void controller(@RequestParam(value = "patientId", required = false) Patient patient,
-	        @RequestParam(value = "headerForm") String headerForm, @RequestParam(value = "flowsheets") String[] flowsheets,
+	        @RequestParam(value = "headerForm") String headerForm,
+	        @RequestParam(value = "flowsheets", required = false) String[] flowsheets,
 	        @RequestParam(value = "viewOnly", required = false) Boolean viewOnly,
 	        @RequestParam(value = "addRow", required = false) Boolean addRow,
 	        @RequestParam(value = "encounterDate", required = false) Date headerEncounterDate,
