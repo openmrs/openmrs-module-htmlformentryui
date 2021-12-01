@@ -2,7 +2,7 @@
 // expects to extend htmlForm defined in the core HFE module
 (function( htmlForm, jq, undefined) {
 
-    // individual forms can define their own functions to execute before a form validation or submission by adding them to these lists
+  // individual forms can define their own functions to execute before a form validation or submission by adding them to these lists
     // if any function returns false, no further functions are called and the validation or submission is cancelled
     var beforeValidation = new Array();     // a list of functions that will be executed before the validation of a form
     var beforeSubmit = new Array(); 		// a list of functions that will be executed before the submission of a form
@@ -351,3 +351,6 @@
 
 
 }( window.htmlForm = window.htmlForm || {}, jQuery ));
+
+// backwards compatibility hack to make sure jQuery is available as "$j" for old forms that use it
+window['$j'] = window['$j'] || jQuery;
