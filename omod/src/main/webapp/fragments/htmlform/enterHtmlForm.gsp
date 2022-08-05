@@ -77,12 +77,14 @@
             htmlForm.setEncounterStartDateRange('${visitStartDatetime}', ${ui.convertTimezones()});
             htmlForm.setEncounterStopDateRange('${visitStopDatetime}', ${ui.convertTimezones()});
         <% } else { %>
-            <% if (ui.convertTimezones()) { %>
-                //without visit
-                htmlForm.adjustEncounterDatetimeWithTimezone('${currentDate}');
-            <% } else { %>
-                // note that we need to get the current datetime from the *server*, in case the server and client are in different time zones
-                htmlForm.setEncounterDate('${(currentDate)}');
+            <% if (command.context.mode.toString().equals('ENTER')) { %>
+                <% if (ui.convertTimezones()) { %>
+                    //without visit
+                    htmlForm.adjustEncounterDatetimeWithTimezone('${currentDate}');
+                <% } else { %>
+                    // note that we need to get the current datetime from the *server*, in case the server and client are in different time zones
+                    htmlForm.setEncounterDate('${(currentDate)}');
+                <% } %>
             <% } %>
             htmlForm.setEncounterStopDateRange('${(currentDate)}' , ${ui.convertTimezones()});
         <% } %>
