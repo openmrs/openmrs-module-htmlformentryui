@@ -113,7 +113,7 @@ public class EnterHtmlFormFragmentControllerComponentTest extends BaseModuleWebC
 	@Qualifier("messageSource")
 	@Autowired
 	MessageSource messageSource;
-
+	
 	ResourceFactory resourceFactory;
 	
 	UiUtils ui;
@@ -141,13 +141,13 @@ public class EnterHtmlFormFragmentControllerComponentTest extends BaseModuleWebC
 		
 		FormatterImpl formatter = (FormatterImpl) Whitebox.getInternalState(ui, "formatter");
 		Whitebox.setInternalState(formatter, "messageSource", messageSource);
-
+		
 		controller = new EnterHtmlFormFragmentController();
 	}
 	
 	@Test
 	public void testDefiningAnHtmlFormInUiResource() throws Exception {
-
+		
 		FragmentModel model = new FragmentModel();
 		Patient patient = new Patient();
 		String resourcePath = "emr:htmlforms/vitals.xml";
@@ -167,7 +167,7 @@ public class EnterHtmlFormFragmentControllerComponentTest extends BaseModuleWebC
 	
 	@Test
 	public void testSubmittingHtmlFormDefinedInUiResource() throws Exception {
-
+		
 		// first, ensure the form is created and persisted, by calling the controller display method
 		testDefiningAnHtmlFormInUiResource();
 		HtmlForm hf = htmlFormEntryService.getHtmlFormByForm(formService.getFormByUuid("form-uuid"));
@@ -211,7 +211,7 @@ public class EnterHtmlFormFragmentControllerComponentTest extends BaseModuleWebC
 	
 	@Test
 	public void testSubmittingHtmlFormDefinedInUiResourceShouldCreateOpenVisit() throws Exception {
-
+		
 		// first, ensure the form is created and persisted, by calling the controller display method
 		testDefiningAnHtmlFormInUiResource();
 		HtmlForm hf = htmlFormEntryService.getHtmlFormByForm(formService.getFormByUuid("form-uuid"));
@@ -247,7 +247,7 @@ public class EnterHtmlFormFragmentControllerComponentTest extends BaseModuleWebC
 	
 	@Test
 	public void testSubmittingHtmlFormDefinedInUiResourceShouldAssociateWithExistingVisit() throws Exception {
-
+		
 		// first, ensure the form is created and persisted, by calling the controller display method
 		testDefiningAnHtmlFormInUiResource();
 		HtmlForm hf = htmlFormEntryService.getHtmlFormByForm(formService.getFormByUuid("form-uuid"));
@@ -281,7 +281,7 @@ public class EnterHtmlFormFragmentControllerComponentTest extends BaseModuleWebC
 		assertThat(created.getVisit(), is(visit));
 		assertThat(created.getEncounterDatetime(), is(visit.getStartDatetime())); // make sure the encounter date has been shifted to match the visit start time of 10:10:10
 	}
-
+	
 	@Test
 	public void testFeatureTogglingViaVelocityShouldNotShowFeatureIfToggledOff() throws Exception {
 		FragmentModel model = new FragmentModel();
