@@ -338,9 +338,6 @@
     flowsheet.showVisitTable = function() {
         jq(".flowsheet-edit-section").hide();
         jq(".flowsheet-section").show();
-        if (flowsheet.getFlowsheetExtension()) {
-            flowsheetExtension.afterShowVisitTable(flowsheet);
-        }
     };
 
     flowsheet.loadVisitTable = function() {
@@ -402,7 +399,13 @@
                 addLinksToVisitRow(table.find(".visit-table-row"), formName, encId, encTypeUuid);
                 section.append(table);
             }
-
+            if (loadingEncounters.length === 1) {
+              // this is the last visit encounter to be loaded into the visit table
+              // the loadHtmlFormForEncounter.always() will be called after this function(data) completes
+              if (flowsheet.getFlowsheetExtension()) {
+                flowsheetExtension.afterShowVisitTable(flowsheet);
+              }
+            }
             if (showVisitTable) {
                 jq('.flowsheet-edit-section').empty();
                 flowsheet.toggleViewFlowsheet();
@@ -451,6 +454,7 @@
             "formName": formName,
             "encounterDate": encounterDate != null ? encounterDate : "",
         }), action).always( function() {
+            // the following code is executed after the action callback function is complete
             var index = loadingEncounters.indexOf(encounterId);
             if (index > -1) {
                 // the encounter visit was successfully loaded into the table
