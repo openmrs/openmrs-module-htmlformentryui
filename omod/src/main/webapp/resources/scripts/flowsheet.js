@@ -338,9 +338,6 @@
     flowsheet.showVisitTable = function() {
         jq(".flowsheet-edit-section").hide();
         jq(".flowsheet-section").show();
-        if (flowsheet.getFlowsheetExtension()) {
-            flowsheetExtension.afterShowVisitTable(flowsheet);
-        }
     };
 
     flowsheet.loadVisitTable = function() {
@@ -402,7 +399,11 @@
                 addLinksToVisitRow(table.find(".visit-table-row"), formName, encId, encTypeUuid);
                 section.append(table);
             }
-
+            if (loadingEncounters.length === 1) {
+              if (flowsheet.getFlowsheetExtension()) {
+                flowsheetExtension.afterShowVisitTable(flowsheet);
+              }
+            }
             if (showVisitTable) {
                 jq('.flowsheet-edit-section').empty();
                 flowsheet.toggleViewFlowsheet();
