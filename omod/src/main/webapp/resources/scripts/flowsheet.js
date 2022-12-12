@@ -116,6 +116,10 @@
         flowsheet.clearDirty();
     };
 
+    flowsheet.getCurrentlyEditingEncounterId = function() {
+      return currentlyEditingEncounterId;
+    };
+
     flowsheet.setHtmlFormJs = function(htmlform) {
         htmlformJs = htmlform;
         htmlForm.setSuccessFunction(function(result) {
