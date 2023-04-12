@@ -1,28 +1,25 @@
 [main]
 host = https://www.transifex.com/
 
-[o:openmrs:p:OpenMRS:r:htmlformentryui-module]
+[OpenMRS.htmlformentryui-module]
 source_file = api/src/main/resources/messages.properties
 source_lang = en
-trans.it    = api/src/main/resources/messages_it.properties
-trans.ku    = api/src/main/resources/messages_ku.properties
-trans.lt    = api/src/main/resources/messages_lt.properties
-trans.el    = api/src/main/resources/messages_el.properties
-trans.fa    = api/src/main/resources/messages_fa.properties
-trans.hy    = api/src/main/resources/messages_hy.properties
-trans.pl    = api/src/main/resources/messages_pl.properties
-trans.si    = api/src/main/resources/messages_si.properties
-trans.te    = api/src/main/resources/messages_te.properties
-trans.ar    = api/src/main/resources/messages_ar.properties
-trans.hi    = api/src/main/resources/messages_hi.properties
-trans.ht    = api/src/main/resources/messages_ht.properties
+trans.ar = api/src/main/resources/messages_ar.properties
+trans.de = api/src/main/resources/messages_de.properties
+trans.el = api/src/main/resources/messages_el.properties
+trans.es = api/src/main/resources/messages_es.properties
+trans.fa = api/src/main/resources/messages_fa.properties
+trans.fr = api/src/main/resources/messages_fr.properties
+trans.hi = api/src/main/resources/messages_hi.properties
+trans.ht = api/src/main/resources/messages_ht.properties
+trans.hy = api/src/main/resources/messages_hy.properties
 trans.id_ID = api/src/main/resources/messages_id_ID.properties
-trans.pt    = api/src/main/resources/messages_pt.properties
-trans.ru    = api/src/main/resources/messages_ru.properties
-trans.sw    = api/src/main/resources/messages_sw.properties
-trans.de    = api/src/main/resources/messages_de.properties
-trans.es    = api/src/main/resources/messages_es.properties
-trans.fr    = api/src/main/resources/messages_fr.properties
-file_filter = api/src/main/resources/messages_<lang>.properties
-type = UNICODEPROPERTIES
-
+trans.it = api/src/main/resources/messages_it.properties
+trans.ku = api/src/main/resources/messages_ku.properties
+trans.lt = api/src/main/resources/messages_lt.properties
+trans.pl = api/src/main/resources/messages_pl.properties
+trans.pt = api/src/main/resources/messages_pt.properties
+trans.ru = api/src/main/resources/messages_ru.properties
+trans.si = api/src/main/resources/messages_si.properties
+trans.sw = api/src/main/resources/messages_sw.properties
+trans.te = api/src/main/resources/messages_te.properties
