@@ -130,19 +130,28 @@
         tryingToSubmit = false;
     }
 
-    // if an encounter id is passed in, then insert it at the beginning of the query string
+O
     var goToReturnUrl = function(encounterId) {
         if (returnUrl) {
-            if (encounterId) {
-              var encounterParameter =  "encounterId=" + encounterId;
-              var index = returnUrl.indexOf('?');
-              if (index == -1) {
-                  returnUrl = returnUrl + '?' + encounterParameter;
-              } else {
-                  returnUrl = returnUrl.substring(0,index+1) + encounterParameter + '&' + returnUrl.substring(index+1);
-              }
+            // special-case where we want to post a message to the parent window instead of navigating (used for O3 integration)
+            if (returnUrl.startsWith("post-message:")) {
+                const message = returnUrl.split(":")[1];
+                window.parent.postMessage(message, "*");
             }
-            location.href = returnUrl;
+            // main use case--redirect to a URL
+            else {
+                // if an encounter id is passed in, then insert it at the beginning of the query string
+                if (encounterId) {
+                    var encounterParameter = "encounterId=" + encounterId;
+                    var index = returnUrl.indexOf('?');
+                    if (index == -1) {
+                        returnUrl = returnUrl + '?' + encounterParameter;
+                    } else {
+                        returnUrl = returnUrl.substring(0, index + 1) + encounterParameter + '&' + returnUrl.substring(index + 1);
+                    }
+                }
+                location.href = returnUrl;
+            }
         }
         else {
             if (typeof(parent) !== 'undefined') {
