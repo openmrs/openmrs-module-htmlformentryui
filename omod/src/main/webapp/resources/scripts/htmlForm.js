@@ -130,7 +130,6 @@
         tryingToSubmit = false;
     }
 
-O
     var goToReturnUrl = function(encounterId) {
         if (returnUrl) {
             // special-case where we want to post a message to the parent window instead of navigating (used for O3 integration)
