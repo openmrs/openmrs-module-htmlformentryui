@@ -295,11 +295,14 @@ public class EnterHtmlFormFragmentController extends BaseHtmlFormFragmentControl
 		// Do actual encounter creation/updating
 		fes.applyActions();
 		
-		request.getSession().setAttribute(UiCommonsConstants.SESSION_ATTRIBUTE_INFO_MESSAGE,
-		    ui.message(
-		        editMode ? "htmlformentryui.editHtmlForm.successMessage" : "htmlformentryui.enterHtmlForm.successMessage",
-		        ui.format(hf.getForm()), ui.encodeJavaScript(ui.format(patient))));
-		request.getSession().setAttribute(UiCommonsConstants.SESSION_ATTRIBUTE_TOAST_MESSAGE, "true");
+		if (returnUrl == null || !returnUrl.startsWith("post-message:")) { // hack to not render a toast during O3 integraton workflow
+			request.getSession().setAttribute(UiCommonsConstants.SESSION_ATTRIBUTE_INFO_MESSAGE,
+			    ui.message(
+			        editMode ? "htmlformentryui.editHtmlForm.successMessage"
+			                : "htmlformentryui.enterHtmlForm.successMessage",
+			        ui.format(hf.getForm()), ui.encodeJavaScript(ui.format(patient))));
+			request.getSession().setAttribute(UiCommonsConstants.SESSION_ATTRIBUTE_TOAST_MESSAGE, "true");
+		}
 		
 		return returnHelper(null, fes, formEncounter);
 	}
