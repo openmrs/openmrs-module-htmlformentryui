@@ -4,6 +4,8 @@
     ui.includeJavascript("uicommons", "angular.min.js");
     ui.includeJavascript("uicommons", "angular-resource.min.js");
 
+    def createNewVisit = createVisit ?: false
+
     def breadcrumbMiddle = breadcrumbOverride ?: """
         [ { label: '${ returnLabel }' , link: '${ returnUrl }'} ]
     """
@@ -30,5 +32,6 @@ ${ ui.includeFragment("htmlformentryui", "htmlform/enterHtmlForm", [
         patient: patient,
         htmlForm: htmlForm,
         visit: visit,
+        createVisit: createNewVisit,
         returnUrl: returnUrl
 ]) }
