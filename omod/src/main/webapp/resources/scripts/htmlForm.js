@@ -7,6 +7,7 @@
     var beforeValidation = new Array();     // a list of functions that will be executed before the validation of a form
     var beforeSubmit = new Array(); 		// a list of functions that will be executed before the submission of a form
     var propertyAccessorInfo = new Array();
+    var binaryDataInputs = [];
 
     var whenObsHasValueThenDisplaySection = { };
 
@@ -188,13 +189,20 @@
             if (window.FormData) {
                 formData = new FormData(form[0]);
             }
+            if (!formData) {
+                formData = form.serialize();
+            }
+            binaryDataInputs.forEach(e => {
+                formData.set(e.formFieldName, e.binaryData, e.fileName);
+            })
+
 			jq(".error", form).text(""); //clear errors
             //ui.openLoadingDialog('Submitting Form');
 
             jq.ajax({
                 type: 'POST',
                 url: form.attr('action'),
-                data: formData ? formData : form.serialize(),
+                data: formData,
                 cache: false,
                 contentType: false,
                 processData: false,
@@ -261,6 +269,10 @@
 
     htmlForm.getPropertyAccessorInfo = function() {
         return propertyAccessorInfo;
+    };
+
+    htmlForm.addBinaryData = function(formFieldName, binaryData, fileName) {
+        binaryDataInputs.push({formFieldName, binaryData, fileName});
     };
 
     htmlForm.getBeforeSubmit = function() {
