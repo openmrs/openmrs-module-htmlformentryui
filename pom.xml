@@ -42,9 +42,9 @@
     </modules>
 
     <properties>
-        <openmrsPlatformVersion>2.1.4</openmrsPlatformVersion>
+        <openmrsPlatformVersion>2.3.2</openmrsPlatformVersion>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <htmlformentryVersion>4.0.1</htmlformentryVersion>
+        <htmlformentryVersion>5.5.0-SNAPSHOT</htmlformentryVersion>
         <uiframeworkVersion>3.21.0</uiframeworkVersion>
         <appframeworkVersion>2.9</appframeworkVersion>
         <appuiVersion>1.7</appuiVersion>

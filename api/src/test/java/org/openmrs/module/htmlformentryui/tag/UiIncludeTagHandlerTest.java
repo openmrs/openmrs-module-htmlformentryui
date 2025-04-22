@@ -18,6 +18,8 @@ import org.openmrs.Patient;
 import org.openmrs.User;
 import org.openmrs.Visit;
 import org.openmrs.api.context.Context;
+import org.openmrs.module.htmlformentry.FormEntryContextFactory;
+import org.openmrs.module.htmlformentry.FormEntryContextFactoryImpl;
 import org.openmrs.module.htmlformentry.FormEntrySession;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
@@ -27,7 +29,7 @@ import org.w3c.dom.Node;
 
 @RunWith(PowerMockRunner.class)
 @PrepareForTest(Context.class)
-public class UiIcludeTagHandlerTest {
+public class UiIncludeTagHandlerTest {
 	
 	private FormEntrySession session;
 	
@@ -42,6 +44,8 @@ public class UiIcludeTagHandlerTest {
 	@Before
 	public void setup() throws Exception {
 		mockStatic(Context.class);
+		when(Context.getRegisteredComponent("formEntryContextFactoryImpl", FormEntryContextFactory.class))
+		        .thenReturn(new FormEntryContextFactoryImpl());
 		when(Context.getAuthenticatedUser()).thenReturn(new User(1));
 		handler = spy(new UiIncludeTagHandler());
 		node = new TestNode();
