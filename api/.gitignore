@@ -1,8 +1,0 @@
-/.settings
-/target
-/.classpath
-/.project
-
-# Rubygems build directories #
-omod/.rubygems
-omod/.rubygems-provided
