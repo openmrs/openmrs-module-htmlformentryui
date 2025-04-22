@@ -1,7 +1,6 @@
 *.iml
 *.idea
-*.sass-cache
-*.css
+
 target
 api/target
 omod/target
@@ -9,13 +8,13 @@ omod/target
 /.settings
 /.project
 /.DS_Store
-
-omod/.DS_Store
-omod/src/main/compass/sass-external/*
-
 /.classpath
 
-### Rubygems build directories ###
-omod/.rubygems
-omod/.rubygems-provided
-####################
+omod/.DS_Store
+
+# SASS
+*.css
+*.css.map
+omod/node
+omod/node_modules
+omod/src/main/webapp/resources/styles/lib/
