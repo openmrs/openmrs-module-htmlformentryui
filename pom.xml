@@ -48,12 +48,9 @@
         <uiframeworkVersion>3.21.0</uiframeworkVersion>
         <appframeworkVersion>2.9</appframeworkVersion>
         <appuiVersion>1.7</appuiVersion>
-        <emrapiVersion>1.18</emrapiVersion>
+        <emrapiVersion>2.0.0</emrapiVersion>
+        <metadatamappingVersion>1.6.0</metadatamappingVersion>
         <uicommonsVersion>2.1</uicommonsVersion>
-        <providermanagementVersion>2.5.0</providermanagementVersion>
-        <reportingVersion>0.10.4</reportingVersion>
-        <calculationVersion>1.2</calculationVersion>
-        <serializationXstreamVersion>0.2.12</serializationXstreamVersion>
         <junitVersion>4.13.1</junitVersion>
         <javaxServletVersion>4.0.1</javaxServletVersion>
     </properties>
@@ -113,17 +110,10 @@
         </dependency>
         <dependency>
             <groupId>org.openmrs.module</groupId>
-            <artifactId>emrapi-api-1.12</artifactId>
-            <version>${emrapiVersion}</version>
+            <artifactId>metadatamapping-api</artifactId>
+            <version>${metadatamappingVersion}</version>
             <scope>provided</scope>
         </dependency>
-        <dependency>
-            <groupId>org.openmrs.module</groupId>
-            <artifactId>providermanagement-api</artifactId>
-            <version>${providermanagementVersion}</version>
-            <scope>provided</scope>
-        </dependency>
-        <!-- End OpenMRS modules -->
         <!-- Begin OpenMRS core -->
         <dependency>
             <groupId>org.openmrs.api</groupId>
@@ -175,31 +165,6 @@
             <artifactId>servlet-api</artifactId>
             <version>2.5</version>
             <scope>provided</scope>
-        </dependency>
-        <!-- OpenMRS modules simply required to fire up the application context when running component tests -->
-        <dependency>
-            <groupId>org.openmrs.module</groupId>
-            <artifactId>reporting-api</artifactId>
-            <version>${reportingVersion}</version>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.openmrs.module</groupId>
-            <artifactId>calculation-api</artifactId>
-            <version>${calculationVersion}</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.openmrs.module</groupId>
-            <artifactId>serialization.xstream-api</artifactId>
-            <version>${serializationXstreamVersion}</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.openmrs.module</groupId>
-            <artifactId>serialization.xstream-api-2.0</artifactId>
-            <version>${serializationXstreamVersion}</version>
-            <scope>test</scope>
         </dependency>
     </dependencies>
 
