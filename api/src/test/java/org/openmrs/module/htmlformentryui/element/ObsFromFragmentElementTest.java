@@ -40,6 +40,8 @@ import org.openmrs.api.ConceptService;
 import org.openmrs.api.EncounterService;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.htmlformentry.FormEntryContext;
+import org.openmrs.module.htmlformentry.FormEntryContextFactory;
+import org.openmrs.module.htmlformentry.FormEntryContextFactoryImpl;
 import org.openmrs.module.htmlformentry.FormEntrySession;
 import org.openmrs.module.htmlformentry.FormSubmissionActions;
 import org.openmrs.module.htmlformentryui.element.ObsFromFragmentElement.Option;
@@ -93,6 +95,8 @@ public class ObsFromFragmentElementTest {
 		mockStatic(Context.class);
 		when(Context.getEncounterService()).thenReturn(encounterService);
 		when(Context.getConceptService()).thenReturn(conceptService);
+		when(Context.getRegisteredComponent("formEntryContextFactoryImpl", FormEntryContextFactory.class))
+		        .thenReturn(new FormEntryContextFactoryImpl());
 		when(encounterService.getEncounter(any(Integer.class))).thenReturn(encounter);
 		when(session.getContext()).thenReturn(context);
 		when(session.getSubmissionActions()).thenReturn(submissionActions);

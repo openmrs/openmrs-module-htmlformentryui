@@ -27,9 +27,7 @@ import org.openmrs.module.emrapi.patient.PatientDomainWrapper;
 import org.openmrs.module.htmlformentry.HtmlForm;
 import org.openmrs.module.htmlformentry.HtmlFormEntryService;
 import org.openmrs.module.htmlformentryui.HtmlFormUtil;
-import org.openmrs.module.reporting.data.DataUtil;
-import org.openmrs.module.reporting.data.patient.definition.EncountersForPatientDataDefinition;
-import org.openmrs.module.reporting.data.person.definition.ObsForPersonDataDefinition;
+import org.openmrs.parameter.EncounterSearchCriteriaBuilder;
 import org.openmrs.ui.framework.SimpleObject;
 import org.openmrs.ui.framework.UiUtils;
 import org.openmrs.ui.framework.annotation.InjectBeans;
@@ -42,6 +40,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
@@ -176,13 +175,9 @@ public class FlowsheetPageController {
 		
 		// standard use case, fetch encounters by underlying encounter type
 		if (StringUtils.isBlank(conceptStr)) {
-			EncountersForPatientDataDefinition edd = new EncountersForPatientDataDefinition();
-			edd.addType(form.getForm().getEncounterType());
-			List<Encounter> ret = DataUtil.evaluateForPatient(edd, p.getPatientId(), List.class);
-			if (ret == null) {
-				ret = new ArrayList<Encounter>();
-			}
-			return ret;
+			EncounterSearchCriteriaBuilder b = new EncounterSearchCriteriaBuilder();
+			b.setPatient(p).setEncounterTypes(Collections.singletonList(form.getForm().getEncounterType()));
+			return Context.getEncounterService().getEncounters(b.createEncounterSearchCriteria());
 		}
 		// if a concept is specified, ignore encounter type and fetch all encounters that contain this obs
 		else {
@@ -190,28 +185,24 @@ public class FlowsheetPageController {
 			if (concept == null) {
 				throw new APIException("Unable to find concept with uuid " + conceptStr);
 			}
-			
-			ObsForPersonDataDefinition opdd = new ObsForPersonDataDefinition();
-			opdd.setQuestion(concept);
-			List<Obs> obsList = DataUtil.evaluateForPerson(opdd, p, List.class);
-			
+			List<Obs> obsList = Context.getObsService().getObservationsByPersonAndConcept(p, concept);
 			if (obsList != null) {
-				Set<Encounter> encounters = new HashSet<Encounter>();
+				Set<Encounter> encounters = new HashSet<>();
 				for (Obs obs : obsList) {
 					if (obs.getEncounter() != null) {
 						encounters.add(obs.getEncounter());
 					}
 				}
-				return new ArrayList<Encounter>(encounters);
+				return new ArrayList<>(encounters);
 			} else {
-				return new ArrayList<Encounter>();
+				return new ArrayList<>();
 			}
 			
 		}
 	}
 	
 	protected Set<String> getNestedConcepts(String conceptUuid) {
-		Set<String> ret = new HashSet<String>();
+		Set<String> ret = new HashSet<>();
 		ret.add(conceptUuid);
 		Concept c = getConcept(conceptUuid);
 		if (c.isSet()) {

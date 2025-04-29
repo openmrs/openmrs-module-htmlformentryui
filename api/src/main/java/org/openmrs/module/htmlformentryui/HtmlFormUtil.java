@@ -15,6 +15,8 @@
 package org.openmrs.module.htmlformentryui;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.openmrs.Encounter;
 import org.openmrs.EncounterType;
 import org.openmrs.Form;
@@ -32,11 +34,11 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 
 import java.io.IOException;
+import java.lang.reflect.Method;
 
-/**
- *
- */
 public class HtmlFormUtil {
+	
+	protected static final Log log = LogFactory.getLog(HtmlFormUtil.class);
 	
 	public static HtmlForm getHtmlFormFromUiResource(ResourceFactory resourceFactory, FormService formService,
 	        HtmlFormEntryService htmlFormEntryService, String providerAndPath, Encounter encounter) throws IOException {
@@ -90,6 +92,17 @@ public class HtmlFormUtil {
 	public static HtmlForm getHtmlFormFromResourceXml(FormService formService, HtmlFormEntryService htmlFormEntryService,
 	        String xml) {
 		try {
+			// In HFE 5.5.0, a new service method was introduced to save or update an html form from xml
+			// If this method is available, use it, otherwise fall back to the legacy implementation here
+			try {
+				Method method = HtmlFormEntryService.class.getDeclaredMethod("saveHtmlFormFromXml", String.class);
+				return (HtmlForm) method.invoke(htmlFormEntryService, xml);
+			}
+			catch (NoSuchMethodException e) {
+				log.trace("No saveHtmlFormFromXml method found in htmlformentryservice, using existing implementation");
+			}
+			
+			// If here, this means HTML Form Entry < 5.5.0 is running, so use pre-existing Hfeui implementation
 			Document doc = HtmlFormEntryUtil.stringToDocument(xml);
 			Node htmlFormNode = HtmlFormEntryUtil.findChild(doc, "htmlform");
 			String formUuid = getAttributeValue(htmlFormNode, "formUuid");
