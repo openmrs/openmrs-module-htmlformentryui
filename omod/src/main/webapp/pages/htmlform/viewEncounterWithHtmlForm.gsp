@@ -6,6 +6,9 @@
     ui.includeJavascript("uicommons", "moment-with-locales.min.js")
 %>
 
+<link href="/${ contextPath }/moduleResources/htmlformentry/orderWidget.css" type="text/css" rel="stylesheet" />
+<script type="text/javascript" src="/${ contextPath }/moduleResources/htmlformentry/orderWidget.js"></script>
+
 <script type="text/javascript">
     window.viewHtmlForm = {
         encounterId: ${ encounter.id },
