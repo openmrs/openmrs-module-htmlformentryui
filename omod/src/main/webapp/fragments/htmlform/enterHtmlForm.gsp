@@ -3,6 +3,7 @@
     // config supports cssClass (css class on div around form)
 
     // assumes jquery and jquery-ui from emr module
+    ui.includeCss("htmlformentryui", "htmlform/modal.css")
     ui.includeJavascript("uicommons", "handlebars/handlebars.min.js", Integer.MAX_VALUE - 1);
     ui.includeJavascript("htmlformentryui", "dwr-util.js")
     ui.includeJavascript("htmlformentryui", "htmlForm.js")
@@ -109,6 +110,13 @@
     });
     
 </script>
+
+<div id="modal-overlay">
+    <div id="modal-content">
+        <div class="spinner"></div>
+        <p>${ui.message("htmlformentryui.pleaseDoNotRefreshPage")}</p>
+    </div>
+</div>
 
 <div id="${ config.id }" <% if (config.style) { %>style="${ config.style }"<% } %> <% if (config.cssClass) { %>class="${config.cssClass}"<% } %>>
 

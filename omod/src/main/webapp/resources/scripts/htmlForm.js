@@ -41,6 +41,15 @@
         return jq(".submitButton.confirm").is(":disabled");
     }
 
+    var showModal = function() {
+        $('#modal-overlay').fadeIn();
+    }
+
+    var hideModal = function() {
+        $('#modal-overlay').fadeOut();
+    }
+
+
 
     /**
      * Change the hours, minutes and seconds dropdowns to new date with client timezone
@@ -183,6 +192,7 @@
         // also, hack to double check to  disallow form submittal if submit button is disabled (prevent multiple submits)
         if (state_beforeSubmit && !submitButtonIsDisabled()){
             disableSubmitButton();
+            showModal();
             var form = jq('#htmlform');
             var formData = false;
             // Check whether FormData is supported
@@ -214,6 +224,7 @@
                     }
                     else {
                         enableSubmitButton();
+                        hideModal();
                         tryingToSubmit = false;
                         for (key in result.errors) {
                             showError(key, result.errors[key]);
