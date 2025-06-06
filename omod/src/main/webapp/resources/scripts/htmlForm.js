@@ -42,11 +42,11 @@
     }
 
     var showModal = function() {
-        $('#modal-overlay').fadeIn();
+        jq('#modal-overlay').fadeIn();
     }
 
     var hideModal = function() {
-        $('#modal-overlay').fadeOut();
+        jq('#modal-overlay').fadeOut();
     }
 
 
