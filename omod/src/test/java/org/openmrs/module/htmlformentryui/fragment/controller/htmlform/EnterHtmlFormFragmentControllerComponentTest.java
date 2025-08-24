@@ -59,9 +59,7 @@ import java.util.TimeZone;
 import java.util.concurrent.TimeUnit;
 
 import static org.hamcrest.Matchers.is;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertThat;
+import static org.junit.Assert.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -280,6 +278,55 @@ public class EnterHtmlFormFragmentControllerComponentTest extends BaseModuleWebC
 		assertNotNull(created.getVisit());
 		assertThat(created.getVisit(), is(visit));
 		assertThat(created.getEncounterDatetime(), is(visit.getStartDatetime())); // make sure the encounter date has been shifted to match the visit start time of 10:10:10
+	}
+	
+	@Test
+	public void testEditingHtmlFormDefinedInUiResourceShouldNotChangeTimeOfEncounterDateIfNewDateIsPriorToDateOfVisit()
+	        throws Exception {
+		// first, ensure the form is created and persisted, by calling the controller display method
+		testDefiningAnHtmlFormInUiResource();
+		HtmlForm hf = htmlFormEntryService.getHtmlFormByForm(formService.getFormByUuid("form-uuid"));
+		
+		// make "Hippocrates" a provider
+		Provider provider = new Provider();
+		provider.setPerson(personService.getPerson(502));
+		providerService.saveProvider(provider);
+		
+		Patient patient = patientService.getPatient(8);
+		assertThat(encounterService.getEncountersByPatient(patient).size(), is(0));
+		
+		Visit visit = visitService.getVisit(1001);
+		
+		Date date = new DateMidnight(2012, 1, 20).toDate();
+		String dateString = new SimpleDateFormat("yyyy-MM-dd").format(date);
+		
+		MockHttpServletRequest request = new MockHttpServletRequest();
+		request.addParameter("w2", "70"); // weight in kg
+		request.addParameter("w3", dateString); // date
+		request.addParameter("w5", "2"); // location = Xanadu
+		request.addParameter("w7", "502"); // provider = Hippocrates
+		
+		SimpleObject result = controller.submit(sessionContext, patient, hf, null, visit, true, null, adtService,
+		    featureToggles, ui, request);
+		assertThat((Boolean) result.get("success"), is(Boolean.TRUE));
+		assertThat(encounterService.getEncountersByPatient(patient).size(), is(1));
+		Encounter created = encounterService.getEncountersByPatient(patient).get(0);
+		
+		Date updatedEncounterDate = new DateTime(2012, 1, 20, 9, 10, 10, 0).toDate();
+		String updatedDateString = new SimpleDateFormat("yyyy-MM-dd").format(updatedEncounterDate);
+		
+		created.setEncounterDatetime(updatedEncounterDate);
+		
+		MockHttpServletRequest editRequest = new MockHttpServletRequest();
+		editRequest.addParameter("w2", "70"); // weight in kg
+		editRequest.addParameter("w3", updatedDateString); // date
+		editRequest.addParameter("w5", "2"); // location = Xanadu
+		editRequest.addParameter("w7", "502"); // provider = Hippocrates
+		
+		result = controller.submit(sessionContext, patient, hf, created, visit, false, null, adtService, featureToggles, ui,
+		    editRequest);
+		assertThat((Boolean) result.get("success"), is(Boolean.FALSE));
+		assertNotNull(result.get("errors"));
 	}
 	
 	@Test
