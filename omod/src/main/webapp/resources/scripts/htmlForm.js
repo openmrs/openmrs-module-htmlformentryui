@@ -341,6 +341,10 @@
     htmlForm.setEncounterDate = function(date) {
         if (getField('encounterDate.value')) {
             getField('encounterDate.value').datepicker('setDate',  extractDate(date));
+            // hack to find and set the time widgets if present; currently they are sibling of the datepicker value widget so we go up the parent and search from there
+            getField('encounterDate.value').parent().find(".hfe-hours").val(moment(date).hour()).change();
+            getField('encounterDate.value').parent().find(".hfe-minutes").val(moment(date).minute()).change();
+            getField('encounterDate.value').parent().find(".hfe-seconds").val(moment(date).second()).change();
         }
     };
 
