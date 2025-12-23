@@ -101,7 +101,7 @@ public class EnterHtmlFormFragmentController extends BaseHtmlFormFragmentControl
 	        @FragmentParam(value = "formUuid", required = false) String formUuid,
 	        @FragmentParam(value = "definitionUiResource", required = false) String definitionUiResource,
 	        @FragmentParam(value = "encounter", required = false) Encounter encounter,
-	        @FragmentParam(value = "encounterDate", required = false) Date defaultEncounterDate, // allows specifying a default encounter date when adding a new encounter; should not be used with encounter param
+	        @FragmentParam(value = "encounterDate", required = false) Date encounterDate, // allows specifying a default encounter date when adding a new encounter; should not be used with encounter param
 	        @FragmentParam(value = "visit", required = false) Visit visit,
 	        @FragmentParam(value = "createVisit", required = false) Boolean createVisit,
 	        @FragmentParam(value = "returnUrl", required = false) String returnUrl,
@@ -160,6 +160,10 @@ public class EnterHtmlFormFragmentController extends BaseHtmlFormFragmentControl
 				visitStopDatetime = ui.dateToISOString(new Date());
 			}
 		}
+		
+		// use defaultEncounterDate if specified, otherwise if retro entry (visit is closed) use visit start date, otherwise null
+		Date defaultEncounterDate = encounterDate != null ? encounterDate
+		        : ((visit != null && visit.getStopDatetime() != null) ? visit.getStartDatetime() : null);
 		
 		VisitDomainWrapper visitDomainWrapper = getVisitDomainWrapper(visit, encounter, adtService);
 		setupVelocityContext(fes, visitDomainWrapper, ui, sessionContext, featureToggles);
