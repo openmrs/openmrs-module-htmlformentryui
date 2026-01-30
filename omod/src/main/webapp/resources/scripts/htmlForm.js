@@ -7,7 +7,7 @@
     var beforeValidation = new Array();     // a list of functions that will be executed before the validation of a form
     var beforeSubmit = new Array(); 		// a list of functions that will be executed before the submission of a form
 
-    // functions run on the case of a failed form submission
+    // individual forms can define their own functions to execute on the case of a failed form submission
     var afterSubmitFailure = new Array();
 
     var propertyAccessorInfo = new Array();
