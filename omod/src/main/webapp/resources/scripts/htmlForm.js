@@ -2,10 +2,14 @@
 // expects to extend htmlForm defined in the core HFE module
 (function( htmlForm, jq, undefined) {
 
-  // individual forms can define their own functions to execute before a form validation or submission by adding them to these lists
+    // individual forms can define their own functions to execute before a form validation or submission by adding them to these lists
     // if any function returns false, no further functions are called and the validation or submission is cancelled
     var beforeValidation = new Array();     // a list of functions that will be executed before the validation of a form
     var beforeSubmit = new Array(); 		// a list of functions that will be executed before the submission of a form
+
+    // individual forms can define their own functions to execute on the case of a failed form submission
+    var afterSubmitFailure = new Array();
+
     var propertyAccessorInfo = new Array();
     var binaryDataInputs = [];
 
@@ -223,19 +227,24 @@
                         successFunction(result);
                     }
                     else {
-                        enableSubmitButton();
-                        hideModal();
-                        tryingToSubmit = false;
-                        for (key in result.errors) {
-                            showError(key, result.errors[key]);
+                      // call any afterSubmitFailure functions that may have been defined by the form
+                      if (afterSubmitFailure.length > 0){
+                        for (var i=0, l = afterSubmitFailure.length; i < l; i++){
+                          afterSubmitFailure[i]();
                         }
-                        // scroll to one of the errors
-                        // TODO there must be a more efficient way to do this!
-                        for (key in result.errors) {
-                            jq(document).scrollTop(jq('#' + key).offset().top - 100);
-                            break;
-                        }
-
+                      }
+                      enableSubmitButton();
+                      hideModal();
+                      tryingToSubmit = false;
+                      for (key in result.errors) {
+                          showError(key, result.errors[key]);
+                      }
+                      // scroll to one of the errors
+                      // TODO there must be a more efficient way to do this!
+                      for (key in result.errors) {
+                          jq(document).scrollTop(jq('#' + key).offset().top - 100);
+                          break;
+                      }
                     }
                 },
                 error: function (jqXHR, textStatus, errorThrown) {
@@ -292,6 +301,10 @@
 
     htmlForm.getBeforeValidation = function() {
         return beforeValidation;
+    };
+
+    htmlForm.getAfterSubmitFailure = function() {
+        return afterSubmitFailure;
     };
 
     htmlForm.setReturnUrl = function(url) {

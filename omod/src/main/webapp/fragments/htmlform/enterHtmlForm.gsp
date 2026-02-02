@@ -47,6 +47,7 @@
 
     var beforeSubmit = htmlForm.getBeforeSubmit();
     var beforeValidation = htmlForm.getBeforeValidation();
+    var afterSubmitFailure = htmlForm.getAfterSubmitFailure();
     var propertyAccessorInfo = htmlForm.getPropertyAccessorInfo();
 
     <% if (command.returnUrl) { %>
