@@ -23,6 +23,7 @@ import org.openmrs.Form;
 import org.openmrs.Patient;
 import org.openmrs.Visit;
 import org.openmrs.api.FormService;
+import org.openmrs.api.ValidationException;
 import org.openmrs.api.context.Context;
 import org.openmrs.api.context.ContextAuthenticationException;
 import org.openmrs.module.ModuleFactory;
@@ -50,18 +51,18 @@ import org.openmrs.ui.framework.fragment.FragmentConfiguration;
 import org.openmrs.ui.framework.fragment.FragmentModel;
 import org.openmrs.ui.framework.resource.ResourceFactory;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.text.SimpleDateFormat;
-import java.util.TimeZone;
 
 /**
  *
@@ -297,7 +298,13 @@ public class EnterHtmlFormFragmentController extends BaseHtmlFormFragmentControl
 		}
 		
 		// Do actual encounter creation/updating
-		fes.applyActions();
+		try {
+			fes.applyActions();
+		}
+		catch (Exception e) {
+			validationErrors.addAll(convertToFormSubmissionErrors(e, ui));
+			return returnHelper(validationErrors, fes, null);
+		}
 		
 		if (returnUrl == null || !returnUrl.startsWith("post-message:")) { // hack to not render a toast during O3 integraton workflow
 			request.getSession().setAttribute(UiCommonsConstants.SESSION_ATTRIBUTE_INFO_MESSAGE,
@@ -395,4 +402,43 @@ public class EnterHtmlFormFragmentController extends BaseHtmlFormFragmentControl
 		}
 	}
 	
+	protected List<FormSubmissionError> convertToFormSubmissionErrors(Exception e, UiUtils ui) {
+		List<FormSubmissionError> ret = new ArrayList<>();
+		if (e instanceof ValidationException) {
+			ValidationException ve = (ValidationException) e;
+			List<ObjectError> objectErrors = ve.getErrors().getAllErrors();
+			if (objectErrors != null) {
+				for (ObjectError error : objectErrors) {
+					String message = null;
+					if (error.getCodes() != null) {
+						for (String code : error.getCodes()) {
+							if (StringUtils.isNotBlank(code)) {
+								String translatedCode = ui.message(code, error.getArguments());
+								if (!code.equals(translatedCode)) {
+									message = translatedCode;
+									break;
+								}
+							}
+						}
+					}
+					if (message == null && StringUtils.isNotBlank(error.getCode())) {
+						String translatedCode = ui.message(error.getCode(), error.getArguments());
+						if (!error.getCode().equals(translatedCode)) {
+							message = translatedCode;
+						}
+					}
+					if (message == null) {
+						message = error.getDefaultMessage();
+					}
+					if (StringUtils.isNotBlank(message)) {
+						ret.add(new FormSubmissionError("general-form-error", ui.message(message)));
+					}
+				}
+			}
+		}
+		if (ret.isEmpty()) {
+			ret.add(new FormSubmissionError("general-form-error", ui.message(e.getMessage())));
+		}
+		return ret;
+	}
 }
