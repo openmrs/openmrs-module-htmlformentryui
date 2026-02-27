@@ -55,7 +55,6 @@ import uk.co.it.modular.hamcrest.date.DateMatchers;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.TimeZone;
 import java.util.concurrent.TimeUnit;
 
 import static org.hamcrest.Matchers.is;

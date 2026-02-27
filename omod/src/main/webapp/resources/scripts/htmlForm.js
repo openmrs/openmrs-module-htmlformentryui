@@ -210,8 +210,7 @@
                 formData.set(e.formFieldName, e.binaryData, e.fileName);
             })
 
-			jq(".error", form).text(""); //clear errors
-            //ui.openLoadingDialog('Submitting Form');
+			jq(".error").text(""); //clear errors
 
             jq.ajax({
                 type: 'POST',

@@ -121,7 +121,7 @@
 
 <div id="${ config.id }" <% if (config.style) { %>style="${ config.style }"<% } %> <% if (config.cssClass) { %>class="${config.cssClass}"<% } %>>
 
-    <span class="error" style="display: none" id="general-form-error"></span>
+    <span class="error field-error" style="display: none" id="general-form-error"></span>
 
     <form autocomplete="off" id="htmlform" method="post" action="${ ui.actionLink("htmlformentryui", "htmlform/enterHtmlForm", "submit") }" onSubmit="submitHtmlForm(); return false;">
         <input type="hidden" name="personId" value="${ command.patient.personId }"/>
