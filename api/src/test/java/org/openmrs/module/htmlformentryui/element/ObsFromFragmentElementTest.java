@@ -95,8 +95,8 @@ public class ObsFromFragmentElementTest {
 		mockStatic(Context.class);
 		when(Context.getEncounterService()).thenReturn(encounterService);
 		when(Context.getConceptService()).thenReturn(conceptService);
-		when(Context.getRegisteredComponent("formEntryContextFactoryImpl", FormEntryContextFactory.class))
-		        .thenReturn(new FormEntryContextFactoryImpl());
+		when(Context.getRegisteredComponent("formEntryContextFactoryImpl", FormEntryContextFactory.class)).thenReturn(
+		    new FormEntryContextFactoryImpl());
 		when(encounterService.getEncounter(any(Integer.class))).thenReturn(encounter);
 		when(session.getContext()).thenReturn(context);
 		when(session.getSubmissionActions()).thenReturn(submissionActions);
@@ -311,21 +311,22 @@ public class ObsFromFragmentElementTest {
 		when(concept.getDatatype()).thenReturn(dateDatatype);
 		element.setConcept(concept);
 		
-		when(submissionActions.createObs(any(Concept.class), any(Object.class), any(Date.class), any(String.class),
-		    any(String.class))).thenAnswer(new Answer() {
-			    
-			    @Override
-			    public Object answer(InvocationOnMock invocation) throws Throwable {
-				    Date expectedDate = new SimpleDateFormat("yyyy-MM-dd").parse("2017-08-14");
-				    Concept concept = (Concept) invocation.getArguments()[0];
-				    Date valueDate = (Date) invocation.getArguments()[1];
-				    
-				    // Verify
-				    Assert.assertTrue(concept.getDatatype().isDate());
-				    Assert.assertEquals(expectedDate, valueDate);
-				    return new Obs();
-			    }
-		    });
+		when(
+		    submissionActions.createObs(any(Concept.class), any(Object.class), any(Date.class), any(String.class),
+		        any(String.class))).thenAnswer(new Answer() {
+			
+			@Override
+			public Object answer(InvocationOnMock invocation) throws Throwable {
+				Date expectedDate = new SimpleDateFormat("yyyy-MM-dd").parse("2017-08-14");
+				Concept concept = (Concept) invocation.getArguments()[0];
+				Date valueDate = (Date) invocation.getArguments()[1];
+				
+				// Verify
+				Assert.assertTrue(concept.getDatatype().isDate());
+				Assert.assertEquals(expectedDate, valueDate);
+				return new Obs();
+			}
+		});
 		
 		// Replay
 		element.handleSubmission(session, request);
@@ -350,21 +351,22 @@ public class ObsFromFragmentElementTest {
 		when(concept.getDatatype()).thenReturn(dateTimeDatatype);
 		element.setConcept(concept);
 		
-		when(submissionActions.createObs(any(Concept.class), any(Object.class), any(Date.class), any(String.class),
-		    any(String.class))).thenAnswer(new Answer() {
-			    
-			    @Override
-			    public Object answer(InvocationOnMock invocation) throws Throwable {
-				    Date expectedDatetime = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss").parse("2017-08-14 10:10:00");
-				    Concept concept = (Concept) invocation.getArguments()[0];
-				    Date valueDate = (Date) invocation.getArguments()[1];
-				    
-				    // Verify
-				    Assert.assertTrue(concept.getDatatype().isDateTime());
-				    Assert.assertEquals(expectedDatetime, valueDate);
-				    return new Obs();
-			    }
-		    });
+		when(
+		    submissionActions.createObs(any(Concept.class), any(Object.class), any(Date.class), any(String.class),
+		        any(String.class))).thenAnswer(new Answer() {
+			
+			@Override
+			public Object answer(InvocationOnMock invocation) throws Throwable {
+				Date expectedDatetime = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss").parse("2017-08-14 10:10:00");
+				Concept concept = (Concept) invocation.getArguments()[0];
+				Date valueDate = (Date) invocation.getArguments()[1];
+				
+				// Verify
+				Assert.assertTrue(concept.getDatatype().isDateTime());
+				Assert.assertEquals(expectedDatetime, valueDate);
+				return new Obs();
+			}
+		});
 		
 		// Replay
 		element.handleSubmission(session, request);
@@ -411,8 +413,8 @@ public class ObsFromFragmentElementTest {
 		element.handleSubmission(session, request);
 		
 		// Verify
-		verify(submissionActions, times(1)).modifyObs(any(Obs.class), any(Concept.class), any(Object.class), any(Date.class),
-		    any(String.class), eq(formFieldName));
+		verify(submissionActions, times(1)).modifyObs(any(Obs.class), any(Concept.class), any(Object.class),
+		    any(Date.class), any(String.class), eq(formFieldName));
 		
 	}
 	
@@ -458,8 +460,8 @@ public class ObsFromFragmentElementTest {
 	}
 	
 	/**
-	 * Convenient factory method to create a populated Concept with a one fully specified name and one
-	 * short name
+	 * Convenient factory method to create a populated Concept with a one fully specified name and
+	 * one short name
 	 */
 	private Concept createConcept(String name, String datatypeUuid) {
 		Concept concept = new Concept();

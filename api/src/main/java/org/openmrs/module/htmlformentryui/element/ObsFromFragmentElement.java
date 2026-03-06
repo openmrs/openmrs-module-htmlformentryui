@@ -108,9 +108,9 @@ public class ObsFromFragmentElement implements HtmlGeneratorElement, FormSubmiss
 				return;
 			}
 			session.getSubmissionActions().createObs(concept, convertToType(valueText), new Date(), null,
-			    // Set the formFieldName of the widget as the Obs comment 
-			    // this helps to map an Obs to it's fragment widget for cases were the same concept
-			    // was used in more than one <obsFromFragment/> tag on the same form 
+			// Set the formFieldName of the widget as the Obs comment 
+			// this helps to map an Obs to it's fragment widget for cases were the same concept
+			// was used in more than one <obsFromFragment/> tag on the same form 
 			    formFieldName);
 		}
 	}

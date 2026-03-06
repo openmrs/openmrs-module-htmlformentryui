@@ -24,10 +24,10 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 
 /**
  * Usage: * <uiInclude provider="yourModuleId" javascript="fileAndPath.js" [priority="5"] /> *
- * <uiInclude provider="yourModuleId" css="fileAndPath.css" [priority="10"] /> *
- * <uiInclude provider="yourModuleId" fragment="pathAndFragmentName" fragmentParams=
- * "param1=value&param2=value"/> *
- * <uiInclude provider="yourModuleId" fragment="pathAndFragmentName?param1=value&param2=value"/>
+ * <uiInclude provider="yourModuleId" css="fileAndPath.css" [priority="10"] /> * <uiInclude
+ * provider="yourModuleId" fragment="pathAndFragmentName" fragmentParams=
+ * "param1=value&param2=value"/> * <uiInclude provider="yourModuleId"
+ * fragment="pathAndFragmentName?param1=value&param2=value"/>
  * 
  * @see org.openmrs.ui.framework.ResourceIncluder
  * @see UiUtils#includeJavascript(String, String, Integer)
@@ -44,8 +44,7 @@ public class UiIncludeTagHandler extends AbstractTagHandler {
 		
 		UiUtils uiUtils = (UiUtils) formEntrySession.getAttribute("uiUtils");
 		if (uiUtils == null) {
-			throw new IllegalArgumentException(
-			        "Cannot use " + node.getNodeName() + " tag if no UiUtils object is available");
+			throw new IllegalArgumentException("Cannot use " + node.getNodeName() + " tag if no UiUtils object is available");
 		}
 		
 		String provider = getAttribute(node, "provider", null);

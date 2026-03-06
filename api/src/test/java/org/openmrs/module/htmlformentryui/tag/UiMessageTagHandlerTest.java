@@ -88,25 +88,25 @@ public class UiMessageTagHandlerTest {
 		messageSourceService = mock(MessageSourceService.class);
 		when(messageSourceService.getMessage(messageCodeWithNoArg, null, Locale.ENGLISH))
 		        .thenReturn(englishMessageWithNoArg);
-		when(messageSourceService.getMessage(eq(messageCodeWithArg), any(Object[].class), eq(Locale.ENGLISH)))
-		        .thenAnswer(new Answer<String>() {
-			        
-			        @Override
-			        public String answer(InvocationOnMock invocationOnMock) {
-				        Object[] messageArgs = (Object[]) invocationOnMock.getArguments()[1];
-				        return englishMessageWithArg.replace("{0}", messageArgs[0].toString());
-			        }
-		        });
+		when(messageSourceService.getMessage(eq(messageCodeWithArg), any(Object[].class), eq(Locale.ENGLISH))).thenAnswer(
+		    new Answer<String>() {
+			    
+			    @Override
+			    public String answer(InvocationOnMock invocationOnMock) {
+				    Object[] messageArgs = (Object[]) invocationOnMock.getArguments()[1];
+				    return englishMessageWithArg.replace("{0}", messageArgs[0].toString());
+			    }
+		    });
 		when(messageSourceService.getMessage(messageCodeWithNoArg, null, Locale.FRENCH)).thenReturn(frenchMessageWithNoArg);
-		when(messageSourceService.getMessage(eq(messageCodeWithArg), any(Object[].class), eq(Locale.FRENCH)))
-		        .thenAnswer(new Answer<String>() {
-			        
-			        @Override
-			        public String answer(InvocationOnMock invocationOnMock) {
-				        Object[] messageArgs = (Object[]) invocationOnMock.getArguments()[1];
-				        return frenchMessageWithArg.replace("{0}", messageArgs[0].toString());
-			        }
-		        });
+		when(messageSourceService.getMessage(eq(messageCodeWithArg), any(Object[].class), eq(Locale.FRENCH))).thenAnswer(
+		    new Answer<String>() {
+			    
+			    @Override
+			    public String answer(InvocationOnMock invocationOnMock) {
+				    Object[] messageArgs = (Object[]) invocationOnMock.getArguments()[1];
+				    return frenchMessageWithArg.replace("{0}", messageArgs[0].toString());
+			    }
+		    });
 		
 		tagHandler = new UiMessageTagHandler(messageSourceService);
 		

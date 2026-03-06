@@ -44,8 +44,8 @@ public class UiIncludeTagHandlerTest {
 	@Before
 	public void setup() throws Exception {
 		mockStatic(Context.class);
-		when(Context.getRegisteredComponent("formEntryContextFactoryImpl", FormEntryContextFactory.class))
-		        .thenReturn(new FormEntryContextFactoryImpl());
+		when(Context.getRegisteredComponent("formEntryContextFactoryImpl", FormEntryContextFactory.class)).thenReturn(
+		    new FormEntryContextFactoryImpl());
 		when(Context.getAuthenticatedUser()).thenReturn(new User(1));
 		handler = spy(new UiIncludeTagHandler());
 		node = new TestNode();

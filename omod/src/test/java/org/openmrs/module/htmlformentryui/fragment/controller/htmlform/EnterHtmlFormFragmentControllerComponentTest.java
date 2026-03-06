@@ -286,8 +286,8 @@ public class EnterHtmlFormFragmentControllerComponentTest extends BaseModuleWebC
 		FragmentModel model = new FragmentModel();
 		Patient patient = new Patient();
 		String resourcePath = "emr:htmlforms/featureTogglesTest.xml";
-		when(resourceFactory.getResourceAsString("emr", "htmlforms/featureTogglesTest.xml"))
-		        .thenReturn(FEATURE_TOGGLE_TEST_FORM_DEFINITION);
+		when(resourceFactory.getResourceAsString("emr", "htmlforms/featureTogglesTest.xml")).thenReturn(
+		    FEATURE_TOGGLE_TEST_FORM_DEFINITION);
 		
 		// overrride the feature toggles service with a mock
 		featureToggles = mock(FeatureToggleProperties.class);
@@ -310,8 +310,8 @@ public class EnterHtmlFormFragmentControllerComponentTest extends BaseModuleWebC
 		FragmentModel model = new FragmentModel();
 		Patient patient = new Patient();
 		String resourcePath = "emr:htmlforms/featureTogglesTest.xml";
-		when(resourceFactory.getResourceAsString("emr", "htmlforms/featureTogglesTest.xml"))
-		        .thenReturn(FEATURE_TOGGLE_TEST_FORM_DEFINITION);
+		when(resourceFactory.getResourceAsString("emr", "htmlforms/featureTogglesTest.xml")).thenReturn(
+		    FEATURE_TOGGLE_TEST_FORM_DEFINITION);
 		
 		// overrride the feature toggles service with a mock
 		featureToggles = mock(FeatureToggleProperties.class);

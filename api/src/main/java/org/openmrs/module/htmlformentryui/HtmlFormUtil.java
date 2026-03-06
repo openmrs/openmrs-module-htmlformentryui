@@ -56,8 +56,8 @@ public class HtmlFormUtil {
 		
 		// first, see if there is a specific version of the form referenced by version number
 		if (encounter != null && encounter.getForm() != null && encounter.getForm().getVersion() != null) {
-			String resourcePathWithVersion = resourcePath.replaceAll("\\.xml$", "") + "_v" + encounter.getForm().getVersion()
-			        + ".xml";
+			String resourcePathWithVersion = resourcePath.replaceAll("\\.xml$", "") + "_v"
+			        + encounter.getForm().getVersion() + ".xml";
 			xml = resourceFactory.getResourceAsString(providerName, resourcePathWithVersion);
 			// should be of the format <htmlform formUuid="..." formVersion="..." formEncounterType="...">...</htmlform>
 		}
@@ -136,8 +136,8 @@ public class HtmlFormUtil {
 			}
 			
 			String formEncounterType = getAttributeValue(htmlFormNode, "formEncounterType");
-			EncounterType encounterType = formEncounterType == null ? null
-			        : HtmlFormEntryUtil.getEncounterType(formEncounterType);
+			EncounterType encounterType = formEncounterType == null ? null : HtmlFormEntryUtil
+			        .getEncounterType(formEncounterType);
 			if (encounterType != null && !OpenmrsUtil.nullSafeEquals(form.getEncounterType(), encounterType)) {
 				form.setEncounterType(encounterType);
 				needToSaveForm = true;
