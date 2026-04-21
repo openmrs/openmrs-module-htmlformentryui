@@ -23,6 +23,10 @@
 
 ${ ui.includeFragment("coreapps", "patientHeader", [ patient: patient ]) }
 
+${ ui.includeFragment("htmlformentryui", "htmlform/visitDetails", [
+        visit: encounter.visit
+]) }
+
 ${ ui.includeFragment("htmlformentryui", "htmlform/enterHtmlForm", [
         visit: encounter.visit,
         encounter: encounter,
