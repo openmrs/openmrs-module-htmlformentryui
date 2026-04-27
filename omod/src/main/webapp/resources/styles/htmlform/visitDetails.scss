@@ -1,0 +1,25 @@
+
+$green: #51A351;
+$white: #FFFFFF;
+
+.visit-dates {
+  font-size: 0.8em;
+  margin-right: 10px;
+  white-space: nowrap;
+  padding-bottom: 5px;
+}
+
+.lozenge {
+  display: inline-block;
+  padding: 0px 8px;
+  border: 1px solid black;
+  border-radius: 3px;
+  font-size: 0.7em;
+  text-transform: uppercase;
+
+  &.active {
+    color: $white;
+    background:$green;
+    border-color: $green;
+  }
+}
