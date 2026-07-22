@@ -198,17 +198,19 @@
             disableSubmitButton();
             showModal();
             var form = jq('#htmlform');
-            var formData = false;
-            // Check whether FormData is supported
-            if (window.FormData) {
-                formData = new FormData(form[0]);
-            }
-            if (!formData) {
-                formData = form.serialize();
-            }
+            var formData = new FormData(form[0]);
             binaryDataInputs.forEach(e => {
                 formData.set(e.formFieldName, e.binaryData, e.fileName);
             })
+
+            // the "returnUrl" hidden input only reflects the value at page render time; if a form
+            // has since called htmlForm.setReturnUrl(...) (e.g. for O3 "post-message:" integration),
+            // that live value must win over whatever is still sitting in the hidden input
+            if (returnUrl) {
+                formData.set('returnUrl', returnUrl);
+            } else {
+                formData.delete('returnUrl');
+            }
 
 			jq(".error").text(""); //clear errors
 
