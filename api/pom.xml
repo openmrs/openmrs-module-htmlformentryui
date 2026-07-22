@@ -18,18 +18,19 @@
             <artifactId>httpclient</artifactId>
             <version>4.5.13</version>
         </dependency>
-        <dependency>
-            <groupId>org.openmrs.web</groupId>
-            <artifactId>openmrs-web</artifactId>
-            <version>${openmrsPlatformVersion}</version>
-        </dependency>
-
         <!-- jars required only to run test scripts (scope=test) -->
         <dependency>
             <groupId>org.openmrs.api</groupId>
             <artifactId>openmrs-api</artifactId>
             <version>${openmrsPlatformVersion}</version>
             <type>test-jar</type>
+            <scope>test</scope>
+        </dependency>
+        <!-- needed by RegressionTestHelper (htmlformentry-api test-jar) for multipart request handling -->
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-web</artifactId>
+            <version>4.1.4.RELEASE</version>
             <scope>test</scope>
         </dependency>
         <dependency>
