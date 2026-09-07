@@ -4,6 +4,9 @@ import java.net.URISyntaxException;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.Instant;
+import java.time.OffsetDateTime;
+import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -11,7 +14,6 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
-import java.util.TimeZone;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang3.StringUtils;
@@ -163,12 +165,16 @@ public class ObsFromFragmentElement implements HtmlGeneratorElement, FormSubmiss
 		}
 		if (dataType.isDateTime() || dataType.isTime()) {
 			try {
-				DateFormat df = new SimpleDateFormat(WebConstants.DATE_FORMAT_DATETIME);
-				df.setLenient(false);
-				if (dataType.isDateTime() && uiUtils.convertTimezones() && uiUtils.getClientTimezone() != null) {
-					df.setTimeZone(TimeZone.getTimeZone(uiUtils.getClientTimezone()));
+				// Datetimepicker can send one of 2 formats "yyyy-MM-dd HH:mm:ss" / "yyyy-MM-dd'T'HH:mm:ss.SSSZ"
+				try {
+					Instant instant = OffsetDateTime.parse(val).toInstant();
+					return Date.from(instant);
 				}
-				return df.parse(val);
+				catch (DateTimeParseException e) {
+					DateFormat df = new SimpleDateFormat(WebConstants.DATE_FORMAT_DATETIME);
+					df.setLenient(false);
+					return df.parse(val);
+				}
 			}
 			catch (ParseException e) {
 				throw new IllegalArgumentException("Failed to parse date: " + val, e);
