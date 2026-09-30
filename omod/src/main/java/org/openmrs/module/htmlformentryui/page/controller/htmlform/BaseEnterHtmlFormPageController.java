@@ -14,6 +14,7 @@
 
 package org.openmrs.module.htmlformentryui.page.controller.htmlform;
 
+import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang.StringUtils;
 import org.openmrs.Form;
 import org.openmrs.Patient;
@@ -71,7 +72,8 @@ public abstract class BaseEnterHtmlFormPageController {
 			throw new IllegalArgumentException("Couldn't find a form");
 		}
 		
-		returnUrl = HtmlFormUtil.determineReturnUrl(returnUrl, returnProvider, returnPage, currentPatient, visit, ui);
+		returnUrl = HtmlFormUtil.determineReturnUrl(StringEscapeUtils.escapeJavaScript(returnUrl), returnProvider,
+		    returnPage, currentPatient, visit, ui);
 		returnLabel = HtmlFormUtil.determineReturnLabel(returnLabel, currentPatient, ui);
 		
 		model.addAttribute("htmlForm", htmlForm);
