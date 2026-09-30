@@ -19,6 +19,7 @@
     var patientDashboardUrl = null;
     var flowsheetExtension = null; // This can be overridden by modules to provide custom functionality
     var encounterIdToEncounterTypeUuidMap = null;
+    var headerRemoved = false;
 
     function Flowsheet(index, formName, encounterIds, encounterTypeUuid) {
         this.index = index;
@@ -210,6 +211,11 @@
     };
 
     flowsheet.toggleViewFlowsheet = function() {
+        if (headerRemoved) {
+            headerRemoved = false;
+            flowsheet.viewHeader(); // calls back into toggleViewFlowsheet once the header is re-rendered
+            return;
+        }
         jq('#header-section').show();
         jq(".form-action-link").show();
         if (viewOnly || !requireEncounter) {
@@ -287,9 +293,9 @@
         flowsheet.setCurrentlyEditingFormName(formName);
         loadHtmlFormForEncounter(formName, null, encounterDate,true, function(data) {
             var fs = flowsheet.getFlowsheet(formName);
+            hideHeader();
             jq('#flowsheet-edit-section-'+fs.index).html(data).show();
             setupForm(jq('#flowsheet-edit-section-'+fs.index));
-            jq("#header-section").hide();
             jq(".flowsheet-section").hide();
             flowsheet.focusFirstObs();
         });
@@ -300,9 +306,9 @@
         flowsheet.setCurrentlyEditingEncounterId(encId);
         loadHtmlFormForEncounter(formName, encId, null,true, function(data) {
             var fs = flowsheet.getFlowsheet(formName);
+            hideHeader();
             jq('#flowsheet-edit-section-'+fs.index).html(data).show();
             setupForm(jq('#flowsheet-edit-section-'+fs.index));
-            jq("#header-section").hide();
             jq(".flowsheet-section").hide();
             flowsheet.focusFirstObs();
         });
@@ -465,6 +471,19 @@
                 loadingEncounters.splice(index, 1);
             }
         });
+    };
+
+    /**
+     * If the header is rendered as an editable form (eg. requireEncounter=false), remove it from the page rather than
+     * hiding it, so that only the form being edited exists as #htmlform and is the one submitted
+     */
+    var hideHeader = function() {
+        var headerSection = jq("#header-section");
+        if (headerSection.find("#htmlform").length > 0) {
+            headerSection.empty();
+            headerRemoved = true;
+        }
+        headerSection.hide();
     };
 
     var showLinksForEditMode = function() {
