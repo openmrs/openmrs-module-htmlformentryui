@@ -96,17 +96,20 @@
     }
 
     /*
-     It seems the logic of  showAuthenticateDialog and
-     findAndHighlightErrors should be in the same callback function.
-     i.e. only authenticated user can see the error msg of
+     Only an authenticated user gets as far as validation. If the session has expired, the user
+     is sent to the home page to log in again (there is no in-page re-login).
      */
     var checkIfLoggedInAndErrorsCallback = function(isLoggedIn) {
 
         var state_beforeValidation=true;
 
-        if (!isLoggedIn) {
-            showAuthenticateDialog();
-        }else{
+        if (isLoggedIn === null) {
+            // couldn't reach the server; keep the user on the form so nothing is lost
+            tryingToSubmit = false;
+            emr.errorAlert(sessionExpiry.messages.serverUnreachable);
+        } else if (!isLoggedIn) {
+            goToHomePage();
+        } else {
 
             // first call any beforeValidation functions that may have been defined by the html form
             if (beforeValidation.length > 0){
@@ -139,10 +142,174 @@
         }
     }
 
-    var showAuthenticateDialog = function() {
-        jq('#passwordPopup').show();
-        tryingToSubmit = false;
-    }
+    /*
+     * Session expiry warning
+     *
+     * The server session is only kept alive by requests to the server (typing in the form doesn't
+     * count), so we track the time since the last request: page load, plus any jQuery ajax call.
+     * Shortly before the session times out we show a countdown with a link that refreshes the
+     * session. If it does time out, we send the user to the home page to log in again.
+     */
+    var SESSION_CHECK_GRACE_MS = 2000;      // check a little after the expected expiry, so the server has expired it
+    var SESSION_RETRY_MS = 10000;           // when the server can't be reached, try again after this long
+
+    var sessionExpiry = {
+        timeoutMs: 0,
+        warningMs: 0,
+        homeUrl: null,
+        expiresAt: 0,
+        timer: null,
+        checking: false,
+        redirecting: false,
+        messages: {
+            serverUnreachable: 'Unable to reach the server. Please check your connection and try again.'
+        }
+    };
+
+    var goToHomePage = function() {
+        if (sessionExpiry.redirecting) {
+            return;
+        }
+        sessionExpiry.redirecting = true;
+        if (sessionExpiry.timer) {
+            clearInterval(sessionExpiry.timer);
+            sessionExpiry.timer = null;
+        }
+        location.href = sessionExpiry.homeUrl || '/';
+    };
+
+    /*
+     * Asks the server whether the user is still logged in, which also keeps a live session alive.
+     * Calls back with true, false, or null if the server couldn't be reached.
+     * Once the session has gone, the authentication filter redirects this request to the login page,
+     * which comes back as a JSON string (or as HTML), so anything other than an explicit
+     * isLoggedIn === true means logged out.
+     */
+    var checkSession = function(callback) {
+        jq.ajax({
+            url: emr.fragmentActionLink('htmlformentryui', 'htmlform/enterHtmlForm', 'checkIfLoggedIn'),
+            dataType: 'json',
+            cache: false,
+            global: false   // don't let our own check count as activity in the ajaxComplete handler
+        }).done(function(result) {
+            callback(!!result && result.isLoggedIn === true);
+        }).fail(function(jqXHR) {
+            var serverUnreachable = jqXHR.status === 0 || jqXHR.status >= 500;
+            callback(serverUnreachable ? null : false);
+        });
+    };
+
+    var showSessionExpiryDialog = function(secondsLeft) {
+        jq('#session-expiry-countdown').text(secondsLeft);
+        var dialog = jq('#session-expiry-overlay');
+        if (!dialog.is(':visible')) {
+            jq('#session-expiry-error').hide();
+            dialog.show();
+            jq('#session-expiry-refresh').focus();
+        }
+    };
+
+    var hideSessionExpiryDialog = function() {
+        jq('#session-expiry-overlay').hide();
+    };
+
+    var restartSessionExpiryCountdown = function() {
+        if (sessionExpiry.redirecting) {
+            return;
+        }
+        sessionExpiry.expiresAt = Date.now() + sessionExpiry.timeoutMs;
+        hideSessionExpiryDialog();
+    };
+
+    var onSessionExpiryTick = function() {
+        if (sessionExpiry.checking || sessionExpiry.redirecting) {
+            return;
+        }
+        var msLeft = sessionExpiry.expiresAt - Date.now();
+        if (msLeft <= -SESSION_CHECK_GRACE_MS) {
+            // we expect the session to have expired by now; confirm with the server before leaving,
+            // since another tab using the same session may have kept it alive
+            sessionExpiry.checking = true;
+            checkSession(function(isLoggedIn) {
+                sessionExpiry.checking = false;
+                if (isLoggedIn === true) {
+                    restartSessionExpiryCountdown();
+                } else if (isLoggedIn === false) {
+                    goToHomePage();
+                } else {
+                    sessionExpiry.expiresAt = Date.now() + SESSION_RETRY_MS - SESSION_CHECK_GRACE_MS;
+                }
+            });
+        } else if (msLeft <= sessionExpiry.warningMs) {
+            showSessionExpiryDialog(Math.max(0, Math.ceil(msLeft / 1000)));
+        }
+    };
+
+    var refreshSession = function() {
+        if (sessionExpiry.checking || sessionExpiry.redirecting) {
+            return;
+        }
+        sessionExpiry.checking = true;
+        checkSession(function(isLoggedIn) {
+            sessionExpiry.checking = false;
+            if (isLoggedIn === true) {
+                restartSessionExpiryCountdown();
+            } else if (isLoggedIn === false) {
+                goToHomePage();
+            } else {
+                jq('#session-expiry-error').text(sessionExpiry.messages.serverUnreachable).show();
+            }
+        });
+    };
+
+    /*
+     * Starts tracking the session. Options:
+     *   timeoutSeconds: the server session timeout; 0 or less means don't track the session
+     *   warningSeconds: how long before expiry to show the countdown; 0 or less means no countdown
+     *   homeUrl: where to send the user once the session has expired
+     *   messages: localized messages (serverUnreachable)
+     */
+    htmlForm.initSessionExpiryWarning = function(options) {
+        var timeoutSeconds = parseInt(options.timeoutSeconds, 10) || 0;
+        var warningSeconds = parseInt(options.warningSeconds, 10) || 0;
+
+        if (sessionExpiry.timer) {
+            clearInterval(sessionExpiry.timer);
+            sessionExpiry.timer = null;
+        }
+        jq(document).off('.sessionExpiry');
+        jq('#session-expiry-refresh').off('.sessionExpiry');
+
+        sessionExpiry.homeUrl = options.homeUrl;
+        jq.extend(sessionExpiry.messages, options.messages);
+        if (timeoutSeconds <= 0) {
+            return;
+        }
+        sessionExpiry.timeoutMs = timeoutSeconds * 1000;
+        sessionExpiry.warningMs = Math.min(Math.max(warningSeconds, 0), timeoutSeconds) * 1000;
+        restartSessionExpiryCountdown();
+
+        // any successful request to the server keeps the session alive
+        jq(document).on('ajaxComplete.sessionExpiry', function(event, jqXHR) {
+            if (jqXHR && jqXHR.status > 0) {
+                restartSessionExpiryCountdown();
+            }
+        });
+
+        // browsers slow down timers in background tabs, so re-check as soon as the tab is visible again
+        jq(document).on('visibilitychange.sessionExpiry', function() {
+            if (!document.hidden) {
+                onSessionExpiryTick();
+            }
+        });
+
+        jq('#session-expiry-refresh').on('click.sessionExpiry', function(e) {
+            e.preventDefault();
+            refreshSession();
+        });
+
+        sessionExpiry.timer = setInterval(onSessionExpiryTick, 1000);
+    };
 
     var goToReturnUrl = function(encounterId) {
         if (returnUrl) {
@@ -261,19 +428,8 @@
     htmlForm.submitHtmlForm = function()  {
         if (!tryingToSubmit) {    // don't allow form submittal if submit button is disabled (disallows multiple submits)
             tryingToSubmit = true;
-            jq.getJSON(emr.fragmentActionLink('htmlformentryui', 'htmlform/enterHtmlForm', 'checkIfLoggedIn'), function(result) {
-                checkIfLoggedInAndErrorsCallback(result.isLoggedIn);
-            });
+            checkSession(checkIfLoggedInAndErrorsCallback);
         }
-    };
-
-    htmlForm.loginThenSubmitHtmlForm = function() {
-        jq('#passwordPopup').hide();
-        var username = jq('#passwordPopupUsername').val();
-        var password = jq('#passwordPopupPassword').val();
-        jq('#passwordPopupUsername').val('');
-        jq('#passwordPopupPassword').val('');
-        jq.getJSON(emr.fragmentActionLink('htmlformentryui', 'htmlform/enterHtmlForm', 'authenticate', { user: username, pass: password }), submitHtmlForm);
     };
 
     htmlForm.cancel = function() {

@@ -1,0 +1,35 @@
+// "Your session is about to expire" countdown shown on html forms.
+// Sits above #modal-overlay (z-index 999), the "please do not refresh" overlay shown while saving.
+#session-expiry-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 1000;
+}
+
+#session-expiry-dialog {
+  display: block;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 90%;
+  max-width: 480px;
+  box-sizing: border-box;
+  background: white;
+
+  .dialog-content {
+    text-align: center;
+  }
+
+  #session-expiry-countdown {
+    font-size: 1.2em;
+  }
+
+  #session-expiry-error {
+    margin-bottom: 10px;
+  }
+}

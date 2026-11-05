@@ -25,11 +25,9 @@ import org.openmrs.Visit;
 import org.openmrs.api.FormService;
 import org.openmrs.api.ValidationException;
 import org.openmrs.api.context.Context;
-import org.openmrs.api.context.ContextAuthenticationException;
 import org.openmrs.module.ModuleFactory;
 import org.openmrs.module.appframework.feature.FeatureToggleProperties;
 import org.openmrs.module.appui.UiSessionContext;
-import org.openmrs.module.emrapi.EmrApiProperties;
 import org.openmrs.module.emrapi.adt.AdtService;
 import org.openmrs.module.emrapi.adt.exception.EncounterDateAfterVisitStopDateException;
 import org.openmrs.module.emrapi.adt.exception.EncounterDateBeforeVisitStartDateException;
@@ -41,6 +39,7 @@ import org.openmrs.module.htmlformentry.FormSubmissionError;
 import org.openmrs.module.htmlformentry.HtmlForm;
 import org.openmrs.module.htmlformentry.HtmlFormEntryService;
 import org.openmrs.module.htmlformentry.HtmlFormEntryUtil;
+import org.openmrs.module.htmlformentryui.HtmlFormEntryUiConstants;
 import org.openmrs.module.htmlformentryui.HtmlFormUtil;
 import org.openmrs.module.uicommons.UiCommonsConstants;
 import org.openmrs.ui.framework.SimpleObject;
@@ -174,36 +173,18 @@ public class EnterHtmlFormFragmentController extends BaseHtmlFormFragmentControl
 		setupVelocityContext(fes, visitDomainWrapper, ui, sessionContext, featureToggles);
 		setupFormEntrySession(fes, visitDomainWrapper, defaultEncounterDate, ui, sessionContext, returnUrl);
 		setupModel(model, fes, visitDomainWrapper, createVisit, visitStartDatetime, visitStopDatetime, ui);
+		setupSessionExpiryModel(model, httpSession);
 		
 	}
 	
 	/**
-	 * Creates a simple object to record if there is an authenticated user
+	 * Creates a simple object to record if there is an authenticated user. Calling this also keeps
+	 * the user's session alive, which is how the "session about to expire" warning refreshes it.
 	 * 
 	 * @return the simple object
 	 */
 	public SimpleObject checkIfLoggedIn() {
 		return SimpleObject.create("isLoggedIn", Context.isAuthenticated());
-	}
-	
-	/**
-	 * Tries to authenticate with the given credentials
-	 * 
-	 * @param user the username
-	 * @param pass the password
-	 * @return a simple object to record if successful
-	 */
-	public SimpleObject authenticate(@RequestParam("user") String user, @RequestParam("pass") String pass,
-	        UiSessionContext context, @SpringBean EmrApiProperties emrApiProperties) {
-		try {
-			Context.authenticate(user, pass);
-			context.setSessionLocation(emrApiProperties.getUnknownLocation());
-		}
-		catch (ContextAuthenticationException ex) {
-			
-		}
-		
-		return checkIfLoggedIn();
 	}
 	
 	/**
@@ -389,6 +370,32 @@ public class EnterHtmlFormFragmentController extends BaseHtmlFormFragmentControl
 		model.addAttribute("hfeMajorVersion", hfeMajorVersion);
 		model.addAttribute("hfeMinorVersion", hfeMinorVersion);
 		
+	}
+	
+	/**
+	 * Adds what the page needs to warn the user before their session expires: the session timeout
+	 * and how long before it to show the countdown. A timeout of 0 means the session never expires
+	 * (or there is no session), in which case the page does not track it.
+	 */
+	void setupSessionExpiryModel(FragmentModel model, HttpSession httpSession) {
+		int sessionTimeoutSeconds = httpSession != null ? Math.max(0, httpSession.getMaxInactiveInterval()) : 0;
+		model.addAttribute("sessionTimeoutSeconds", sessionTimeoutSeconds);
+		model.addAttribute("sessionExpiryWarningSeconds", getSessionExpiryWarningSeconds());
+	}
+	
+	private int getSessionExpiryWarningSeconds() {
+		String value = Context.getAdministrationService().getGlobalProperty(
+		    HtmlFormEntryUiConstants.GP_SESSION_EXPIRY_WARNING_SECONDS);
+		if (StringUtils.isNotBlank(value)) {
+			try {
+				return Math.max(0, Integer.parseInt(value.trim()));
+			}
+			catch (NumberFormatException e) {
+				log.warn("Invalid value for " + HtmlFormEntryUiConstants.GP_SESSION_EXPIRY_WARNING_SECONDS + ": " + value
+				        + ", using the default of " + HtmlFormEntryUiConstants.DEFAULT_SESSION_EXPIRY_WARNING_SECONDS);
+			}
+		}
+		return HtmlFormEntryUiConstants.DEFAULT_SESSION_EXPIRY_WARNING_SECONDS;
 	}
 	
 	private VisitDomainWrapper getVisitDomainWrapper(Visit visit, Encounter encounter, AdtService adtService) {
