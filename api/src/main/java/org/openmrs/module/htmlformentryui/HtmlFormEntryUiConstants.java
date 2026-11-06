@@ -27,4 +27,13 @@ public class HtmlFormEntryUiConstants {
 	
 	public static final String HTMLFORMENTRY_UI_OBS_FROM_FRAGMENT_TAG_NAME = "obsFromFragment";
 	
+	/**
+	 * Global property: how many seconds before the user's session expires the "session about to
+	 * expire" countdown is shown on html forms. A value of 0 or less disables the countdown (the
+	 * user is still sent to the home page once the session has expired).
+	 */
+	public static final String GP_SESSION_EXPIRY_WARNING_SECONDS = MODULE_ID + ".sessionExpiryWarningSeconds";
+	
+	public static final int DEFAULT_SESSION_EXPIRY_WARNING_SECONDS = 60;
+	
 }

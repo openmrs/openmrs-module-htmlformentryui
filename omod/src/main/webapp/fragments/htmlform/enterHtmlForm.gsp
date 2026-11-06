@@ -4,6 +4,7 @@
 
     // assumes jquery and jquery-ui from emr module
     ui.includeCss("htmlformentryui", "htmlform/modal.css")
+    ui.includeCss("htmlformentryui", "htmlform/sessionExpiry.css")
     ui.includeJavascript("uicommons", "handlebars/handlebars.min.js", Integer.MAX_VALUE - 1);
     ui.includeJavascript("htmlformentryui", "dwr-util.js")
     ui.includeJavascript("htmlformentryui", "htmlForm.js")
@@ -39,10 +40,6 @@
 
     function getValueIfLegal(idAndProperty) {
         htmlForm.getValueIfLegal(idAndProperty);
-    }
-
-    function loginThenSubmitHtmlForm() {
-        htmlForm.loginThenSubmitHtmlForm();
     }
 
     var beforeSubmit = htmlForm.getBeforeSubmit();
@@ -108,6 +105,16 @@
 
 		// performs any initialization required by the "htmlForm" object (which is defined in htmlForm.js in the htmlformentry module and extended by htmlForm.js in this module)
 		htmlForm.initialize();
+
+        // warn the user before their session expires, and send them to the home page once it has
+        htmlForm.initSessionExpiryWarning({
+            timeoutSeconds: ${ sessionTimeoutSeconds },
+            warningSeconds: ${ sessionExpiryWarningSeconds },
+            homeUrl: '/${ contextPath }/index.htm',
+            messages: {
+                serverUnreachable: '${ ui.escapeJs(ui.message("htmlformentryui.sessionExpiry.serverUnreachable")) }'
+            }
+        });
     });
     
 </script>
@@ -141,28 +148,20 @@
         <input type="hidden" name="closeAfterSubmission" value="${ config.closeAfterSubmission }"/>
 
         ${ command.htmlToDisplay }
-
-        <div id="passwordPopup" style="position: absolute; z-axis: 1; bottom: 25px; background-color: #ffff00; border: 2px black solid; display: none; padding: 10px">
-            <center>
-                <table>
-                    <tr>
-                        <td colspan="2"><b>${ ui.message("htmlformentry.loginAgainMessage") }</b></td>
-                    </tr>
-                    <tr>
-                        <td align="right"><b>${ ui.message("coreapps.user.username") }:</b></td>
-                        <td><input type="text" id="passwordPopupUsername"/></td>
-                    </tr>
-                    <tr>
-                        <td align="right"><b>${ ui.message("coreapps.user.password") }:</b></td>
-                        <td><input type="password" id="passwordPopupPassword"/></td>
-                    </tr>
-                    <tr>
-                        <td colspan="2" align="center"><input type="button" value="Submit" onClick="loginThenSubmitHtmlForm()"/></td>
-                    </tr>
-                </table>
-            </center>
-        </div>
     </form>
+</div>
+
+<div id="session-expiry-overlay" style="display: none">
+    <div id="session-expiry-dialog" class="dialog" role="alertdialog" aria-modal="true" aria-labelledby="session-expiry-title" aria-describedby="session-expiry-message">
+        <div class="dialog-header">
+            <h3 id="session-expiry-title">${ ui.message("htmlformentryui.sessionExpiry.title") }</h3>
+        </div>
+        <div class="dialog-content">
+            <p id="session-expiry-message" aria-live="polite">${ ui.message("htmlformentryui.sessionExpiry.message", "<strong id=\"session-expiry-countdown\"></strong>") }</p>
+            <p id="session-expiry-error" class="error" style="display: none"></p>
+            <a href="#" id="session-expiry-refresh" class="button confirm">${ ui.message("htmlformentryui.sessionExpiry.stayLoggedIn") }</a>
+        </div>
+    </div>
 </div>
 
 <% if (command.fieldAccessorJavascript) { %>

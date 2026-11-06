@@ -59,6 +59,11 @@
 		<defaultValue>_self</defaultValue>
 		<description>If overriding ${project.parent.artifactId} print button behavior, URL target value (e.g. _self, _blank)</description>
 	</globalProperty>
+	<globalProperty>
+		<property>${project.parent.artifactId}.sessionExpiryWarningSeconds</property>
+		<defaultValue>60</defaultValue>
+		<description>Number of seconds before the user's session expires that html forms show a countdown warning, with a link to keep the session alive. Once the session has expired the user is sent to the home page. Set to 0 to disable the countdown warning.</description>
+	</globalProperty>
 
 	<!-- Maps hibernate file's, if present -->
 	<mappingFiles>

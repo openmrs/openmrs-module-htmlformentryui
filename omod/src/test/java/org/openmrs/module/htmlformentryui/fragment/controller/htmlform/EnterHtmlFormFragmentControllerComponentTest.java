@@ -51,6 +51,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.MessageSource;
 import org.springframework.mock.web.MockHttpServletRequest;
+import org.springframework.mock.web.MockHttpSession;
+import org.openmrs.GlobalProperty;
+import org.openmrs.api.context.Context;
+import org.openmrs.module.htmlformentryui.HtmlFormEntryUiConstants;
 import uk.co.it.modular.hamcrest.date.DateMatchers;
 
 import java.text.SimpleDateFormat;
@@ -327,6 +331,72 @@ public class EnterHtmlFormFragmentControllerComponentTest extends BaseModuleWebC
 		FormEntrySession command = (FormEntrySession) model.getAttribute("command");
 		String html = command.getHtmlToDisplay();
 		assertThat(html, Matchers.containsString("featureToggledOn"));
+	}
+	
+	@Test
+	public void setupSessionExpiryModel_shouldUseSessionTimeoutAndDefaultWarningWhenGlobalPropertyNotSet() {
+		FragmentModel model = setupSessionExpiryModel(1800);
+		
+		assertThat(model.getAttribute("sessionTimeoutSeconds"), is((Object) 1800));
+		assertThat(model.getAttribute("sessionExpiryWarningSeconds"),
+		    is((Object) HtmlFormEntryUiConstants.DEFAULT_SESSION_EXPIRY_WARNING_SECONDS));
+	}
+	
+	@Test
+	public void setupSessionExpiryModel_shouldUseWarningFromGlobalProperty() {
+		setSessionExpiryWarningGlobalProperty("120");
+		
+		FragmentModel model = setupSessionExpiryModel(1800);
+		
+		assertThat(model.getAttribute("sessionExpiryWarningSeconds"), is((Object) 120));
+	}
+	
+	@Test
+	public void setupSessionExpiryModel_shouldAllowDisablingTheWarning() {
+		setSessionExpiryWarningGlobalProperty("0");
+		
+		FragmentModel model = setupSessionExpiryModel(1800);
+		
+		assertThat(model.getAttribute("sessionExpiryWarningSeconds"), is((Object) 0));
+	}
+	
+	@Test
+	public void setupSessionExpiryModel_shouldFallBackToDefaultWarningWhenGlobalPropertyIsInvalid() {
+		setSessionExpiryWarningGlobalProperty("one minute");
+		
+		FragmentModel model = setupSessionExpiryModel(1800);
+		
+		assertThat(model.getAttribute("sessionExpiryWarningSeconds"),
+		    is((Object) HtmlFormEntryUiConstants.DEFAULT_SESSION_EXPIRY_WARNING_SECONDS));
+	}
+	
+	@Test
+	public void setupSessionExpiryModel_shouldNotTrackSessionThatNeverExpires() {
+		FragmentModel model = setupSessionExpiryModel(-1);
+		
+		assertThat(model.getAttribute("sessionTimeoutSeconds"), is((Object) 0));
+	}
+	
+	@Test
+	public void setupSessionExpiryModel_shouldNotTrackSessionWhenThereIsNoSession() {
+		FragmentModel model = new FragmentModel();
+		
+		controller.setupSessionExpiryModel(model, null);
+		
+		assertThat(model.getAttribute("sessionTimeoutSeconds"), is((Object) 0));
+	}
+	
+	private FragmentModel setupSessionExpiryModel(int maxInactiveIntervalSeconds) {
+		MockHttpSession httpSession = new MockHttpSession();
+		httpSession.setMaxInactiveInterval(maxInactiveIntervalSeconds);
+		FragmentModel model = new FragmentModel();
+		controller.setupSessionExpiryModel(model, httpSession);
+		return model;
+	}
+	
+	private void setSessionExpiryWarningGlobalProperty(String value) {
+		Context.getAdministrationService().saveGlobalProperty(
+		    new GlobalProperty(HtmlFormEntryUiConstants.GP_SESSION_EXPIRY_WARNING_SECONDS, value));
 	}
 	
 }
