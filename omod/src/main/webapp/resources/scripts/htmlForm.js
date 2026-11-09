@@ -199,8 +199,15 @@
         });
     };
 
+    // formats a number of seconds as MM:SS, e.g. 90 -> "01:30"
+    var formatCountdown = function(totalSeconds) {
+        var minutes = Math.floor(totalSeconds / 60);
+        var seconds = totalSeconds % 60;
+        return (minutes < 10 ? '0' : '') + minutes + ':' + (seconds < 10 ? '0' : '') + seconds;
+    };
+
     var showSessionExpiryDialog = function(secondsLeft) {
-        jq('#session-expiry-countdown').text(secondsLeft);
+        jq('#session-expiry-countdown').text(formatCountdown(secondsLeft));
         var dialog = jq('#session-expiry-overlay');
         if (!dialog.is(':visible')) {
             jq('#session-expiry-error').hide();
